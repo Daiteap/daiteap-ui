@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 135.00011 95.883501"
+   version="1.1"
+   id="svg1061"
+   sodipodi:docname="IoTArm_logo_small.svg"
+   width="135.00011"
+   height="95.883507"
+   inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata1065">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Logo 3_1</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     id="namedview1063"
+     showgrid="true"
+     inkscape:zoom="4.0791476"
+     inkscape:cx="132.74832"
+     inkscape:cy="43.636568"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1-2"
+     inkscape:pagecheckerboard="0" />
+  <defs
+     id="defs1009">
+    <style
+       id="style1001">.cls-1{fill:url(#linear-gradient);}.cls-2{fill:url(#linear-gradient-2);}.cls-3{fill:#2099d0;}.cls-4{fill:#4e2e7c;}</style>
+    <linearGradient
+       id="linear-gradient"
+       x1="100.65"
+       y1="17.9"
+       x2="42.790001"
+       y2="78.82"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#2099d0"
+         id="stop1003" />
+      <stop
+         offset="1"
+         stop-color="#8661b1"
+         id="stop1005" />
+    </linearGradient>
+    <linearGradient
+       id="linear-gradient-2"
+       x1="45.990002"
+       y1="69.489998"
+       x2="12.98"
+       y2="45.52"
+       xlink:href="#linear-gradient"
+       gradientTransform="translate(226.63248,51.364245)" />
+  </defs>
+  <title
+     id="title1011">Logo 3_1</title>
+  <g
+     id="Layer_2"
+     data-name="Layer 2"
+     transform="translate(-122.37744,-26.192987)">
+    <g
+       id="Layer_1-2"
+       data-name="Layer 1">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:74.8479px;line-height:1.25;font-family:'Noto Mono';-inkscape-font-specification:'Noto Mono';fill:#000;fill-opacity:1;stroke:none;stroke-width:1.87119"
+         x="102.99332"
+         y="82.253036"
+         id="text2596"
+         transform="scale(1.1003547,0.90879787)"><tspan
+           sodipodi:role="line"
+           id="tspan2594"
+           x="102.99332"
+           y="82.253036"
+           style="fill:#000;fill-opacity:1;stroke-width:1.87119">IoT</tspan><tspan
+           sodipodi:role="line"
+           x="102.99332"
+           y="175.81291"
+           id="tspan8254"
+           style="fill:#000;fill-opacity:1;stroke-width:1.87119" /></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:53.1339px;line-height:1.25;font-family:sans-serif;fill:#000;fill-opacity:1;stroke:none;stroke-width:1.32834"
+         x="117.3564"
+         y="127.01867"
+         id="text14984"
+         transform="scale(1.0404843,0.96109093)"><tspan
+           sodipodi:role="line"
+           id="tspan14982"
+           x="117.3564"
+           y="127.01867"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#000;fill-opacity:1;stroke-width:1.32834">ARM</tspan></text>
+    </g>
+  </g>
+</svg>

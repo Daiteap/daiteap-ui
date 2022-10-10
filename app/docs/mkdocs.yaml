@@ -1,0 +1,25 @@
+site_name: Daiteap Cloud Management
+site_url: https://daiteap.com/docs
+theme: readthedocs
+highlightjs: true
+hljs_languages:
+    - yaml
+    - rust
+nav:
+    - 'index.md'
+    - 'registration_login.md'
+    - 'web_console.md'
+    - 'tenant_workspace.md'
+    - 'projects.md'
+    - 'kubernetes_clusters.md'
+    - 'compute.md'
+    - 'storage.md'
+    - 'service_catalog.md'
+    - 'user_management.md'
+    - 'cloud_credentials.md'
+    - 'cli_tool.md'
+    - 'apis.md'
+    
+markdown_extensions:
+    - footnotes
+    - admonition

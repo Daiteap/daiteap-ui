@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="pattern_x5F_one" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 1024 430" style="enable-background:new 0 0 1024 430;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#EA002F;stroke-width:1;stroke-miterlimit:10;}
+    
+   
+    
+    @keyframes example {
+    0%{transform:translate(470px, -470px)} 
+    10%{transform:translate(0px, 0px)} 
+    15%{transform:translate(10px, -10px)}
+    20%{transform:translate(0px, 0px)}
+    80%{transform:translate(0px,0px)}
+    100%{transform:translate(-550px, 550px)};
+}
+    .firstline{
+  animation-name: example;
+  animation-duration: 7s;
+      animation-iteration-count:infinite;
+
+    }
+    
+    
+    @keyframes example2 { 
+    0%{transform:translate(470px, -470px)} 
+    12%{transform:translate(0px, 0px)} 
+    17%{transform:translate(10px, -10px)}
+    21%{transform:translate(0px,0px)}
+    83%{transform:translate(0px,0px)}
+    100%{transform:translate(-550px, 550px)};
+}
+    .secondline{
+  animation-name: example2;
+  animation-duration: 7s;
+      animation-iteration-count:infinite;
+
+    }
+    
+    
+     @keyframes example3 { 
+      0%{transform:translate(470px, -470px)} 
+    15%{transform:translate(0px, 0px)} 
+    20%{transform:translate(10px, -10px)}
+    25%{transform:translate(0px,0px)}
+    86%{transform:translate(0px,0px)}
+    100%{transform:translate(-550px, 550px)};
+}
+    .thirdline{
+  animation-name: example3;
+  animation-duration: 7s;
+      animation-iteration-count:infinite;
+
+    }
+    
+    @keyframes example4 { 
+      0%{transform:translate(470px, -470px)} 
+    18%{transform:translate(0px, 0px)} 
+    23%{transform:translate(10px, -10px)}
+    28%{transform:translate(0px,0px)}
+    89%{transform:translate(0px,0px)}
+    100%{transform:translate(-550px, 550px)};
+}
+    .fourthline{
+  animation-name: example4;
+  animation-duration: 7s;
+      animation-iteration-count:infinite;
+
+    }
+    
+
+    
+</style>
+<line id="four_x5F_three" class="st0 fourthline" x1="1003.6" y1="33.9" x2="955.3" y2="82.2"/>
+<line id="four_x5F_one" class="st0 fourthline" x1="1020.9" y1="306.9" x2="972.5" y2="355.2"/>
+<line id="four_x5F_two" class="st0 fourthline" x1="1008.2" y1="121.1" x2="934.6" y2="194.6"/>
+<line id="three_x5F_four" class="st0 thirdline" x1="1042.3" y1="185.7" x2="875.7" y2="352.3"/>
+<line id="three_x5F_three" class="st0 thirdline" x1="885.2" y1="168.1" x2="821.5" y2="231.9"/>
+<line id="three_x5F_two" class="st0 thirdline purple" x1="929.6" y1="3.5" x2="763.1" y2="170"/>
+<line id="three_x5F_one" class="st0 thirdline brown" x1="781.6" y1="-41.4" x2="733.3" y2="6.9"/>
+<line id="second_x5F_four" class="st0 secondline black" x1="818.4" y1="287.1" x2="744.9" y2="360.7"/>
+<line id="second_x5F_three" class="st0 secondline orange" x1="747.8" y1="246.6" x2="681" y2="313.4"/>
+<line id="second_x5F_two" class="st0 secondline blue" x1="805.3" y1="16.6" x2="638.7" y2="183.2"/>
+<line id="second_x5F_one" class="st0 secondline pink" x1="832.4" y1="412.6" x2="784.1" y2="460.9"/>
+<line id="first_x5F_three" class="st0 firstline yellow" x1="673.5" y1="34.4" x2="606.7" y2="101.2"/>
+<line id="first_x5F_two" class="st0 firstline grey" x1="581.3" y1="289.2" x2="636.3" y2="234.3"/>
+<line id="first_x5F_one" class="st0 firstline" x1="621.4" y1="364.7" x2="554.6" y2="431.5"/>
+</svg>

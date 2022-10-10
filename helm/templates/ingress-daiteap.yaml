@@ -1,0 +1,30 @@
+{{ if .Values.daiteapManagedCertificates }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: daiteap-clusterissuer
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  name: "{{ .Chart.Name }}"
+spec:
+  rules:
+  - host: "{{ .Values.host }}"
+    http:
+      paths:
+      - backend:
+          service:
+            name: "{{ .Chart.Name }}"
+            port:
+              number: {{ .Values.service.port }}
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "{{ .Values.host }}"
+    secretName: cert-{{ .Chart.Name }}
+
+{{ end }}

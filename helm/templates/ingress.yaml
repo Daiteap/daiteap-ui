@@ -1,0 +1,25 @@
+{{ if .Values.gkeManagedCertificates }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Chart.Name }}"
+  annotations:
+    kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/ingress.global-static-ip-name: "{{ .Values.globalStaticIPName }}"
+    kubernetes.io/ssl-redirect: "true"
+    networking.gke.io/managed-certificates: "{{ .Chart.Name }}"
+spec:
+  rules:
+  - host: "{{ .Values.host }}"
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: "{{ .Chart.Name }}"
+            port:
+              number: {{ .Values.service.port }}
+
+{{ end }}

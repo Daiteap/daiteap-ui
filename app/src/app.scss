@@ -1,0 +1,38 @@
+$green: #1d1e22;
+$black: #1d1e22;
+$white: #fff;
+$primary: #1d1e22;
+$red: #ea0020;
+
+$gray-100: #f8f8f8;
+$gray-200: #eaebed;
+$gray-300: #eaebed;
+$gray-400: #d1d1d1;
+$gray-500: #d1d1d1;
+$gray-600: #bcbcbc;
+$gray-700: #bcbcbc;
+$gray-800: #1d1e22;
+$gray-900: #1d1e22;
+
+$border-width: 1px;
+$border-radius: 0px;
+
+$progress-bg: $gray-700;
+$b-toast-background-opacity: 1;
+$secondary: $gray-700;
+$input-color: $black;
+$input-border-color: $gray-600;
+$input-focus-border-color: $black;
+$input-focus-bg: $black;
+$input-focus-color: $white;
+$light: $gray-200;
+$navbar-light-color: $black;
+$navbar-light-hover-color: $white;
+$nav-tabs-link-bg: $white;
+$dropdown-link-hover-color: $black;
+$nav-tabs-link-active-color: $white;
+$navbar-light-active-color: $white;
+
+
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+@import 'node_modules/bootstrap-vue/src/index.scss';

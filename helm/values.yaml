@@ -1,0 +1,22 @@
+image:  eu.gcr.io/cloudcluster-261712/vuejs-client:eade95707532d748e0fd046ab3c285621f977b2d
+env: develop
+
+replicas: 2
+
+service:
+  port: 8080
+  type: NodePort
+
+keycloakServiceName: keycloak
+
+globalStaticIPName: cloudcluster-dev
+
+host: dev.daiteap.com
+
+gkeManagedCertificates: true
+daiteapManagedCertificates: false
+
+imagePullSecrets:
+  - name: regcred
+
+keycloakConfig: ewogICAgInJlYWxtIjogIkRhaXRlYXAiLAogICAgImF1dGgtc2VydmVyLXVybCI6ICJodHRwczovL2Rldi5kYWl0ZWFwLmNvbS9hdXRoLyIsCiAgICAic3NsLXJlcXVpcmVkIjogIm5vbmUiLAogICAgInJlc291cmNlIjogImFwcC12dWUiLAogICAgInB1YmxpYy1jbGllbnQiOiB0cnVlLAogICAgInZlcmlmeS10b2tlbi1hdWRpZW5jZSI6IHRydWUsCiAgICAidXNlLXJlc291cmNlLXJvbGUtbWFwcGluZ3MiOiB0cnVlLAogICAgImNvbmZpZGVudGlhbC1wb3J0IjogMAp9Cg==

@@ -1,0 +1,11 @@
+{{ if .Values.gkeManagedCertificates }}
+
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: "{{ .Chart.Name }}"
+spec:
+  domains:
+    - "{{ .Values.host }}"
+
+{{ end }}
