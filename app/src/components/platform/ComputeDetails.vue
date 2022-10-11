@@ -448,7 +448,11 @@ export default {
             ];
         }
 
-        if (cluster.machinesList[i].status == 0) {
+        if (cluster.machinesList[i].sync_ssh_status == 1 || cluster.machinesList[i].sync_ssh_status == 2){
+          cluster.machinesList[i].statusText = "sync ssh keys...";
+        } else if (cluster.machinesList[i].sync_ssh_status < 0) {
+          cluster.machinesList[i].statusText = "failed to sync ssh keys";
+        } else if (cluster.machinesList[i].status == 0) {
           cluster.machinesList[i].statusText = "running";
         } else if (cluster.machinesList[i].status == 1) {
           cluster.machinesList[i].statusText = "starting";
