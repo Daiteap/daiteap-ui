@@ -2,19 +2,45 @@
   <div>
     <div>
       <div style="margin-top: 6rem">
-        <h3>Welcome {{ computed_userInfo.username }}</h3>
+        <h3 class="ml-3">Welcome {{ computed_userInfo.username }}</h3>
         <br />
-        <h5>
+        <h5 class="ml-3">
           Your Console overview for a quick navigation and operation to support
           your daily development and operations teams. Happy dev-ops :-)
         </h5>
         <div class="my-5"></div>
+
         <ProfileProgressBar
           :resourcesCount="
             kubernetesClustersCount + computeCount + computed_buckets.length
           "
         />
-        
+
+        <div class="px-3 py-0 col-12">
+          <b-card-group deck>
+            <CreateResourceCard
+              text="Setup Project"
+              redirectPage="addnewproject"
+            />
+            <CreateResourceCard
+              text="Create Kubernetes Cluster"
+              redirectPage="createcluster"
+            />
+            <CreateResourceCard
+              text="Create Virtual Machine"
+              redirectPage="createvms"
+            />
+            <CreateResourceCard
+              text="Setup Storage"
+              redirectPage="AddNewBucket"
+            />
+            <CreateResourceCard
+              text="Add Credentials"
+              redirectPage="addcloudcredentials"
+            />
+          </b-card-group>
+        </div>
+
         <b-row>
           <b-col class="px-3 py-0 col-12">
             <div>
@@ -41,9 +67,7 @@
                   cardText="Setup Kubernetes Cluster to deploy and manage containerized applications. Add as many Kubernetes Clusters to your project as you need. Customize according to your requirements and process management operations."
                   videoTitle="https://www.youtube.com/watch?v=fUuvv0YUEPY"
                 />
-              </b-card-group>
 
-              <b-card-group deck>
                 <OverviewCard
                   v-if="isComputeEnabled()"
                   redirectPage="computeoverviewall"
@@ -67,9 +91,7 @@
                   cardText="Use your cloud credentials to create and access AWS and Google buckets and Azure containers. Assign them to a project. Manage folders. Upload, download and delete files."
                   videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
-              </b-card-group>
 
-              <b-card-group deck>
                 <OverviewCard
                   redirectPage="ServiceCatalog"
                   title="Service Catalog"
@@ -81,7 +103,8 @@
               </b-card-group>
 
               <b-card-group deck>
-                <OverviewCard v-if="computed_isAdmin"
+                <OverviewCard
+                  v-if="computed_isAdmin"
                   redirectPage="userslist"
                   title="Users"
                   :showCount="true"
@@ -90,9 +113,7 @@
                   cardText="Get a list of users and manage members. Add users to your projects. Development and operations can work together on one platform to create, deliver and scale applications fast."
                   videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
-              </b-card-group>
 
-              <b-card-group deck>
                 <OverviewCard
                   redirectPage="CloudProfile"
                   title="Cloud Credentials"
@@ -100,6 +121,18 @@
                   :count="computed_credentials.length"
                   favIcon="fas fa-key"
                   cardText="Integrate multiple infrastructure providers and cloud platforms. Add your credentials manually or use OAuth where possible for an easy to use platform deployment access.    "
+                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
+                />
+              </b-card-group>
+
+              <b-card-group deck>
+                <OverviewCard
+                  redirectPage="templates"
+                  title="Templates"
+                  class="w-100"
+                  :showCount="false"
+                  favIcon="fas fa-save"
+                  cardText="Use templates to configure your environments faster. You can save a template of any Kubernetes or Compute environment, while creating them or once they're ready."
                   videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
               </b-card-group>
@@ -114,6 +147,7 @@
 <script>
 import OverviewCard from "@/components/platform/OverviewCard";
 import ProfileProgressBar from "@/components/platform/ProfileProgressBar";
+import CreateResourceCard from "@/components/platform/CreateResourceCard";
 
 const options = {
   title: {
@@ -192,6 +226,7 @@ export default {
   components: {
     OverviewCard,
     ProfileProgressBar,
+    CreateResourceCard,
   },
   data() {
     return {

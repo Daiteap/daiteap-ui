@@ -1,7 +1,10 @@
 <template>
   <div
-    id="custom-sidebar"
-    :class="[{ collapsed: collapsed }, { onmobile: isOnMobile }]"
+    :class="[
+      { 'custom-sidebar': $route.path != '/app/platform/overview' },
+      { collapsed: collapsed },
+      { onmobile: isOnMobile },
+    ]"
   >
     <div>
       <div class="m-1 m-xs-2 m-sm-3 m-md-4 m-lg-5">
@@ -10,6 +13,7 @@
         </div>
       </div>
       <sidebar-menu
+        v-if="$route.path != '/app/platform/overview'"
         width="250px"
         :menu="baseMenuItems"
         :collapsed="collapsed"
@@ -30,7 +34,7 @@
 import Separator from "@/components/platform/Separator";
 
 export default {
-  name: 'Sidebar',
+  name: "Sidebar",
   computed: {
     baseMenuItems() {
       return [

@@ -1,8 +1,16 @@
 <template>
   <div id="wrapper">
+    <Navbar
+      v-if="$route.path == '/app/platform/overview'"
+      :key="navbarKey"
+    />
+    <Navbar v-else :navbarLeftMargin="navbarLeftMargin" :key="navbarKey" />
 
-    <Navbar :navbarLeftMargin="navbarLeftMargin" :key="navbarKey" />
-    <Sidebar @collapsed="resizeNavBar" @avatarChanged="onAvatarChange" />
+    <Sidebar
+      @collapsed="resizeNavBar"
+      @avatarChanged="onAvatarChange"
+      :class="[{ 'no-sidebar': $route.path == '/app/platform/overview' }]"
+    />
     <notifications width="300px" position="bottom right" group="msg" />
 
     <b-navbar-brand v-if="this.computed_theme == 'daiteap'" to="/app/platform/overview">
@@ -53,10 +61,24 @@ export default {
       this.navbarKey += 1;
     },
   },
+  watch: {
+    "$route.path": {
+      handler: function () {
+        this.navbarKey += 1;
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
 };
 </script>
 
 <style>
+.no-sidebar {
+  max-width: 1800px;
+  margin: auto;
+}
+
 .notification-title {
   font-size: 17px;
 }

@@ -37,7 +37,7 @@ html {
     background-size: 60px 42px;
     z-index: 99999;
     position: fixed;
-    top: 16px;
+    top: 12px;
     left: 50px;
 }
 
@@ -45,16 +45,16 @@ html {
     content: url("../img/logo_wo.png");
 }
 
-#custom-sidebar {
+.custom-sidebar {
     padding-left: 250px;
     transition: 0.3s ease;
 }
 
-#custom-sidebar.collapsed {
+.custom-sidebar.collapsed {
     padding-left: 50px;
 }
 
-#custom-sidebar.onmobile {
+.custom-sidebar.onmobile {
     padding-left: 50px;
 }
 

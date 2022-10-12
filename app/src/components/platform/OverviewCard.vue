@@ -37,8 +37,8 @@
         <b-row>
           &nbsp;&nbsp;&nbsp;
           <i class="fa fa-video videoIcon"></i>
-          &nbsp; Video &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <span v-on:click.stop="$bvModal.show(title)">x</span>
+          &nbsp; Video &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span style="line-height: 1" v-on:click.stop="$bvModal.show(title)">x</span>
         </b-row>
         <hr width="150"/>
         <b-row>
