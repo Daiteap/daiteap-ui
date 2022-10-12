@@ -23,17 +23,17 @@
               <div>
                 <p
                   v-if="!$v.currentProject.Name.maxLength"
-                  class="help text-danger"
+                  class="help text-danger" style="height: 1.2rem"
                 >
                   Invalid Project Name
                 </p>
                 <p
                   v-else-if="nameResolved && !$v.currentProject.Name.isNameFree && currentProject.Name != ''"
-                  class="help text-danger"
+                  class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
                 </p>
-                <div v-else style="height: 1rem"></div>
+                <div v-else style="height: 1.2rem"></div>
               </div>
 
             </div>

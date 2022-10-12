@@ -23,17 +23,17 @@
               <div>
                 <p
                   v-if="!$v.currentCluster.Name.maxLength"
-                  class="help text-danger"
+                  class="help text-danger" style="height: 1.2rem"
                 >
                   Invalid Cluster Name
                 </p>
                 <p
                   v-else-if="nameResolved && !$v.currentCluster.Name.isNameFree && currentCluster.Name != ''"
-                  class="help text-danger"
+                  class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
                 </p>
-                <div v-else style="height: 1rem"></div>
+                <div v-else style="height: 1.2rem"></div>
               </div>
             </div>
           </div>
