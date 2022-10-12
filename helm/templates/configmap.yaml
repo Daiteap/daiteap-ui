@@ -35,11 +35,11 @@ data:
       }
 
       location /server/ {
-          proxy_pass http://daiteap-platform:8080/;
+          proxy_pass http://platform-api:8080/;
       }
 
       location /spec {
-          proxy_pass http://daiteap-platform:8080/spec;
+          proxy_pass http://platform-api:8080/spec;
       }
 
       location /static/ {
