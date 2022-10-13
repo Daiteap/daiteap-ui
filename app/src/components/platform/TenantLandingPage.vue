@@ -1,14 +1,13 @@
 <template>
   <div>
     <div>
-      <div style="margin-top: 6rem">
+      <div style="margin-top: 2rem">
         <h3 class="ml-3">Welcome {{ computed_userInfo.username }}</h3>
-        <br />
-        <h5 class="ml-3">
+        <h5 class="ml-3" style="margin-top: 15px">
           Your Console overview for a quick navigation and operation to support
           your daily development and operations teams. Happy dev-ops :-)
         </h5>
-        <div class="my-5"></div>
+        <div class="my-3"></div>
 
         <ProfileProgressBar
           :resourcesCount="

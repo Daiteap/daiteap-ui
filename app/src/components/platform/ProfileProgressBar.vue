@@ -5,26 +5,29 @@
         <b-card-group deck>
           <b-card
             no-body
-            class="p-3 p-sm-3 p-md-3 p-lg-4 m-3 m-sm-3 m-md-3 m-lg-4 text-left"
+            class="m-3 m-sm-3 m-md-3 m-lg-4 text-left"
             style="border-radius: 0.6rem"
           >
-            <b-row>
+            <b-row class="float-right">
               <b-col>
                 <div
                   v-if="showProgressBar && !loading"
                   @click="$bvModal.show(warningId)"
-                  class="float-right"
+                  class="float-right mr-2"
                   style="cursor: pointer; font-size: 24px"
                 >
-                  x&nbsp;&nbsp;&nbsp;
+                  x
                 </div>
               </b-col>
-              <b-col class="col-1"></b-col>
             </b-row>
-            <b-row>
+            <b-row style="margin-left: 10px">
               <b-col>
                 <div v-if="showProgressBar">
-                  <div v-if="loading" class="d-flex justify-content-center">
+                  <div
+                    v-if="loading"
+                    class="d-flex justify-content-center"
+                    style="padding-bottom: 25px; padding-left: 125px"
+                  >
                     <div class="spinner-border" role="status">
                       <span class="sr-only">Loading...</span>
                     </div>
@@ -211,7 +214,8 @@ export default {
       this.loading = false;
     },
     hideProgressBar() {
-      document.cookie = "ProgressBar=hidden; expires=Fri, 31 Dec 9999 14:00:00 GMT";
+      document.cookie =
+        "ProgressBar=hidden; expires=Fri, 31 Dec 9999 14:00:00 GMT";
       this.$bvModal.hide(this.warningId);
     },
   },
@@ -226,52 +230,60 @@ export default {
   justify-content: left;
 }
 
-@media screen and (max-width: 640pt) {
+@media screen and (max-width: 600pt) {
   .custom-progress {
-    width: calc(7em - 0.7vw);
+    width: 95px;
   }
   .custom-progress-text {
-    width: calc(4.2em - 0.7vw);
+    width: 95px;
   }
 }
-@media screen and (min-width: 640pt) {
+@media screen and (min-width: 600pt) {
   .custom-progress {
-    width: calc(7em + 3vw);
+    width: 170px;
   }
   .custom-progress-text {
-    width: calc(4.2em + 3vw);
+    width: 170px;
   }
 }
-@media screen and (min-width: 850pt) {
+@media screen and (min-width: 800pt) {
   .custom-progress {
-    width: calc(7em + 7.5vw);
+    width: 225px;
   }
   .custom-progress-text {
-    width: calc(4.2em + 7.5vw);
+    width: 225px;
   }
 }
-@media screen and (min-width: 1000pt) {
+@media screen and (min-width: 950pt) {
   .custom-progress {
-    width: calc(7em + 10vw);
+    width: 270px;
   }
   .custom-progress-text {
-    width: calc(4.2em + 10vw);
+    width: 270px;
+  }
+}
+@media screen and (min-width: 1100pt) {
+  .custom-progress {
+    width: 320px;
+  }
+  .custom-progress-text {
+    width: 320px;
   }
 }
 @media screen and (min-width: 1200pt) {
   .custom-progress {
-    width: 17vw;
+    width: 360px;
   }
   .custom-progress-text {
-    width: 17vw;
+    width: 360px;
   }
 }
-@media screen and (min-width: 1500pt) {
+@media screen and (min-width: 1300pt) {
   .custom-progress {
-    width: 335px;
+    width: 385px;
   }
   .custom-progress-text {
-    width: 335px;
+    width: 385px;
   }
 }
 

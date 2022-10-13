@@ -2,7 +2,7 @@
   <b-card
     @click="$router.push(redirectPage)"
     no-body
-    class="p-3 p-sm-3 p-md-3 p-lg-4 m-3 m-sm-3 m-md-3 m-lg-4 custom-card"
+    class="p-3 p-sm-3 p-md-3 p-lg-4 m-3 custom-card"
   >
     <b-row no-gutters>
       <b-col class="col-8 m-auto d-flex custom-font">
@@ -34,15 +34,14 @@
         v-if="videosEnabled"
         class="text-right m-auto custom-font"
       >
-        <b-row>
+        <b-row class="ml-5 float-right">
           &nbsp;&nbsp;&nbsp;
           <i class="fa fa-video videoIcon"></i>
-          &nbsp; Video &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp; Video &nbsp;&nbsp;&nbsp;
           <span style="line-height: 1" v-on:click.stop="$bvModal.show(title)">x</span>
         </b-row>
-        <hr width="150"/>
-        <b-row>
-          &nbsp;&nbsp;
+        <hr class="ml-5 float-right" width="150"/>
+        <b-row class="ml-5 float-right">
           <div
             width="150"
             height="100"
