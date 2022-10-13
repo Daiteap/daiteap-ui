@@ -297,16 +297,16 @@ export default {
   margin-bottom: 7px;
 }
 .progress::-moz-progress-bar {
-  background: #09dc7d;
+  background: #198900;
 }
 .progress::-webkit-progress-value {
-  background: #09dc7d;
+  background: #198900;
 }
 .progress::-webkit-progress-bar {
   background: #bcbcbc;
 }
 .progress {
-  color: #09dc7d;
+  color: #198900;
   border: none;
 }
 
@@ -319,7 +319,7 @@ export default {
   position: relative;
 }
 .progressDot.complete {
-  color: #09dc7d;
+  color: #198900;
 }
 
 .custom-progress-text {
