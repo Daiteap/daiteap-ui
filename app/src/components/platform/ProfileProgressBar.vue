@@ -266,6 +266,14 @@ export default {
     width: 17vw;
   }
 }
+@media screen and (min-width: 1500pt) {
+  .custom-progress {
+    width: 335px;
+  }
+  .custom-progress-text {
+    width: 335px;
+  }
+}
 
 .custom-progress {
   max-width: 45em;

@@ -10,7 +10,7 @@
   >
     <b-navbar-toggle target="nav-collapse" class="ml-auto"></b-navbar-toggle>
 
-    <div class="" style="max-width: 150rem; width: 150rem; margin-right: 3%">
+    <div style="width: 400rem; margin-right: 1%">
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
 

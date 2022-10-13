@@ -17,7 +17,7 @@
       <br />
       <div>
         <hr />
-        <b-row class="my-1 mb-2">
+        <div>
             <label for="project-name">Project Name: *</label>
             <b-form-input
               id="project-name"
@@ -34,9 +34,9 @@
               Project name is already used.
             </p>
             <div v-else style="height: 1.375rem"></div>
-        </b-row>
+        </div>
 
-        <b-row class="my-1 mb-2">
+        <div>
             <label for="project-description">Project Description:</label>
             <b-form-input
               v-model="form.description"
@@ -51,7 +51,7 @@
               Invalid project description
             </p>
             <div v-else style="height: 1.375rem"></div>
-        </b-row>
+        </div>
 
         <br/>
 

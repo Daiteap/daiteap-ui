@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card daiteap-content-card">
+    <div :class="{ 'card daiteap-content-card': !projectID }">
       <div
         class="d-flex justify-content-between cardHeaderLight"
         v-if="!projectID"
