@@ -15,7 +15,7 @@
           </b-col>
         </b-row>
         <b-card-text class="my-auto">
-          <b-row>
+          <b-row style="font-size: 22px">
             <b-col v-if="showCount" class="ml-3">{{ title }} ({{ count }})</b-col>
             <b-col v-else class="ml-3">{{ title }}</b-col>
           </b-row>
@@ -34,15 +34,14 @@
         v-if="videosEnabled"
         class="text-right m-auto custom-font"
       >
-        <b-row>
+        <b-row class="ml-5 float-right" style="font-size: 22px">
           &nbsp;&nbsp;&nbsp;
           <i class="fa fa-video videoIcon"></i>
-          &nbsp; Video &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp; Video &nbsp;&nbsp;&nbsp;
           <span style="line-height: 1" v-on:click.stop="$bvModal.show(title)">x</span>
         </b-row>
-        <hr width="150"/>
-        <b-row>
-          &nbsp;&nbsp;
+        <hr class="ml-5 float-right" width="150"/>
+        <b-row class="ml-5 float-right">
           <div
             width="150"
             height="100"
@@ -111,7 +110,7 @@ export default {
   font-size: 24px;
 }
 .cardtext {
-  font-size: calc(0.6rem + 0.4vw);
+  font-size: calc(8.7px + 0.4vw);
   color: #5f5f5f;
 }
 .videoIcon {
