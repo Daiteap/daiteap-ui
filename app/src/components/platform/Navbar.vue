@@ -10,7 +10,10 @@
   >
     <b-navbar-toggle target="nav-collapse" class="ml-auto"></b-navbar-toggle>
 
-    <div style="width: 400rem; margin-right: 1%">
+    <div
+      :class="{ 'no-sidebar': $route.path == '/app/platform/overview' }"
+      style="width: 152.5rem"
+    >
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
 
@@ -141,3 +144,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.no-sidebar {
+  max-width: 104rem;
+}
+</style>
