@@ -6,4 +6,4 @@ URL [daiteap.com](https://www.daiteap.com/)
 
 This repo contains the Daiteap Cloud Console, which is a browser application used to interact with the daiteap platform.
 
-![Daiteap Console] (https://github.com/Daiteap/daiteap-ui/img/Console_Start_Screen.png?raw=true)
+![Daiteap Console] (https://github.com/Daiteap/daiteap-ui/img/blob/master/Console_Start_Screen.png?raw=true)
