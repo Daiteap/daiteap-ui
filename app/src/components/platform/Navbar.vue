@@ -1,6 +1,6 @@
 <template>
   <b-navbar
-    :style="`transition: all 0.3s; margin-left: ${navbarLeftMargin}px;`"
+    :style="`transition: all 0.3s; margin-left: ${navbarLeftMargin}px; height: 70px`"
     toggleable="sm"
     type="light"
     variant="light"
@@ -28,12 +28,14 @@
                 height="30"
                 :src="computed_userInfo.image"
                 :key="avatarKey"
+                style="vertical-align: middle;"
               />
               <img
                 v-else
                 class="rounded-circle daiteap-avatar-img"
                 width="30"
                 height="30"
+                style="vertical-align: middle;"
               />
             </template>
 
@@ -94,7 +96,7 @@
             <i
               class="fa fa-question-circle"
               style="
-                font-size: 29px;
+                font-size: 28px;
                 color: white;
                 display: table-cell;
                 vertical-align: middle;

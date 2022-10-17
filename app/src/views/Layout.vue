@@ -1,11 +1,6 @@
 <template>
   <div id="wrapper">
-    <Navbar
-      v-if="$route.path == '/app/platform/overview'"
-      :key="navbarKey"
-    />
-    <Navbar v-else :navbarLeftMargin="navbarLeftMargin" :key="navbarKey" />
-
+    <Navbar :key="navbarKey" />
     <Sidebar
       @collapsed="resizeNavBar"
       @avatarChanged="onAvatarChange"
