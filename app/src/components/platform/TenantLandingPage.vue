@@ -2,7 +2,7 @@
   <div>
     <div>
       <div style="margin-top: 4rem">
-        <h3 class="ml-3">Welcome {{ computed_userInfo.username }}</h3>
+        <h3 class="ml-3">Welcome</h3>
         <h5 class="ml-3" style="margin-top: 15px; margin-bottom: 2.2rem">
           Your Console overview for a quick navigation and operation to support
           your daily development and operations teams. Happy dev-ops :-)
