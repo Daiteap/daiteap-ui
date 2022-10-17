@@ -8,7 +8,7 @@
   >
     <div>
       <div class="m-1 m-xs-2 m-sm-3 m-md-4 m-lg-5">
-        <div class="m-1 container-daiteap">
+        <div class="m-1" :class="[{'container-daiteap': $route.path != '/app/platform/overview'}]">
           <router-view @avatarChanged="$emit('avatarChanged')" />
         </div>
       </div>

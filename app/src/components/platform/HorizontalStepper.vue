@@ -73,7 +73,7 @@
         ></component>
       </transition>
     </div>
-    <div v-show="showStepper" :class="['bottom', (currentStep.index >= 0) ? '' : 'only-next']">
+    <div v-show="showStepper" :class="['bottom', (currentStep.index >= 0) ? '' : 'only-next']" style="padding: 0">
       <div v-if="currentStep.index > 0" class="stepper-button previous mr-5" @click="backStep()">
         <i class="material-icons">keyboard_arrow_left</i>
         <span class="mr-2">{{ 'back' | translate(locale) }}</span>

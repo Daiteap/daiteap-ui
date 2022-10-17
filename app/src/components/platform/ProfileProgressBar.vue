@@ -9,7 +9,7 @@
             style="border-radius: 0.6rem"
           >
             <b-row class="float-right">
-              <b-col>
+              <b-col style="padding-bottom: 0;">
                 <div
                   v-if="showProgressBar && !loading"
                   @click="$bvModal.show(warningId)"
@@ -21,12 +21,12 @@
               </b-col>
             </b-row>
             <b-row style="margin-left: 10px">
-              <b-col>
+              <b-col style="padding-bottom: 0; padding-top: 0">
                 <div v-if="showProgressBar">
                   <div
                     v-if="loading"
                     class="d-flex justify-content-center"
-                    style="padding-bottom: 25px; padding-left: 125px"
+                    style="padding-bottom: 25px; padding-left: 125px; padding-top: 17px"
                   >
                     <div class="spinner-border" role="status">
                       <span class="sr-only">Loading...</span>
@@ -327,6 +327,7 @@ export default {
   height: 1em;
   vertical-align: middle;
   margin-bottom: 7px;
+  font-size: 17px;
 }
 .progressText {
   margin-left: 0;

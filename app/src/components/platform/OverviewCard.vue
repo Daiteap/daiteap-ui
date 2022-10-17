@@ -40,7 +40,6 @@
           &nbsp; Video &nbsp;&nbsp;&nbsp;
           <span style="line-height: 1" v-on:click.stop="$bvModal.show(title)">x</span>
         </b-row>
-        <hr class="ml-5 float-right" width="150"/>
         <b-row class="ml-5 float-right">
           <div
             width="150"

@@ -37,7 +37,7 @@ html {
     background-size: 60px 42px;
     z-index: 99999;
     position: fixed;
-    top: 12px;
+    top: 15px;
     left: 50px;
 }
 
@@ -90,7 +90,7 @@ html {
 }
 
 .v-sidebar-menu {
-    background-color: #1d1e22;
+    background-color: #ffffff;
 }
 
 .vsm--mobile-item .vsm--item {
@@ -105,29 +105,29 @@ html {
 }
 
 .v-sidebar-menu .vsm--item:hover {
-    background-color: #bcbcbc !important;
-    color: #1d1e22 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 
 .v-sidebar-menu .vsm--item .vsm--icon {
-    color: #1d1e22 !important;
+    color: #ffffff !important;
 }
 
 .v-sidebar-menu .vsm--link:hover {
-    background-color: #bcbcbc;
+    background-color: #000000;
 }
 
 .v-sidebar-menu .vsm--link:hover .vsm--title {
-    color: #1d1e22;
+    color: #ffffff;
 }
 
 .v-sidebar-menu .vsm--title {
     font-size: 1.2rem;
-    color: #fff;
+    color: #000000;
 }
 
 .v-sidebar-menu .vsm--icon {
-    color: #1d1e22;
+    color: #ffffff;
     background-color: #ED7D31 !important;
 }
 
@@ -142,13 +142,13 @@ html {
 }
 
 .v-sidebar-menu .vsm--toggle-btn {
-    color: #fff;
-    background-color: #1d1e22;
+    color: #000000;
+    background-color: #ffffff;
 }
 
 .v-sidebar-menu .vsm--toggle-btn:hover {
-    color: #1d1e22;
-    background-color: #bcbcbc;
+    color: #ffffff;
+    background-color: #000000;
 }
 
 .v-sidebar-menu .vsm--link.vsm--link_active {
@@ -182,7 +182,7 @@ html {
 }
 
 .container-daiteap {
-    max-width: 150rem;
+    max-width: 1007px;
 }
 
 .btn-outline-success {
