@@ -21,9 +21,10 @@ export default {
     };
   },
   created() {
-    if (!Vue.SingleUserMode){
+    if (!this.computed_single_user_mode){
       this.registerUser();
     } else {
+      this.getActiveTenants();
       this.getUserInfo();
     }
   },
@@ -67,7 +68,7 @@ Vue.mixin({
     },
     get_axiosConfig() {
       let authorization = "";
-      if (!Vue.SingleUserMode){
+      if (!this.computed_single_user_mode){
         authorization = "JWT " + Vue.$keycloak.token;
       }
 
@@ -815,6 +816,9 @@ Vue.mixin({
     computed_theme() {
       return process.env.VUE_APP_THEME;
     },
+    computed_single_user_mode() {
+      return process.env.VUE_APP_SINGLE_USER_MODE;
+    }
   },
 });
 

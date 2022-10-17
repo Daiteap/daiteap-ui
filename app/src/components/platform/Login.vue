@@ -20,7 +20,7 @@ export default {
     this.resetState();
     let self = this;
 
-    if (Vue.SingleUserMode){
+    if (this.computed_single_user_mode){
       self.$router.push({ name: "DaiteapWebLandingPage" });
     }
 

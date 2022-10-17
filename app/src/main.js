@@ -453,13 +453,15 @@ const store = new Vuex.Store({
 
 Vue.config.productionTip = false
 
+let singleUserMode = false;
+
 if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
-    Vue.SingleUserMode = false
+    singleUserMode = false
 } else {
-    Vue.SingleUserMode = true
+    singleUserMode = true
 }
 
-if (Vue.SingleUserMode) {
+if (singleUserMode) {
   new Vue({
     router,
     store,
