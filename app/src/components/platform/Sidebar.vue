@@ -8,7 +8,15 @@
   >
     <div>
       <div class="m-1 m-xs-2 m-sm-3 m-md-4 m-lg-5">
-        <div class="m-1" :class="[{'container-daiteap': $route.path != '/app/platform/overview'}]">
+        <div
+          class="m-1"
+          :class="[
+            {
+              'container-daiteap':
+                $route.path != '/app/platform/overview' && isFormPage,
+            },
+          ]"
+        >
           <router-view @avatarChanged="$emit('avatarChanged')" />
         </div>
       </div>
@@ -114,11 +122,20 @@ export default {
       ],
       selectedTheme: "white-theme",
       isOnMobile: false,
+      isFormPage: false,
     };
   },
   mounted() {
     this.$emit("collapsed", this.collapsed)
     this.onResize();
+
+    setInterval(() => {
+      this.isFormPage =
+        (document.getElementsByClassName("form-control").length > 0 ||
+          document.getElementsByClassName("custom-select").length > 0 ||
+          document.getElementsByClassName("showHelpLink").length > 0) &&
+        document.getElementsByClassName("modal-body").length == 0;
+    }, 100);
   },
   methods: {
     onToggleCollapse(collapsed) {
