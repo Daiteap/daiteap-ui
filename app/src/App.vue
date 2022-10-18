@@ -817,7 +817,13 @@ Vue.mixin({
       return process.env.VUE_APP_THEME;
     },
     computed_single_user_mode() {
-      return process.env.VUE_APP_SINGLE_USER_MODE;
+      if (process.env.VUE_APP_SINGLE_USER_MODE === "False")
+      {
+        return false;
+      }
+      else {
+        return true;
+      }
     }
   },
 });
