@@ -343,7 +343,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (process.env.VUE_APP_SINGLE_USER_MODE !== 'True') {
+  if (!process.env.VUE_APP_SINGLE_USER_MODE === 'False') {
     if (to.meta.isAuthenticated) {
       // Get the actual url of the app, it's needed for Keycloak
       const basePath = window.location.toString()
