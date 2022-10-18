@@ -94,14 +94,19 @@ html {
 }
 
 .vsm--mobile-item .vsm--item {
-    background-color: #1d1e22 !important;
-    color: #1d1e22 !important;
-    box-shadow: inset 0px 0px 0px 1px #1d1e22;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: inset 0px 0px 0px 1px #000000;
 }
 
-.vsm--mobile-item .vsm--item:hover .vsm--icon {
-    background-color: #bcbcbc !important;
-    color: #1d1e22 !important;
+.vsm--mobile-item .vsm--item .vsm--icon {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+.v-sidebar-menu .vsm--link_mobile {
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 
 .v-sidebar-menu .vsm--item:hover {
@@ -126,6 +131,11 @@ html {
     color: #000000;
 }
 
+.v-sidebar-menu.vsm_collapsed .vsm--title {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
 .v-sidebar-menu .vsm--icon {
     color: #ffffff;
     background-color: #ED7D31 !important;
@@ -134,7 +144,7 @@ html {
 .v-sidebar-menu .vsm--header {
     font-size: 1.4rem;
     margin-top: 2rem;
-    color: #1d1e22;
+    color: #ffffff;
 }
 
 .vsm--list {
@@ -156,11 +166,13 @@ html {
 }
 
 .v-sidebar-menu .vsm--mobile-bg {
-    background-color: #bcbcbc;
+    background-color: #000000;
+    color: #ffffff;
 }
 
 .v-sidebar-menu .vsm--mobile-bg:hover {
-    background-color: #bcbcbc !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 
 .daiteap-content-card {
