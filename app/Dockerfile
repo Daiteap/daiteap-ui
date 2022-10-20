@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 
-RUN apk add python3
+RUN apk add python3 python2 make g++
 RUN apk add --update py-pip
 RUN pip3 install markdown mkdocs jinja2==3.0.3
 
