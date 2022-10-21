@@ -212,6 +212,24 @@ Vue.mixin({
           });
       });
     },
+    getCloudAccountInfo(credentialId) {
+      let self = this;
+      return new Promise((resolve) => {
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        self.usingToken += 1;
+        this.axios
+          .get("/server/getCloudAccountInfo/" + credentialId, this.get_axiosConfig())
+          .then(function (response) {
+            self.usingToken -= 1;
+            resolve(response.data);
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting cloud account info.");
+          });
+      });
+    },
     getAllClusters() {
       let self = this;
       return new Promise((resolve) => {
