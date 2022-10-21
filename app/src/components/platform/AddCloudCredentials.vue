@@ -35,7 +35,13 @@
         <br />
         <br />
 
-        <WarningAlert v-if="showWAlert" :msg="alertMsg" color="warning" :key="alertKey" link="/documentation/cloud_credentials/"/>
+        <WarningAlert
+          v-if="showWAlert"
+          :msg="alertMsg"
+          color="warning"
+          :key="alertKey"
+          link="/documentation/cloud_credentials/"
+        />
 
         <AddAwsAccount
           :awsAccountFromParent="aws"
@@ -437,74 +443,50 @@ export default {
                       gettaskmessage(taskId);
                     }
                   }, 1000);
-                } 
-                else 
-                {
+                } else {
                   self.statusOfValidation = true;
                   self.loading = false;
 
-                  if (response.data.msg.hasOwnProperty("error")) 
-                  {
-                    self.statusOfValidation = "error";                
-                    console.log(response.data.msg.error);
+                  if (response.data.error) {
+                    self.statusOfValidation = "error";
                     self.showWAlert = true;
+                    self.alertMsg = response.data.errorMsg;
 
-                    if(provider === "openstack") {
-                      self.alertMsg =
-                        `No connectivity could be established with the provided cloud credentials information.
-                         Please check the following fields: Application Credential ID, Application Credential Secret, Region Name or Auth URL.`;
-                    } else {
-                      self.alertMsg = "Check your entries.";
+                    if (!response.data.lcmStatuses.dlcmV2Images) {
+                      self.alertMsg += " Check the DLCMV2 images.";
+                    }
+                    if (
+                      provider == "openstack" &&
+                      self.computed_account_settings.enable_kubernetes_capi &&
+                      !response.data.lcmStatuses.capiImages
+                    ) {
+                      self.alertMsg += " Check the CAPI images.";
+                    }
+                    if (
+                      provider == "openstack" &&
+                      self.computed_account_settings
+                        .enable_kubernetes_yaookcapi &&
+                      !response.data.lcmStatuses.yaookCapiImages
+                    ) {
+                      self.alertMsg += " Check the YaookCAPI images.";
+                    }
+                    if (
+                      provider == "openstack" &&
+                      !response.data.lcmStatuses.externalNetwork
+                    ) {
+                      self.alertMsg += " Check the external network.";
                     }
 
-                    if (response.data.msg.error.includes('Missing storage permissions.')) {
-                      self.alertMsg = "Insufficient storage permissions.";
-                    } else if (response.data.msg.error.includes('No storage accounts found.')) {
-                      self.alertMsg = "No storage accounts found.";
-                    }
-                    
                     self.alertKey += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_capi == true
-                   && provider === "openstack"
-                   && response.data.msg.capiImages == false)
-                  {
-                    self.statusOfValidation = "error";            
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the CAPI images.";
-                    self.alertKey += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_yaookcapi == true
-                   && provider === "openstack"
-                   && response.data.msg.yaookCapiImages == false)
-                  {
-                    self.statusOfValidation = "error";            
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the YaookCAPI images.";
-                    self.alertKey += 1;
-                  }
-                  else if(response.data.msg.dlcmV2Images == false)
-                  {
-                    self.statusOfValidation = "error";       
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the DLCMV2 images.";
-                    self.alertKey += 1;
-                  }
-                  else if(provider === "openstack" && response.data.msg.externalNetwork == false)
-                  {
-                    self.statusOfValidation = "error";                    
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the external network.";
-                    self.alertKey += 1;
-                  }
-                  else 
-                  {                   
+                  } else {
                     self.showWAlert = false;
                     self.alertMsg = "";
                     self.alertKey += 1;
 
-                    if(self.loading == false && self.statusOfValidation == true)
-                    {        
+                    if (
+                      self.loading == false &&
+                      self.statusOfValidation == true
+                    ) {
                       self.axios
                         .post(
                           "/server/cloud-credentials",
