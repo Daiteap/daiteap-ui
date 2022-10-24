@@ -597,7 +597,7 @@ export default {
 
     self.interval = setInterval(() => {
       self.getUsersList();
-    }, 2000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);

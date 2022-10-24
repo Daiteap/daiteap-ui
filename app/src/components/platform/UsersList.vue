@@ -123,7 +123,7 @@ export default {
       });
 
       this.getUsersList();
-    }, 1000);
+    }, 5000);
   },
   destroyed() {
     clearInterval(this.interval);

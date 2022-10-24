@@ -368,7 +368,7 @@ export default {
     self.interval = setInterval(() => {
       this.getClustersList();
       this.getProjectsList();
-    }, 1000);
+    }, 5000);
   },
   methods: {
     async getProjectsList() {
