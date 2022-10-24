@@ -453,14 +453,14 @@ export default {
                     self.alertMsg = response.data.errorMsg;
 
                     if (!response.data.lcmStatuses.dlcmV2Images) {
-                      self.alertMsg += " Check the DLCMV2 images.";
+                      self.alertMsg += ", Check the DLCMV2 images.";
                     }
                     if (
                       provider == "openstack" &&
                       self.computed_account_settings.enable_kubernetes_capi &&
                       !response.data.lcmStatuses.capiImages
                     ) {
-                      self.alertMsg += " Check the CAPI images.";
+                      self.alertMsg += ", Check the CAPI images.";
                     }
                     if (
                       provider == "openstack" &&
@@ -468,13 +468,13 @@ export default {
                         .enable_kubernetes_yaookcapi &&
                       !response.data.lcmStatuses.yaookCapiImages
                     ) {
-                      self.alertMsg += " Check the YaookCAPI images.";
+                      self.alertMsg += ", Check the YaookCAPI images.";
                     }
                     if (
                       provider == "openstack" &&
                       !response.data.lcmStatuses.externalNetwork
                     ) {
-                      self.alertMsg += " Check the external network.";
+                      self.alertMsg += ", Check the external network.";
                     }
 
                     self.alertKey += 1;

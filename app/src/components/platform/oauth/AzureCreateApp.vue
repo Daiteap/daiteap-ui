@@ -100,15 +100,15 @@ export default {
         .then(function (response) {
           if (response.data.status !== "PENDING") {
             clearInterval(self.intervalGetTaskMessage);
-            if (response.data.msg.hasOwnProperty("error")) {
+            if (response.data.error) {
               self.$notify({
                 group: "msg",
                 type: "error",
                 title: "Notification:",
                 text: "Error creating OAuth credentials"
               });
-              console.log(response.data.msg.error);
-              self.error = response.data.msg.error;
+              console.log(response.data.errorMsg);
+              self.error = response.data.errorMsg;
             }
             else {
               self.$notify({

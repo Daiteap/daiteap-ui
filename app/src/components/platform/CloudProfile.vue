@@ -601,14 +601,14 @@ export default {
                     alert.msg = alert.label + ": " + response.data.errorMsg;
 
                     if (!response.data.lcmStatuses.dlcmV2Images) {
-                      alert.msg += " Check the DLCMV2 images.";
+                      alert.msg += ", Check the DLCMV2 images.";
                     }
                     if (
                       checkIfAccountCanBeValidated.type == "openstack" &&
                       self.computed_account_settings.enable_kubernetes_capi &&
                       !response.data.lcmStatuses.capiImages
                     ) {
-                      alert.msg += " Check the CAPI images.";
+                      alert.msg += ", Check the CAPI images.";
                     }
                     if (
                       checkIfAccountCanBeValidated.type == "openstack" &&
@@ -616,13 +616,13 @@ export default {
                         .enable_kubernetes_yaookcapi &&
                       !response.data.lcmStatuses.yaookCapiImages
                     ) {
-                      alert.msg += " Check the YaookCAPI images.";
+                      alert.msg += ", Check the YaookCAPI images.";
                     }
                     if (
                       checkIfAccountCanBeValidated.type == "openstack" &&
                       !response.data.lcmStatuses.externalNetwork
                     ) {
-                      alert.msg += " Check the external network.";
+                      alert.msg += ", Check the external network.";
                     }
                   } else {
                     alert.show = false;
