@@ -365,10 +365,13 @@ export default {
   mounted() {
     this.getClustersList();
 
-    self.interval = setInterval(() => {
+    this.interval = setInterval(() => {
       this.getClustersList();
       this.getProjectsList();
-    }, 1000);
+    }, 5000);
+
+    window.intervals = [];
+    window.intervals.push(this.interval);
   },
   methods: {
     async getProjectsList() {

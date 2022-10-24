@@ -111,7 +111,7 @@ export default {
 
     self.interval = setInterval(() => {
       self.getUsersClustersList(self);
-    }, 1000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);

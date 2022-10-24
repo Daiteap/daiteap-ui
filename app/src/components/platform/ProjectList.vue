@@ -76,7 +76,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getUsersProjectsList(self);
-    }, 1000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
