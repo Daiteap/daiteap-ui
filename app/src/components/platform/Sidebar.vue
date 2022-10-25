@@ -22,7 +22,7 @@
       </div>
       <sidebar-menu
         v-if="$route.path != '/app/platform/overview'"
-        width="250px"
+        width="255px"
         :menu="baseMenuItems"
         :collapsed="collapsed"
         :show-one-child="true"
