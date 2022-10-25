@@ -1,6 +1,5 @@
 <template>
   <div class="table-responsive">
-    <CloudAccountInfoPopup :cloudAccountInfo="cloudAccountInfo" />
     <table
       class="table table-bordered"
       id="dataTable"
@@ -13,6 +12,7 @@
           <th v-if="showTenant">Workspace</th>
           <th>Description</th>
           <th>Cloud</th>
+          <th>Account Information</th>
           <th>Created at</th>
           <th>Created by</th>
           <th>Edit</th>
@@ -34,12 +34,7 @@
       <tbody>
         <tr v-for="(account, index) in allAccounts" :key="index" data-test-id="table">
           <td :title="account.label">
-            <span
-              class="clickForDetails"
-              @click="showCloudAccountInfoPopup(account.id)"
-            >
-              {{ account.label }}
-            </span>
+            {{ account.label }}
           </td>
           <td
             v-if="showTenant"
@@ -65,6 +60,11 @@
                   providers.filter(provider => provider.name == account.provider)[0].logo_small)
               "
             />
+          </td>
+          <td style="word-wrap: break-word;word-break: break-all;white-space: normal;">
+            <div v-for="(value, key) in account.cloud_account_info" :key="key">
+              <strong>{{ key | upperCase }}</strong>: {{ value }}
+            </div>
           </td>
           <td>
             {{ account.created_at_pretty }}
@@ -118,7 +118,6 @@
 <script>
 import ValidateButton from "@/components/platform/ValidateButton";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton";
-import CloudAccountInfoPopup from "@/components/platform/popup_modals/CloudAccountInfoPopup";
 
 export default {
   name: 'CloudProfileTable',
@@ -133,7 +132,6 @@ export default {
   data() {
     return {
       allValidations: [],
-      cloudAccountInfo: {},
     };
   },
   created() {
@@ -143,15 +141,19 @@ export default {
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit('removeAccount', accountToRemove)
     },
-    async showCloudAccountInfoPopup(credentialID) {
-      this.cloudAccountInfo = await this.getCloudAccountInfo(credentialID);
-      this.$bvModal.show("bv-modal-cloudaccountinfo");
-    }
   },
   components: {
     ValidateButton,
     RemoveAccountButton,
-    CloudAccountInfoPopup,
+  },
+  filters: {
+    upperCase: function (data) {
+      let upper = [];
+      data.split("_").forEach((word) => {
+        upper.push(word[0].toUpperCase() + word.substring(1));
+      });
+      return upper.join(" ");
+    },
   },
 };
 </script>
