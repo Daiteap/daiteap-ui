@@ -248,7 +248,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getInstallationStatus(self);
-    }, 3000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -264,7 +264,7 @@ export default {
       let self = this;
       self.interval = setInterval(() => {
         self.getInstallationStatus(self);
-      }, 3000);
+      }, 5000);
 
       window.intervals = [];
       window.intervals.push(self.interval);

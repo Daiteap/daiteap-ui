@@ -86,7 +86,7 @@ export default {
   mounted() {
     this.interval = setInterval(() => {
       this.getStorageBuckets();
-    }, 1000);
+    }, 5000);
   },
   destroyed() {
     clearInterval(this.interval);
