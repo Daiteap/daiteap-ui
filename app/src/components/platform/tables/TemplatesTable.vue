@@ -127,7 +127,7 @@ export default {
 
     this.interval = setInterval(() => {
       self.getTemplatesList();
-    }, 3000);
+    }, 5000);
   },
   props: {},
   data() {
