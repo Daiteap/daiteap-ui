@@ -74,7 +74,6 @@
                   :count="computeCount"
                   favIcon="fas fa-laptop-code"
                   cardText="Create a virtual machine that will run Linux. Choose an image during setup. Complete the create process for full customization to deploy a VM of your choice in your project. Individually operate your virtual machines."
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
               </b-card-group>
 
@@ -87,7 +86,6 @@
                   :count="computed_buckets.length"
                   favIcon="fas fa-database"
                   cardText="Use your cloud credentials to create and access AWS and Google buckets and Azure containers. Assign them to a project. Manage folders. Upload, download and delete files."
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
 
                 <OverviewCard
@@ -96,7 +94,6 @@
                   :count="servicesCount"
                   favIcon="fas fa-shopping-basket"
                   cardText="Select and deploy services to your project without hesitation. Configure and decide target projects and resources and install services on the fly."
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
               </b-card-group>
 
@@ -109,7 +106,6 @@
                   :count="computed_users.length"
                   favIcon="far fa-user"
                   cardText="Get a list of users and manage members. Add users to your projects. Development and operations can work together on one platform to create, deliver and scale applications fast."
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
 
                 <OverviewCard
@@ -119,7 +115,6 @@
                   :count="computed_credentials.length"
                   favIcon="fas fa-key"
                   cardText="Integrate multiple infrastructure providers and cloud platforms. Add your credentials manually or use OAuth where possible for an easy to use platform deployment access.    "
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
               </b-card-group>
 
@@ -131,7 +126,6 @@
                   :showCount="false"
                   favIcon="fas fa-save"
                   cardText="Use templates to configure your environments faster. You can save a template of any Kubernetes or Compute environment, while creating them or once they're ready."
-                  videoTitle="https://www.youtube.com/watch?v=txYf5DGViTo"
                 />
               </b-card-group>
             </div>

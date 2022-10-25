@@ -31,7 +31,7 @@
         <slot> </slot>
       </b-col>
       <b-col
-        v-if="videosEnabled"
+        v-if="videosEnabled && videoTitle"
         class="text-right m-auto custom-font"
       >
         <b-row class="ml-5 float-right" style="font-size: 22px">
