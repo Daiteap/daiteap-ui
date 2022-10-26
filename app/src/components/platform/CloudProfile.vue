@@ -592,65 +592,44 @@ export default {
                 } else {
                   account_credentials.statusOfValidation = true;
                   self.loading = false;
-                  if (response.data.msg.hasOwnProperty("error")) {
+
+                  if (response.data.error) {
                     account_credentials.statusOfValidation = "error";
                     self.error = true;
-                    console.log(response.data.msg.error);
-                    self.errorMsg = response.data.msg.error;
-
+                    self.errorMsg = response.data.errorMsg;
                     alert.show = true;
+                    alert.msg = alert.label + ": " + response.data.errorMsg;
 
-                    if(checkIfAccountCanBeValidated.type === "openstack") {
-                      alert.msg =
-                        alert.label + `: No connectivity could be established with the provided cloud credentials information.
-                         Please check the following fields: Application Credential ID, Application Credential Secret, Region Name or Auth URL.`;
-                    } else {
-                      alert.msg = alert.label + ": " + response.data.msg.error;
+                    if (!response.data.lcmStatuses.dlcmV2Images) {
+                      alert.msg += ", Check the DLCMV2 images.";
                     }
-
-                    if (response.data.msg.error.includes('Missing storage permissions.')) {
-                      alert.msg =
-                        alert.label + ": Insufficient storage permissions.";
-                    } else if (response.data.msg.error.includes('No storage accounts found.')) {
-                      alert.msg = alert.label + ": No storage accounts found.";
+                    if (
+                      checkIfAccountCanBeValidated.type == "openstack" &&
+                      self.computed_account_settings.enable_kubernetes_capi &&
+                      !response.data.lcmStatuses.capiImages
+                    ) {
+                      alert.msg += ", Check the CAPI images.";
                     }
-                    
-                    alert.key += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_capi == true
-                   && checkIfAccountCanBeValidated.type === "openstack"
-                   && response.data.msg.capiImages == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the CAPI images.";
-                    alert.key += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_yaookcapi == true
-                   && checkIfAccountCanBeValidated.type === "openstack"
-                   && response.data.msg.yaookCapiImages == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the YaookCAPI images.";
-                    alert.key += 1;
-                  }
-                  else if(response.data.msg.dlcmV2Images == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the DLCMV2 images.";
-                    alert.key += 1;
-                  }
-                  else if(checkIfAccountCanBeValidated.type === "openstack" && response.data.msg.externalNetwork == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the external network.";
-                    alert.key += 1;
-                  }
-                  else 
-                  {
+                    if (
+                      checkIfAccountCanBeValidated.type == "openstack" &&
+                      self.computed_account_settings
+                        .enable_kubernetes_yaookcapi &&
+                      !response.data.lcmStatuses.yaookCapiImages
+                    ) {
+                      alert.msg += ", Check the YaookCAPI images.";
+                    }
+                    if (
+                      checkIfAccountCanBeValidated.type == "openstack" &&
+                      !response.data.lcmStatuses.externalNetwork
+                    ) {
+                      alert.msg += ", Check the external network.";
+                    }
+                  } else {
                     alert.show = false;
                     alert.msg = alert.label + ": ";
-                    alert.key += 1;
                   }
+
+                  alert.key += 1;
                 }
               })
               .catch(function (error) {

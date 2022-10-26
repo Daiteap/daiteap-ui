@@ -132,11 +132,11 @@ export default {
         .then(function (response) {
           if (response.data.status !== "PENDING") {
             clearInterval(self.intervalGetTaskMessage);
-            if (response.data.msg.hasOwnProperty("error")) {
+            if (response.data.error) {
               self.showStorage = false;
-              console.log(response.data.msg.error);
+              console.log(response.data.errorMsg);
             }
-            self.allNodes = response.data.msg.nodes;
+            self.allNodes = response.data.lcmStatuses.nodes;
             self.loadingTable = false;
           }
         })
