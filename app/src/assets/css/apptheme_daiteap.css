@@ -116,6 +116,7 @@ html {
     background-color: #ffffff;
     border-bottom: solid 1px black;
     margin-left: 5px;
+    font-weight: bold;
 }
 
 .v-sidebar-menu .vsm--link {
