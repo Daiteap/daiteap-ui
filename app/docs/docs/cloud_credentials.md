@@ -52,7 +52,18 @@ For AWS, only manual configuration is supported. Steps to configure new credenti
 
 ![Screenshot](img/cloud_credentials_aws_mask.png)
 
-* Create new user. Go to **Services -> IAM -> Users -> Add user**, input new name and select **Programmatic access**. For permissions, attach the following policies: **AmazonEC2FullAccess**, **AmazonS3FullAccess**, **ResourceGroupsandTagEditorReadOnlyAccess**, **AmazonRoute53FullAccess** and **IAMReadOnlyAccess**. Create the user. Copy and paste the **Access key ID** and **Secret access key** from AWS into the corresponding Daiteap fields.
+Create a new user. Go to **Services -> IAM -> Users -> Add user**, input new name and select **Programmatic access**.
+
+For permissions, attach the following policies:
+
+* **AmazonEC2FullAccess**
+* **AmazonS3FullAccess**
+* **ResourceGroupsandTagEditorReadOnlyAccess**
+* **AmazonRoute53FullAccess**
+* **IAMReadOnlyAccess**
+* **AWSOrganizationsReadOnlyAccess**
+
+Create the user. Copy and paste the **Access key ID** and **Secret access key** from AWS into the corresponding Daiteap fields.
 
 ## Microsoft Azure
 
@@ -88,6 +99,8 @@ At last, we need to grant permissions to the newly created client application wh
 Go the the **IAM** tab and on Subscription you used. Click **Add -> Add custom role**. The role name `DaiteapRole` will be automatically filled. For Baseline permissions select **Start from JSON**. The JSON file will the needed permissions can be downloaded <a href="/azure_custom_role.json" download>here</a>. Click **Next** and finally create the role.
 
 At last we create a RoleAssignment, which will map the role to the client application. Click on **Role assignments -> Add role assignment**, select the custom role **DaiteapRole**, click **Next -> Members -> Select members** and search the created client application by name. The select it and click Select and finish the creation of the role assignment.
+
+There's one API permission that you need to give your application. Go to App registrations -> Select your client application -> API permissions -> Add a permission -> Microsoft Graph -> Application permissions -> Directory.Read.All, after that the permission needs to be granted by an admin.
 
 ### Azure Storage Account
 !!! note

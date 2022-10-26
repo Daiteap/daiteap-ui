@@ -73,6 +73,13 @@
               name. The
               select it and click Select and finish the creation of the role assignment.
             </p>
+            <p>
+              There's one API permission that you need to give your application.
+              Go to App registrations -> Select your client application ->
+              API permissions -> Add a permission -> Microsoft Graph ->
+              Application permissions -> Directory.Read.All, after that the
+              permission needs to be granted by an admin.
+            </p>
             <a
               href="/documentation/cloud_credentials/#microsoft-azure"
               target="_blank"

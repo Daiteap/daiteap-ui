@@ -12,6 +12,7 @@
           <th v-if="showTenant">Workspace</th>
           <th>Description</th>
           <th>Cloud</th>
+          <th>Account Information</th>
           <th>Created at</th>
           <th>Created by</th>
           <th>Edit</th>
@@ -59,6 +60,11 @@
                   providers.filter(provider => provider.name == account.provider)[0].logo_small)
               "
             />
+          </td>
+          <td style="word-wrap: break-word;word-break: break-all;white-space: normal;">
+            <div v-for="(value, key) in account.cloud_account_info" :key="key">
+              <strong>{{ key | upperCase }}</strong>: {{ value }}
+            </div>
           </td>
           <td>
             {{ account.created_at_pretty }}
@@ -139,6 +145,15 @@ export default {
   components: {
     ValidateButton,
     RemoveAccountButton,
+  },
+  filters: {
+    upperCase: function (data) {
+      let upper = [];
+      data.split("_").forEach((word) => {
+        upper.push(word[0].toUpperCase() + word.substring(1));
+      });
+      return upper.join(" ");
+    },
   },
 };
 </script>
