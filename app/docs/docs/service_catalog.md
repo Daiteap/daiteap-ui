@@ -67,3 +67,6 @@ The Jupyter Notebook is an open-source web application that allows data scientis
 #### Nextcloud
 
 Nextcloud is a suite of client-server software for creating and using file hosting services. It is enterprise-ready with comprehensive support options.
+
+!!! note
+    Clusters can have only one Nextcloud instance at a time.

@@ -1110,6 +1110,8 @@ export default {
 
       self.reservedServiceNames = [];
 
+      let nextcloudInstalled = false;
+
       for (let i = 0; i < cluster.serviceList.length; i++) {
         self.reservedServiceNames.push(cluster.serviceList[i]["name"]);
         if (cluster.serviceList[i].namespace) {
@@ -1117,7 +1119,18 @@ export default {
             self.listNamespaces.push(cluster.serviceList[i].namespace);
           }
         }
+
+        if (cluster.serviceList[i].service__name == "nextcloud") {
+          nextcloudInstalled = true;
+        }
       }
+
+      if (this.$finalModel.serviceName == "nextcloud" && nextcloudInstalled) {
+        this.$emit('showNextcloudAlert', true);
+      } else {
+        this.$emit('showNextcloudAlert', false);
+      }
+
       if (self.selectedProviders.length == 1) {
         self.form.cloud_providers[self.selectedProviders[0]] = true;
         self.formExtraFieldsCheck();

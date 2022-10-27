@@ -1,8 +1,13 @@
 <template>
   <div class="col">
-    <WarningAlert v-if="alert.show" color="warning" :closeOption="true">
-      <div v-html="alert.msg"></div>
-    </WarningAlert>
+    <WarningAlert
+      v-if="alert.show"
+      :msg="alert.msg"
+      :link="alert.link"
+      color="warning"
+      :closeOption="true"
+      :key="alert.key"
+    />
     <QuotaExceededModal
       v-show="showQuotaExceeded"
       :exceededResources="exceededResources"
@@ -254,6 +259,7 @@
             <SimpleConfig
               ref="simpleConfig"
               @can-continue="proceed"
+              @showNextcloudAlert="showNextcloudAlert"
             ></SimpleConfig>
             <div class="row">
               <div
@@ -262,7 +268,7 @@
               >
                 <div
                   class="custom-button float-right ml-5"
-                  :class="[!canContinue ? 'deactivated' : '']"
+                  :class="[!canContinue || alert.show ? 'deactivated' : '']"
                   @click="
                     submitServiceConfiguration();
                     currentAccordion = 'submitted';
@@ -328,7 +334,7 @@ import SimpleConfig from "./servicesSteps/SimpleConfig.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 export default {
-  name: 'AddService',
+  name: "AddService",
   components: {
     QuotaExceededModal,
     AdvancedConfig,
@@ -340,6 +346,8 @@ export default {
       alert: {
         show: false,
         msg: "",
+        link: "",
+        key: 0,
       },
       activeStep: 0,
       currentServiceDetails: {},
@@ -377,10 +385,10 @@ export default {
       let self = this;
       this.getUserQuota().then((quota) => {
         if (quota["available_services"] < 1) {
-          self.alert = {
-            show: true,
-            msg: 'User quota exceeded. For more information, <a href="/documentation/users/#user-resource-quotas">check the documentation</a>.',
-          };
+          self.alert.show = true;
+          self.alert.msg = "User quota exceeded.";
+          self.alert.link = "/documentation/users/#user-resource-quotas";
+          self.alert.key += 1;
         } else {
           this.chooseService(this.currentServiceDetails.name);
           this.currentAccordion = "simpleConfiguration";
@@ -498,7 +506,7 @@ export default {
                 self.categoriesListSelected.push(categories[cat]);
               }
             }
-            
+
             servicesList.push({
               name: response.data.serviceList[i].name,
               description: response.data.serviceList[i].description,
@@ -628,6 +636,16 @@ export default {
         }
       }
       return showService;
+    },
+    showNextcloudAlert(installed) {
+      if (installed) {
+        this.alert.msg =
+          "Clusters can have only one Nextcloud instance at a time.";
+        this.alert.link = "";
+      }
+
+      this.alert.show = installed;
+      this.alert.key += 1;
     },
   },
 };
