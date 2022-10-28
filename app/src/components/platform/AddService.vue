@@ -259,7 +259,6 @@
             <SimpleConfig
               ref="simpleConfig"
               @can-continue="proceed"
-              @showNextcloudAlert="showNextcloudAlert"
             ></SimpleConfig>
             <div class="row">
               <div
@@ -268,7 +267,7 @@
               >
                 <div
                   class="custom-button float-right ml-5"
-                  :class="[!canContinue || alert.show ? 'deactivated' : '']"
+                  :class="[!canContinue ? 'deactivated' : '']"
                   @click="
                     submitServiceConfiguration();
                     currentAccordion = 'submitted';
@@ -467,6 +466,17 @@ export default {
                 text: "Error while adding service!",
               });
             } else {
+              if (
+                error.response.data.error.message ==
+                "Service can't be installed more than once in a cluster."
+              ) {
+                self.alert.msg =
+                  "Service can't be installed more than once in a cluster.";
+                self.alert.link = "";
+                self.alert.show = true;
+                self.alert.key += 1;
+              }
+
               self.$notify({
                 group: "msg",
                 type: "error",
@@ -636,16 +646,6 @@ export default {
         }
       }
       return showService;
-    },
-    showNextcloudAlert(installed) {
-      if (installed) {
-        this.alert.msg =
-          "Clusters can have only one Nextcloud instance at a time.";
-        this.alert.link = "";
-      }
-
-      this.alert.show = installed;
-      this.alert.key += 1;
     },
   },
 };
