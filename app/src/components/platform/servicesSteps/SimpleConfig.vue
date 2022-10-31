@@ -1118,6 +1118,7 @@ export default {
           }
         }
       }
+
       if (self.selectedProviders.length == 1) {
         self.form.cloud_providers[self.selectedProviders[0]] = true;
         self.formExtraFieldsCheck();
