@@ -475,14 +475,14 @@ export default {
                 self.alert.link = "";
                 self.alert.show = true;
                 self.alert.key += 1;
+              } else {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: error,
+                });
               }
-
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Notification:",
-                text: error,
-              });
             }
           }
           // eslint-disable-next-line no-console
