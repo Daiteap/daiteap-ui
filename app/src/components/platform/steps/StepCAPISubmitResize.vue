@@ -8,8 +8,35 @@
     <ClusterSummary
       :cluster="clusterSummary"
       class="card daiteap-content-card"
-      style="border: 1px solid lightgray; padding: 30px 30px 30px 30px; border-radius: 10px;"
+      style="
+        border: 1px solid lightgray;
+        padding: 30px 30px 30px 30px;
+        border-radius: 10px;
+      "
     />
+
+    <br />
+
+    <div
+      class="card daiteap-content-card"
+      style="
+        border: 1px solid lightgray;
+        padding: 30px 30px 30px 30px;
+        border-radius: 10px;
+        white-space: pre-wrap;
+      "
+    >
+      <CardTitle title="Terraform Plan" />
+      <br />
+      <div v-if="loadingPlan" class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div v-else>
+        {{ tf_plan }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,30 +44,107 @@
 /*eslint no-unused-vars:*/
 import Vue from "vue";
 import ClusterSummary from "@/components/platform/steps/ClusterSummary";
+import CardTitle from "@/components/platform/CardTitle";
 
 export default {
   name: "StepCAPISubmitResize",
   components: {
     ClusterSummary,
+    CardTitle,
   },
   props: ["clickedNext", "currentStep"],
   methods: {},
   data() {
     return {
       clusterSummary: {},
+      tf_plan: "",
+      loadingPlan: true,
     };
   },
   beforeCreate() {
     this.$emit("can-continue", { value: true });
   },
   mounted() {
-    let self=this;
+    let self = this;
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
       self.$destroy()
     );
 
     this.clusterSummary = this.$finalModel;
     this.clusterSummary.resize = true;
+
+    this.getTfPlan();
+  },
+  methods: {
+    getTfPlan() {
+      let self = this;
+      this.$finalModel.clusterID = this.$parent.$parent.clusterID;
+
+      this.axios
+        .post(
+          "/server/getTerraformPlan",
+          this.$finalModel,
+          this.get_axiosConfig()
+        )
+        .then(function (response) {
+          let taskId = response.data.taskId;
+          gettaskmessage(taskId);
+          function gettaskmessage(taskId) {
+            self.axios
+              .post(
+                "/server/gettaskmessage",
+                { taskId: taskId },
+                self.get_axiosConfig()
+              )
+              .then(function (response) {
+                if (response.data.status == "PENDING") {
+                  setTimeout(() => {
+                    gettaskmessage(taskId);
+                  }, 1000);
+                } else {
+                  if (response.data.error) {
+                    self.$notify({
+                      group: "msg",
+                      type: "error",
+                      title: "Notification:",
+                      text: "Error while getting terraform plan.",
+                    });
+                  } else {
+                    let tf_plan = response.data.lcmStatuses.tf_plan;
+                    self.tf_plan = tf_plan.substring(
+                      tf_plan.indexOf("Terraform"),
+                      tf_plan.indexOf(
+                        "─────────────────────────────────────────────────────────────────────────────"
+                      )
+                    );
+                  }
+
+                  self.loadingPlan = false;
+                }
+              })
+              .catch(function (error) {
+                self.loadingPlan = false;
+
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Error while getting terraform plan.",
+                });
+              });
+          }
+        })
+        .catch(function (error) {
+          self.loadingPlan = false;
+
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting terraform plan.",
+          });
+        });
+    },
   },
   destroyed() {
     clearInterval(this.interval);
