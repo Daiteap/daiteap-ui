@@ -34,7 +34,38 @@
         </div>
       </div>
       <div v-else>
-        {{ tf_plan }}
+        Newly created resources:
+        <span v-if="tf_plan.created.length == 0"
+          ><br />
+          -</span
+        >
+        <ul style="list-style: none">
+          <li v-for="(item, index) in tf_plan.created" :key="index">
+            - {{ item }}
+          </li>
+        </ul>
+
+        Deleted resources:
+        <span v-if="tf_plan.deleted.length == 0"
+          ><br />
+          -</span
+        >
+        <ul style="list-style: none">
+          <li v-for="(item, index) in tf_plan.deleted" :key="index">
+            - {{ item }}
+          </li>
+        </ul>
+
+        Changed resources:
+        <span v-if="tf_plan.changed.length == 0"
+          ><br />
+          -</span
+        >
+        <ul style="list-style: none">
+          <li v-for="(item, index) in tf_plan.changed" :key="index">
+            - {{ item }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -53,11 +84,14 @@ export default {
     CardTitle,
   },
   props: ["clickedNext", "currentStep"],
-  methods: {},
   data() {
     return {
       clusterSummary: {},
-      tf_plan: "",
+      tf_plan: {
+        created: [],
+        deleted: [],
+        changed: [],
+      },
       loadingPlan: true,
     };
   },
@@ -111,12 +145,35 @@ export default {
                     });
                   } else {
                     let tf_plan = response.data.lcmStatuses.tf_plan;
-                    self.tf_plan = tf_plan.substring(
-                      tf_plan.indexOf("Terraform"),
-                      tf_plan.indexOf(
-                        "─────────────────────────────────────────────────────────────────────────────"
-                      )
-                    );
+                    for (let i = 0; i < tf_plan.resource_changes.length; i++) {
+                      if (
+                        tf_plan.resource_changes[i].change.actions.includes(
+                          "create"
+                        )
+                      ) {
+                        self.tf_plan.created.push(
+                          tf_plan.resource_changes[i].address
+                        );
+                      }
+                      if (
+                        tf_plan.resource_changes[i].change.actions.includes(
+                          "delete"
+                        )
+                      ) {
+                        self.tf_plan.deleted.push(
+                          tf_plan.resource_changes[i].address
+                        );
+                      }
+                      if (
+                        tf_plan.resource_changes[i].change.actions.includes(
+                          "update"
+                        )
+                      ) {
+                        self.tf_plan.changed.push(
+                          tf_plan.resource_changes[i].address
+                        );
+                      }
+                    }
                   }
 
                   self.loadingPlan = false;
