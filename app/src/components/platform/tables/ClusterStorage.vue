@@ -134,9 +134,9 @@ export default {
             clearInterval(self.intervalGetTaskMessage);
             if (response.data.error) {
               self.showStorage = false;
-              console.log(response.data.errorMsg);
+              console.log(response.data.errorMessage);
             }
-            self.allNodes = response.data.lcmStatuses.nodes;
+            self.allNodes = response.data.lcmStatuses[0].nodes;
             self.loadingTable = false;
           }
         })

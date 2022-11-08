@@ -107,8 +107,8 @@ export default {
                 title: "Notification:",
                 text: "Error creating OAuth credentials"
               });
-              console.log(response.data.errorMsg);
-              self.error = response.data.errorMsg;
+              console.log(response.data.errorMessage);
+              self.error = response.data.errorMessage;
             }
             else {
               self.$notify({

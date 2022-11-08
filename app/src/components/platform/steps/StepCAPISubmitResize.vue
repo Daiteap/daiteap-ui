@@ -144,7 +144,7 @@ export default {
                       text: "Error while getting terraform plan.",
                     });
                   } else {
-                    let tf_plan = response.data.lcmStatuses.tf_plan;
+                    let tf_plan = response.data.lcmStatuses[0].tf_plan;
                     for (let i = 0; i < tf_plan.resource_changes.length; i++) {
                       if (
                         tf_plan.resource_changes[i].change.actions.includes(
