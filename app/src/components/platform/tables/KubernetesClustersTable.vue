@@ -800,11 +800,12 @@ export default {
     getResizeStatus(environment) {
       let self = this;
       this.axios
-        .post(
-          "/server/getResizeStatus",
-          {
-            ID: environment.ID,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            environment.ID +
+            "/resize-status",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1238,11 +1239,12 @@ export default {
     downloadKubeconfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterKubeconfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1268,11 +1270,12 @@ export default {
     downloadWireguardConfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getWireguardConfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/wireguard-config",
           this.get_axiosConfig()
         )
         .then(function (response) {

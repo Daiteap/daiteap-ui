@@ -238,9 +238,14 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getClusterDetails",
-            { clusterID: clusterID },
-            this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/clusters/" +
+              clusterID +
+              "/details",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);
@@ -726,6 +731,12 @@ Vue.mixin({
         return null;
       }
       return this.$store.state.account_settings;
+    },
+    computed_active_tenant_id() {
+      if (!this.$store) {
+        return null;
+      }
+      return this.$store.state.activeTenantId;
     },
     computed_account() {
       if (!this.$store) {

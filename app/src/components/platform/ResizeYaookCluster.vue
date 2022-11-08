@@ -154,11 +154,12 @@ export default {
     getClusterConfig() {
       let self = this;
       return this.axios
-        .post(
-          "/server/getClusterConfig",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/config",
           this.get_axiosConfig()
         )
         .then(function (response) {

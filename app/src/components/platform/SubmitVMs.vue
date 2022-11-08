@@ -207,12 +207,12 @@ export default {
       let self = currentObject;
 
       axios
-        .post(
-          "/server/getInstallationStatus",
-          {
-            ID: self.ID,
-            details: self.timestamp
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.ID +
+            "/installation-status",
           this.get_axiosConfig()
         )
         .then(function(response) {

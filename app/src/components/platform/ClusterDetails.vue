@@ -684,11 +684,12 @@ export default {
     downloadKubeconfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterKubeconfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -714,12 +715,14 @@ export default {
     downloadClusterUserKubeconfig(id, username) {
       let self = this;
       this.axios
-        .post(
-          "/server/getUserKubeconfig",
-          {
-            clusterID: id,
-            username: username,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/user/" +
+            username +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
