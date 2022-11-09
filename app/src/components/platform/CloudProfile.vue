@@ -590,45 +590,51 @@ export default {
                     }
                   }, 1000);
                 } else {
-                  account_credentials.statusOfValidation = true;
-                  self.loading = false;
-
                   if (response.data.error) {
                     account_credentials.statusOfValidation = "error";
                     self.error = true;
-                    self.errorMsg = response.data.errorMsg;
+                    self.errorMsg = response.data.errorMessage;
                     alert.show = true;
-                    alert.msg = alert.label + ": " + response.data.errorMsg;
+                    alert.msg = alert.label + ": " + response.data.errorMessage;
 
-                    if (!response.data.lcmStatuses.dlcmV2Images) {
-                      alert.msg += ", Check the DLCMV2 images.";
-                    }
-                    if (
-                      checkIfAccountCanBeValidated.type == "openstack" &&
-                      self.computed_account_settings.enable_kubernetes_capi &&
-                      !response.data.lcmStatuses.capiImages
-                    ) {
-                      alert.msg += ", Check the CAPI images.";
-                    }
-                    if (
-                      checkIfAccountCanBeValidated.type == "openstack" &&
-                      self.computed_account_settings
-                        .enable_kubernetes_yaookcapi &&
-                      !response.data.lcmStatuses.yaookCapiImages
-                    ) {
-                      alert.msg += ", Check the YaookCAPI images.";
-                    }
-                    if (
-                      checkIfAccountCanBeValidated.type == "openstack" &&
-                      !response.data.lcmStatuses.externalNetwork
-                    ) {
-                      alert.msg += ", Check the external network.";
+                    for (let i = 0; i < response.data.lcmStatuses.length; i++) {
+                      let key = Object.keys(response.data.lcmStatuses[i])[0];
+                      let value = Object.values(
+                        response.data.lcmStatuses[i]
+                      )[0];
+
+                      if (value == false) {
+                        if (key == "dlcmV2Images") {
+                          alert.msg += ", Check the DLCMV2 images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_capi &&
+                          key == "capiImages"
+                        ) {
+                          alert.msg += ", Check the CAPI images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_yaookcapi &&
+                          key == "yaookCapiImages"
+                        ) {
+                          alert.msg += ", Check the YaookCAPI images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          key == "externalNetwork"
+                        ) {
+                          alert.msg += ", Check the external network.";
+                        }
+                      }
                     }
                   } else {
+                    account_credentials.statusOfValidation = true;
                     alert.show = false;
                     alert.msg = alert.label + ": ";
                   }
 
+                  self.loading = false;
                   alert.key += 1;
                 }
               })
