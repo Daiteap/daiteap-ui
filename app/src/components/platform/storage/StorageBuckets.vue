@@ -143,7 +143,13 @@ export default {
       let self = this;
 
       this.axios
-        .delete(`/server/buckets/${this.bucketToDelete.id}`, this.get_axiosConfig())
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucketToDelete.id,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",

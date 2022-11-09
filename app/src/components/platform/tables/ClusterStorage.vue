@@ -150,11 +150,12 @@ export default {
     getClusterStorage() {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterStorage",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/storage",
           this.get_axiosConfig()
         )
         .then(function (response) {

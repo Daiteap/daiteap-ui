@@ -281,7 +281,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/buckets", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateBuckets", response.data);
@@ -300,7 +303,13 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getBucketDetails", { bucket_id: bucketID }, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/buckets/" +
+              bucketID,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data.bucket_details[0]);

@@ -171,13 +171,16 @@ export default {
     },
     getStorageAccounts(credentialID) {
       let self = this;
-      let request = {
-        provider: "azure",
-        credential_id: credentialID,
-      };
 
       this.axios
-        .post("/server/getStorageAccounts", request, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            credentialID +
+            "/storage-accounts",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.storageAccounts.push(...response.data.storage_accounts);
         })
@@ -203,7 +206,11 @@ export default {
       };
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",

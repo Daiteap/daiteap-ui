@@ -315,7 +315,11 @@ export default {
       }
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
