@@ -5,18 +5,6 @@
       Minutes depending on your configuration.
     </div>
 
-    <ClusterSummary
-      :cluster="clusterSummary"
-      class="card daiteap-content-card"
-      style="
-        border: 1px solid lightgray;
-        padding: 30px 30px 30px 30px;
-        border-radius: 10px;
-      "
-    />
-
-    <br />
-
     <div
       class="card daiteap-content-card"
       style="
@@ -26,7 +14,12 @@
         white-space: pre-wrap;
       "
     >
-      <CardTitle title="Terraform Plan" />
+      <CardTitle title=" Resource Changes:" />
+      <br />
+      <div class="h5" style="color: red">
+        Please review the changes below. Make sure that there aren't any
+        resources marked for deletion which you want to keep!
+      </div>
       <br />
       <div v-if="loadingPlan" class="d-flex justify-content-center">
         <div class="spinner-border" role="status">
@@ -68,6 +61,16 @@
         </ul>
       </div>
     </div>
+
+    <ClusterSummary
+      :cluster="clusterSummary"
+      class="card daiteap-content-card"
+      style="
+        border: 1px solid lightgray;
+        padding: 30px 30px 30px 30px;
+        border-radius: 10px;
+      "
+    />
   </div>
 </template>
 
