@@ -145,7 +145,10 @@ export default {
       let self = this;
       this.axios
         .delete(
-          `/server/projects/${project.ID}`,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/projects/" +
+            project.ID,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -187,11 +190,13 @@ export default {
       });
     },
     updateProject(project) {
-      let endpoint = "/server/projects/" + project.id;
       let self = this;
       this.axios
         .put(
-          endpoint,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/projects/" +
+            project.id,
           {
             name: project.Name,
             description: project.Description,

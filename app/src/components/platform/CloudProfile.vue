@@ -360,7 +360,10 @@ export default {
       let self = this;
       this.axios
         .delete(
-          `/server/cloud-credentials/${account.id}`,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account.id,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -439,11 +442,13 @@ export default {
         });
     },
     updateAccountName(accountWithEditedName, id, provider) {
-      let endpointAccountNameChange = "/server/cloud-credentials/" + id;
       let self = this;
       this.axios
         .put(
-          endpointAccountNameChange,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            id,
           {
             label: accountWithEditedName.label,
             description: accountWithEditedName.description,
@@ -483,7 +488,9 @@ export default {
       let self = this;
       this.axios
         .post(
-          "/server/cloud-credentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials",
           {
             provider: provider,
             account_params: account_params,

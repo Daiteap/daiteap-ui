@@ -128,11 +128,11 @@ export default {
         }
 
         this.axios
-          .post(
-            "/server/isProjectNameFree",
-            {
-              projectName: value,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/projects/name-available/" +
+              value,
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -155,7 +155,11 @@ export default {
       var request = this.form;
 
       this.axios
-        .post("/server/projects", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$router.push({
             name: "ProjectList",

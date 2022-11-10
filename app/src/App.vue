@@ -164,7 +164,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/projects", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateProjects", response.data);
@@ -183,7 +186,12 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/cloud-credentials", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateCredentials", response.data);
@@ -202,7 +210,13 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/cloud-credentials/" + credentialId, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);

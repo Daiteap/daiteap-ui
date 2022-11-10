@@ -309,12 +309,13 @@ export default {
       this.$bvModal.hide("deleteUserWarning");
       let self = this;
       axios
-        .post(
-          "/server/removeUserFromProject",
-          {
-            username: self.removeUsername,
-            project_id: self.projectID,
-          },
+        .delete(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/projects/" +
+            self.projectID +
+            "/users/" +
+            self.removeUsername,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -344,16 +345,20 @@ export default {
     },
     deleteAllUsers() {
       this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].role != "Owner") {
-          this.deleteManyDialogParams.requestBody.push({
-            username: this.users[i].username,
-            project_id: this.projectID,
-          });
+          this.deleteManyDialogParams.endpoint.push(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/projects/" +
+              this.projectID +
+              "/users/" +
+              this.users[i].username
+          );
         }
       }
       this.deleteManyDialogParams.text = "Are you sure you want to remove all users";
-      this.deleteManyDialogParams.endpoint = "/server/removeUserFromProject";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
@@ -378,11 +383,12 @@ export default {
     getUsersList() {
       let self = this;
       axios
-        .post(
-          "/server/get_project_userlist",
-          {
-            project_id: self.projectID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/projects/" +
+            self.projectID +
+            "/users",
           this.get_axiosConfig()
         )
         .then(function (response) {

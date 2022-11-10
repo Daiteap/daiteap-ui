@@ -122,11 +122,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isProjectNameFree",
-                    {
-                      projectName: Name,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/projects/name-available/" +
+                      Name,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {

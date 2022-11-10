@@ -489,7 +489,9 @@ export default {
                     ) {
                       self.axios
                         .post(
-                          "/server/cloud-credentials",
+                          "/server/tenants/" +
+                            self.computed_active_tenant_id +
+                            "/cloud-credentials",
                           {
                             provider: provider,
                             account_params: account_params,
@@ -611,11 +613,11 @@ export default {
             return new Promise((resolve) => {
               setTimeout(() => {
                 this.axios
-                  .post(
-                    "/server/isProjectNameFree",
-                    {
-                      projectName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/projects/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
