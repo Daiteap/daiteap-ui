@@ -241,12 +241,15 @@ export default {
       let self = this;
 
       self.interval = setInterval(function() {
-        let request = {
-          provider: "alicloud",
-          accountId: self.form.alicloud.account
-        };
         self.axios
-          .post("/server/checkAccountRegionsUpdateStatus", request, self.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              self.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              self.form.alicloud.account +
+              "/regions/update-status",
+            self.get_axiosConfig()
+          )
           .then(function(response) {
             let status = response.data.alicloud.status;
             if (status == 0) {
@@ -328,12 +331,12 @@ export default {
     getProviderRegionsList() {
       let self = this;
       axios
-        .post(
-          "/server/getValidRegions",
-          {
-            provider: self.provider,
-            accountId: self.form.alicloud.account
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.alicloud.account +
+            "/regions",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -361,13 +364,14 @@ export default {
       let self = this;
       self.loadingZones = true;
       axios
-        .post(
-          "/server/getValidZones",
-          {
-            provider: self.provider,
-            accountId: self.form.alicloud.account,
-            region: self.form.alicloud.region
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.alicloud.account +
+            "/regions/" +
+            self.form.alicloud.region +
+            "/zones",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -395,14 +399,16 @@ export default {
       let self = this;
       self.loadingInstanceTypes = true;
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.provider,
-            accountId: self.form.alicloud.account,
-            region: self.form.alicloud.region,
-            zone: self.form.alicloud.zone
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.alicloud.account +
+            "/regions/" +
+            self.form.alicloud.region +
+            "/zones/" +
+            self.form.alicloud.zone +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -431,7 +437,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios
         .get(
-          "/server/getValidOperatingSystems/" + self.computed_userInfo.username + "/" + self.provider + "/" + self.form.alicloud.account + "/7/" + self.form.alicloud.region,
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.alicloud.account +
+            "/regions/" +
+            self.form.alicloud.region +
+            "/environment-type/7/operating-systems",
           this.get_axiosConfig()
         )
         .then(function(response) {

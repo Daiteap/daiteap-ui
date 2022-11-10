@@ -463,13 +463,14 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidZones",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/zones",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -506,14 +507,16 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            zone: self.machines.zone,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/zones/" +
+            self.machines.zone +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -537,13 +540,14 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidOperatingSystems",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/environment-type/2/operating-systems",
           this.get_axiosConfig()
         )
         .then(function (response) {

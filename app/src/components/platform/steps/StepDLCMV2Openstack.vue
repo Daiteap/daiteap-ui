@@ -379,13 +379,14 @@ export default {
         nodeGroup.loadingInstanceTypes = true;
       });
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.provider,
-            accountId: self.form.openstack.account,
-            region: self.form.openstack.region,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.openstack.account +
+            "/regions/" +
+            self.form.openstack.region +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -430,14 +431,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios
         .get(
-          "/server/getValidOperatingSystems/" +
-            self.computed_userInfo.username +
-            "/" +
-            self.provider +
-            "/" +
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
             self.form.openstack.account +
-            "/7/" +
-            self.form.openstack.region,
+            "/regions/" +
+            self.form.openstack.region +
+            "/environment-type/7/operating-systems",
           this.get_axiosConfig()
         )
         .then(function (response) {

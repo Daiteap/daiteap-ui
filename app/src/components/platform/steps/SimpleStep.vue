@@ -438,14 +438,13 @@ export default {
       let self = this;
 
       self.interval = setInterval(function () {
-        let request = {
-          provider: provider,
-          accountId: credentialId,
-        };
         self.axios
-          .post(
-            "/server/checkAccountRegionsUpdateStatus",
-            request,
+          .get(
+            "/server/tenants/" +
+              self.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/update-status",
             self.get_axiosConfig()
           )
           .then(function (response) {
@@ -514,12 +513,12 @@ export default {
     getProviderRegionsList(provider, credentialId, regions) {
       let self = this;
       this.axios
-        .post(
-          "/server/getValidRegions",
-          {
-            provider: provider,
-            accountId: credentialId,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            credentialId +
+            "/regions",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1045,13 +1044,14 @@ export default {
       let self = this;
       return new Promise((resolve) => {
         this.axios
-          .post(
-            "/server/getValidZones",
-            {
-              provider: provider,
-              accountId: credentialId,
-              region: region,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/zones",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -1072,14 +1072,16 @@ export default {
       let self = this;
       return new Promise((resolve) => {
         this.axios
-          .post(
-            "/server/getValidInstances",
-            {
-              provider: provider,
-              accountId: credentialId,
-              region: region,
-              zone: zone,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/zones/" +
+              zone +
+              "/instances",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -1109,16 +1111,15 @@ export default {
       return new Promise((resolve) => {
         this.axios
           .get(
-            "/server/getValidOperatingSystems/" +
-            this.computed_userInfo.username +
-            "/" +
-            provider +
-            "/" +
-            credentialId +
-            "/" +
-            this.$selectedType +
-            "/" +
-            region,
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/environment-type/" +
+              this.$selectedType +
+              "/operating-systems",
             this.get_axiosConfig()
           )
           .then(function (response) {

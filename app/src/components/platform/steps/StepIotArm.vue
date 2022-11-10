@@ -282,7 +282,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios        
         .get(
-          "/server/getValidOperatingSystems/" + self.computed_userInfo.username + "/" + self.provider + "/" + self.form.iotarm.account + "/0/" + self.form.iotarm.account,
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.iotarm.account +
+            "/regions/" +
+            self.form.iotarm.region +
+            "/environment-type/0/operating-systems",
           this.get_axiosConfig()
         )
         .then(function(response) {

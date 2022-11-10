@@ -472,14 +472,13 @@ export default {
       let self = this;
 
       self.interval = setInterval(function () {
-        let request = {
-          provider: provider,
-          accountId: credentialId,
-        };
         self.axios
-          .post(
-            "/server/checkAccountRegionsUpdateStatus",
-            request,
+          .get(
+            "/server/tenants/" +
+              self.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/update-status",
             self.get_axiosConfig()
           )
           .then(function (response) {
@@ -551,12 +550,12 @@ export default {
     getProviderRegionsList(provider, credentialId, regions) {
       let self = this;
       this.axios
-        .post(
-          "/server/getValidRegions",
-          {
-            provider: provider,
-            accountId: credentialId,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            credentialId +
+            "/regions",
           this.get_axiosConfig()
         )
         .then(function (response) {

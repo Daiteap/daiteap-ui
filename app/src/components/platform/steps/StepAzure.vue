@@ -313,13 +313,14 @@ export default {
       let self = this;
       self.loadingZones = true;
       axios
-        .post(
-          "/server/getValidZones",
-          {
-            provider: self.provider,
-            accountId: self.form.azure.account,
-            region: self.form.azure.region,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.azure.account +
+            "/regions/" +
+            self.form.azure.region +
+            "/zones",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -347,14 +348,16 @@ export default {
       let self = this;
       nodeGroup.loadingInstanceTypes = true;
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.provider,
-            accountId: self.form.azure.account,
-            region: self.form.azure.region,
-            zone: nodeGroup.zone,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.azure.account +
+            "/regions/" +
+            self.form.azure.region +
+            "/zones/" +
+            nodeGroup.zone +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -383,14 +386,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios
         .get(
-          "/server/getValidOperatingSystems/" +
-            self.computed_userInfo.username +
-            "/" +
-            self.provider +
-            "/" +
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
             self.form.azure.account +
-            "/1/" +
-            self.form.azure.region,
+            "/regions/" +
+            self.form.azure.region +
+            "/environment-type/1/operating-systems",
           this.get_axiosConfig()
         )
         .then(function (response) {
