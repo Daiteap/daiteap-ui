@@ -80,6 +80,10 @@
               Application permissions -> Directory.Read.All, after that the
               permission needs to be granted by an admin.
             </p>
+            <p>
+              After granting the permission, press the checkbox `Grant admin consent for Default Directory` 
+              and then make sure the Status fields shows that the access is granted.
+            </p>
             <a
               href="/documentation/cloud_credentials/#microsoft-azure"
               target="_blank"

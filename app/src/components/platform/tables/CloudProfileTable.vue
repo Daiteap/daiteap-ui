@@ -12,7 +12,7 @@
           <th v-if="showTenant">Workspace</th>
           <th>Description</th>
           <th>Cloud</th>
-          <th>Account Information</th>
+          <th>Cloud Account</th>
           <th>Created at</th>
           <th>Created by</th>
           <th>Edit</th>
@@ -61,9 +61,23 @@
               "
             />
           </td>
-          <td style="word-wrap: break-word;word-break: break-all;white-space: normal;">
-            <div v-for="(value, key) in account.cloud_account_info" :key="key">
-              <strong>{{ key | upperCase }}</strong>: {{ value }}
+          <td
+            style="
+              word-wrap: break-word;
+              word-break: break-all;
+              white-space: normal;
+            "
+          >
+            <div v-if="account.provider == 'aws'">
+              {{ account.cloud_account_info["account_email"] }}
+            </div>
+            <div
+              v-else
+              v-for="(value, key) in account.cloud_account_info"
+              :key="key"
+            >
+              <strong>{{ key | upperCase }}</strong
+              >: {{ value }}
             </div>
           </td>
           <td>

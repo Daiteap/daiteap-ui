@@ -450,31 +450,38 @@ export default {
                   if (response.data.error) {
                     self.statusOfValidation = "error";
                     self.showWAlert = true;
-                    self.alertMsg = response.data.errorMsg;
+                    self.alertMsg = response.data.errorMessage;
 
-                    if (!response.data.lcmStatuses.dlcmV2Images) {
-                      self.alertMsg += ", Check the DLCMV2 images.";
-                    }
-                    if (
-                      provider == "openstack" &&
-                      self.computed_account_settings.enable_kubernetes_capi &&
-                      !response.data.lcmStatuses.capiImages
-                    ) {
-                      self.alertMsg += ", Check the CAPI images.";
-                    }
-                    if (
-                      provider == "openstack" &&
-                      self.computed_account_settings
-                        .enable_kubernetes_yaookcapi &&
-                      !response.data.lcmStatuses.yaookCapiImages
-                    ) {
-                      self.alertMsg += ", Check the YaookCAPI images.";
-                    }
-                    if (
-                      provider == "openstack" &&
-                      !response.data.lcmStatuses.externalNetwork
-                    ) {
-                      self.alertMsg += ", Check the external network.";
+                    for (let i = 0; i < response.data.lcmStatuses.length; i++) {
+                      let key = Object.keys(response.data.lcmStatuses[i])[0];
+                      let value = Object.values(
+                        response.data.lcmStatuses[i]
+                      )[0];
+
+                      if (value == false) {
+                        if (key == "dlcmV2Images") {
+                          self.alertMsg += ", Check the DLCMV2 images.";
+                        } else if (
+                          provider == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_capi &&
+                          key == "capiImages"
+                        ) {
+                          self.alertMsg += ", Check the CAPI images.";
+                        } else if (
+                          provider == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_yaookcapi &&
+                          key == "yaookCapiImages"
+                        ) {
+                          self.alertMsg += ", Check the YaookCAPI images.";
+                        } else if (
+                          provider == "openstack" &&
+                          key == "externalNetwork"
+                        ) {
+                          self.alertMsg += ", Check the external network.";
+                        }
+                      }
                     }
 
                     self.alertKey += 1;
