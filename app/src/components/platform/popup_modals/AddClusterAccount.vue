@@ -104,11 +104,11 @@ export default {
       let self = this;
       this.loadingAccounts=true
       axios
-        .post(
-          "/server/getProviderAccounts",
-          {
-            provider: self.account.provider
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/providers/" +
+            self.account.provider,
           this.get_axiosConfig()
         )
         .then(function(response) {

@@ -274,11 +274,11 @@ export default {
     getProviderAccountsList() {
       let self = this;
       axios
-        .post(
-          "/server/getProviderAccounts",
-          {
-            provider: self.provider
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/providers/" +
+            self.provider,
           this.get_axiosConfig()
         )
         .then(function(response) {

@@ -556,12 +556,13 @@ export default {
       self.errorMsg = "";
       self.error = false;
 
-      let request = { account_id: account_id };
-
       this.axios
         .post(
-          "/server/validateCredentials",
-          request,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account_id +
+            "/validate",
           this.get_axiosConfig()
         )
         .then(function (response) {

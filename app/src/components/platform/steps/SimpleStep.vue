@@ -306,7 +306,12 @@ export default {
       })()
     );
     this.axios
-      .get("/server/checkProvidedCredentials", this.get_axiosConfig())
+      .get(
+        "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/cloud-credentials/check-provided-credentials",
+        this.get_axiosConfig()
+      )
       .then(function (response) {
         self.awsProvided = response.data.aws_key_provided;
         self.azureProvided = response.data.azure_key_provided;

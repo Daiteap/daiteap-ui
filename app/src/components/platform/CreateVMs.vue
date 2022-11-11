@@ -92,7 +92,12 @@ export default {
     this.getUsersProjectsList();
 
     this.axios
-      .get("/server/checkProvidedCredentials", this.get_axiosConfig())
+      .get(
+        "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/cloud-credentials/check-provided-credentials",
+        this.get_axiosConfig()
+      )
       .then(function (response) {
         if (
           response.data.alicloud_key_provided == false &&

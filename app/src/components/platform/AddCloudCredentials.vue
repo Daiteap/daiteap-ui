@@ -413,9 +413,11 @@ export default {
 
       this.axios
         .post(
-          "/server/validateCredentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/validate",
           {
-            credentials: accountRequest
+            credentials: accountRequest,
           },
           this.get_axiosConfig()
         )
