@@ -118,7 +118,7 @@ export default {
   },
   mounted() {
     this.interval = setInterval(() => {
-      this.axios.get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+      this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
         this.tenant = response.data.tenant;
       });
 

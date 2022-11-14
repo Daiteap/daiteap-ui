@@ -190,11 +190,11 @@ export default {
   methods: {
     setCompany() {
       if (!this.isBAO) {
-        this.axios.get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+        this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
           this.form.company = response.data.tenant.company;
         });
       } else {
-        this.axios.get("/server/account/tenant/" + this.tenant.id, this.get_axiosConfig()).then((response) => {
+        this.axios.get("/server/tenants/" + this.tenant.id, this.get_axiosConfig()).then((response) => {
           this.form.company = response.data.tenant.company;
         });
       }

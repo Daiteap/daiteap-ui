@@ -340,7 +340,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/account/get/settings", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id + "/settings",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           if (response.status == 200) {
@@ -520,7 +523,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       return this.axios
-        .get("/server/getSpecificUserInfo/" + tenantId + "/" + username, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + tenantId + "/users/" + username,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           return response.data;
@@ -539,7 +545,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/isRegistered", this.get_axiosConfig())
+        .get("/server/is-registered", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           if (!response.data.isRegistered) {

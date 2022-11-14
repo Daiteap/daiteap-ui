@@ -96,7 +96,10 @@ export default {
       let self = this;
       let tenantID = this.tenant.id;
       axios
-        .get("/server/tenant/" + tenantID + "/getUnregisteredUsers", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + tenantID + "/users/unregistered",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.allUsers = response.data.unregisteredUsers;
 					self.filteredUsers = response.data.unregisteredUsers;

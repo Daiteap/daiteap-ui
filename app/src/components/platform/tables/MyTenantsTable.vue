@@ -92,7 +92,7 @@ export default {
       this.confirmAndRedirectDialogParams.action = "Change";
       this.confirmAndRedirectDialogParams.envId = "";
       this.confirmAndRedirectDialogParams.envName = tenant.name;
-      this.confirmAndRedirectDialogParams.endpoint = "/server/selectTenant";
+      this.confirmAndRedirectDialogParams.endpoint = "/server/select-tenant";
       this.confirmAndRedirectDialogParams.redirect = "DaiteapWebLandingPage";
       this.confirmAndRedirectDialogParams.successMessage =
         'You have successfully submitted tenant change.';

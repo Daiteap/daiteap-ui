@@ -84,7 +84,7 @@ export default {
     },
     getSelectedTenant() {
       this.axios
-        .get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+        .get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
           this.selectedTenant = response.data.tenant.id;
         });
     }
