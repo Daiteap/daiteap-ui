@@ -550,7 +550,7 @@ export default {
       let self = this;
       self.loadingKubernetesConfigurations = true;
       axios
-        .get("/server/getsupportedk3sconfigurations", this.get_axiosConfig())
+        .get("/server/clusters/k3s-supported-configurations", this.get_axiosConfig())
         .then(function (response) {
           self.supportedKubernetesVersions =
             response.data.supportedKubernetesVersions;

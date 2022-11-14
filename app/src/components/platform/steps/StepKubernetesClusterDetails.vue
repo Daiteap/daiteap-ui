@@ -548,7 +548,7 @@ export default {
       self.loadingKubernetesConfigurations = true;
       axios
         .get(
-          "/server/getsupportedkubernetesconfigurations",
+          "/server/clusters/k8s-supported-configurations",
           this.get_axiosConfig()
         )
         .then(function (response) {

@@ -330,7 +330,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.endpoint = "/server/stopCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/stop";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -344,7 +349,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.endpoint = "/server/startCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/start";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted start for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -358,7 +368,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.endpoint = "/server/restartCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/restart";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =

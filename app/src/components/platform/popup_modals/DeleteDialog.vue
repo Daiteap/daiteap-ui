@@ -70,8 +70,7 @@ export default {
             self.$emit('closeModal');
           } else if (self.deleteDialogParams.endpoint.includes("environmenttemplates")){
             self.closeModal();
-          } else if (self.deleteDialogParams.endpoint=="/server/deleteCapiCluster" ||
-                      self.deleteDialogParams.endpoint=="/server/deleteCluster"){
+          } else if (self.deleteDialogParams.endpoint.includes("clusters")){
             self.closeModal();
           } else {
             if (self.deleteDialogParams.redirectPage){

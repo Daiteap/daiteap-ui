@@ -339,7 +339,12 @@ export default {
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Kubernetes Clusters";
-      this.deleteManyDialogParams.endpoint = "/server/deleteCluster";
+      this.deleteManyDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/delete";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
@@ -376,7 +381,12 @@ export default {
       console.log(this.deleteManyDialogParams.requestBody);
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Compute (VMs)";
-      this.deleteManyDialogParams.endpoint = "/server/deleteCluster";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/delete";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },

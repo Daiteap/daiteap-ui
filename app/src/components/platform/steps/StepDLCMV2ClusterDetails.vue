@@ -553,7 +553,7 @@ export default {
       let self = this;
       self.loadingKubernetesConfigurations = true;
       axios
-        .get("/server/getsupporteddlcmv2configurations", this.get_axiosConfig())
+        .get("/server/clusters/dlcmv2-supported-configurations", this.get_axiosConfig())
         .then(function (response) {
           self.supportedKubernetesVersions =
             response.data.supportedKubernetesVersions;

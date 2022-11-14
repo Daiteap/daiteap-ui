@@ -308,7 +308,7 @@ export default {
       self.loadingKubernetesConfigurations = true;
       axios
         .get(
-          "/server/getSupportedYaookCapiKubernetesConfigurations",
+          "/server/clusters/yaook-supported-configurations",
           this.get_axiosConfig()
         )
         .then(function (response) {

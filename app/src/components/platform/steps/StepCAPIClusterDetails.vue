@@ -308,7 +308,7 @@ export default {
       self.loadingKubernetesConfigurations = true;
       axios
         .get(
-          "/server/getSupportedCapiKubernetesConfigurations",
+          "/server/clusters/capi-supported-configurations",
           this.get_axiosConfig()
         )
         .then(function (response) {

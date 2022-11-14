@@ -90,11 +90,12 @@ export default {
     getK3sAvailableUpgradeVersions() {
       let self = this;
       axios
-        .post(
-          "/server/getK3sAvailableUpgradeVersions",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/k3s-upgrade-versions",
           this.get_axiosConfig()
         )
         .then(function (response) {

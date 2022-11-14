@@ -293,7 +293,12 @@ export default {
       this.deleteDialogParams.text =
         'Are you sure you want to delete:';
       this.deleteDialogParams.envName = name
-      this.deleteDialogParams.endpoint = "/server/deleteCluster";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/delete";
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =
@@ -306,7 +311,12 @@ export default {
       this.deleteDialogParams.text =
         'Are you sure you want to cancel the installation:';
       this.deleteDialogParams.envName = name
-      this.deleteDialogParams.endpoint = "/server/cancelClusterCreation";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/cancel-creation";
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =

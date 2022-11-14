@@ -97,11 +97,26 @@ Vue.mixin({
       let requestBody = { clusterID: cluster.ID };
       let endpoint;
       if (cluster.Type == 5) {
-        endpoint = "/server/deleteCapiCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/capi-delete";
       } else if (cluster.Type == 8) {
-        endpoint = "/server/deleteYaookCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/yaook-delete";
       } else {
-        endpoint = "/server/deleteCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/delete";
       }
 
       let self = this;
