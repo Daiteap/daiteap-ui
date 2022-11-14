@@ -67,7 +67,7 @@ export default {
     getActiveTenants() {
       let self = this;
       this.axios
-        .get("/server/active-tenants", this.get_axiosConfig())
+        .get("/server/user/active-tenants", this.get_axiosConfig())
         .then(function (response) {
           self.activeTenants = response.data.activeTenants;
           self.loading = false;

@@ -151,7 +151,7 @@ export default {
         return;
       }
       this.axios
-        .post("/server/updateuserpassword", request, this.get_axiosConfig())
+        .post("/server/user/password", request, this.get_axiosConfig())
         .then(function () {
           self.$notify({
             group: "msg",

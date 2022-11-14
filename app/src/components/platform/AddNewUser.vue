@@ -214,7 +214,11 @@ export default {
       let self = this;
       let request = this.form;
       this.axios
-        .post("/server/addnewuser", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/users",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           if (response.data.user_created == false) {
             self.showAlert("Cannot create user");

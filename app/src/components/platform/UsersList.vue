@@ -196,11 +196,11 @@ export default {
       let self = this;
 
       axios
-        .post(
-          "/server/delete_user",
-          {
-            username: userToDelete,
-          },
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/users/" +
+            userToDelete,
           this.get_axiosConfig()
         )
         .then(function (response) {

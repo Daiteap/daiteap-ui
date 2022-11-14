@@ -145,7 +145,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/getuserslist", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/users",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateUsers", response.data.users_list);
@@ -394,7 +397,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/profile/picture", this.get_axiosConfig())
+        .get("/server/user/profile/picture", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           self.$store.commit(
@@ -445,7 +448,7 @@ Vue.mixin({
       let user = {}
       this.usingToken += 1;
       this.axios
-        .get("/server/profile", this.get_axiosConfig())
+        .get("/server/user/profile", this.get_axiosConfig())
         .then(function (response) {
           profile = response.data;
 
@@ -489,7 +492,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/canUpdateUserPassword", this.get_axiosConfig())
+        .get("/server/user/password/can-update", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
@@ -505,7 +508,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/active-tenants", this.get_axiosConfig())
+        .get("/server/user/active-tenants", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           if (response.data.activeTenants.length < 2) {
@@ -553,7 +556,7 @@ Vue.mixin({
           self.usingToken -= 1;
           if (!response.data.isRegistered) {
                   self.axios
-                    .post("/server/registerTenantUser", {}, self.get_axiosConfig())
+                    .post("/server/tenants", {}, self.get_axiosConfig())
                     .then(function () {
                       self.getUserInfo();
                       self.checkCanChangePassword();
@@ -607,7 +610,7 @@ Vue.mixin({
       this.usingToken += 1;
       this.axios
         .delete(
-          "/server/profile/picture",
+          "/server/user/profile/picture",
           this.get_axiosConfig()
         )
         .then(function () {
@@ -627,7 +630,7 @@ Vue.mixin({
         self.usingToken += 1;
         this.axios
           .put(
-            "/server/profile/picture",
+            "/server/user/profile/picture",
             request,
             this.get_axiosConfig()
           )
@@ -648,7 +651,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", profile, this.get_axiosConfig())
+        .put("/server/user/profile", profile, this.get_axiosConfig())
         .then(function () {
 
           self.axios
@@ -685,7 +688,11 @@ Vue.mixin({
       if (this.computed_isBusinessAccountOwner) {
         endpoint = "/server/businessaccountowner/updateUser";
       } else {
-        endpoint = "/server/updateUser";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/users/" +
+          request.username;
       }
 
       let self = this;
@@ -694,7 +701,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .post(
+        .put(
           endpoint,
           request,
           this.get_axiosConfig()
@@ -721,7 +728,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", { news_subscribbed: false }, this.get_axiosConfig())
+        .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
         .then(function () {
           self.usingToken -= 1;
           self.$notify({
@@ -742,7 +749,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", { news_subscribbed: true }, this.get_axiosConfig())
+        .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
         .then(function () {
           self.usingToken -= 1;
           self.$notify({
