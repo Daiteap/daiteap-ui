@@ -122,9 +122,12 @@ export default {
       let self = this;
       axios
         .post(
-          "/server/upgradeKubernetesCluster",
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/k8s-upgrade",
           {
-            clusterID: self.clusterID,
             version: self.upgradeVersion,
           },
           this.get_axiosConfig()

@@ -875,11 +875,8 @@ export default {
     setServiceOptions() {
       let self = this;
       axios
-        .post(
-          "/server/getServiceOptions",
-          {
-            service: self.$finalModel.serviceName,
-          },
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/options",
           this.get_axiosConfig()
         )
         .then(function (response) {

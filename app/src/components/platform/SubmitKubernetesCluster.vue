@@ -407,7 +407,12 @@ export default {
       this.retryDialogParams.requestBody = { clusterID: id };
       this.retryDialogParams.text =
         'Are you sure you want to retry "' + name + '"?';
-      this.retryDialogParams.endpoint = "/server/retryCreateDlcm";
+      this.retryDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/dlcm-retry-create";
       this.retryDialogParams.successMessage =
         'You have successfully submitted retry for "' + name + '".';
       this.retryDialogParams.failureMessage =
@@ -447,7 +452,12 @@ export default {
           this.retryDialogParams.requestBody = { clusterID: id, config: config };
           this.retryDialogParams.text =
             'Are you sure you want to retry "' + name + '"?';
-          this.retryDialogParams.endpoint = "/server/retryCreateDlcm";
+          this.retryDialogParams.endpoint =
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/dlcm-retry-create";
           this.retryDialogParams.successMessage =
             'You have successfully submitted retry for "' + name + '".';
           this.retryDialogParams.failureMessage =

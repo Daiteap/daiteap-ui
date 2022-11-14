@@ -366,7 +366,12 @@ export default {
       this.retryDialogParams.requestBody = { clusterID: id };
       this.retryDialogParams.text =
         'Are you sure you want to retry "' + name + '"?';
-      this.retryDialogParams.endpoint = "/server/retryCreateK3sCluster";
+      this.retryDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/k3s-retry-create";
       this.retryDialogParams.successMessage =
         'You have successfully submitted retry for "' + name + '".';
       this.retryDialogParams.failureMessage =

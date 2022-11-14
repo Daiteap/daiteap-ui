@@ -365,7 +365,7 @@ export default {
     getServicesList(currentObject) {
       let self = currentObject;
       axios
-        .post("/server/getServiceList", {}, this.get_axiosConfig())
+        .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           self.servicesList = [];
           for (let i = 0; i < response.data.serviceList.length; i++) {

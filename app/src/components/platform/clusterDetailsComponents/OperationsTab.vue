@@ -268,7 +268,11 @@ export default {
 
       this.axios
         .post(
-          "/server/environmenttemplates/save",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            templateForm.environmentId +
+            "/template",
           templateForm,
           this.get_axiosConfig()
         )

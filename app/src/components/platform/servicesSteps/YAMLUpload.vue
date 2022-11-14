@@ -113,10 +113,10 @@ export default {
     getValues() {
       let self = this;
       axios
-        .post("/server/getServiceValues", 
-        {
-          service: self.$finalModel.serviceName, 
-        }, this.get_axiosConfig())
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/values",
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.textPopupParams.text = response.data.values;
         })
