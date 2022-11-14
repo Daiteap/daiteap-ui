@@ -94,11 +94,12 @@ export default {
     getKubernetesAvailableUpgradeVersions() {
       let self = this;
       axios
-        .post(
-          "/server/getKubernetesAvailableUpgradeVersions",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/upgrade-versions",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -151,7 +152,6 @@ export default {
 
 
 <style scoped>
-
 .form-group {
   margin: auto;
 }

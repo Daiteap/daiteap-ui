@@ -357,18 +357,27 @@ export default {
               let checkNameEndpoint = ""
 
               if (this.configuration.type == 6 || this.configuration.type == 2) {
-                checkNameEndpoint = "/server/isComputeNameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/compute-name-available/" +
+                  value;
               } else if (this.configuration.type == 7) {
-                checkNameEndpoint = "/server/isDLCMv2NameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/dlcmv2-name-available/" +
+                  value;
               } else {
-                checkNameEndpoint = "/server/isClusterNameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/cluster-name-available/" +
+                  value;
               }
               this.axios
-                .post(
+                .get(
                   checkNameEndpoint,
-                  {
-                    clusterName: value,
-                  },
                   this.get_axiosConfig()
                 )
                 .then(function (response) {
@@ -408,20 +417,31 @@ export default {
       self.configuration.config.clusterName = self.environmentName;
       self.configuration.config.clusterDescription = self.clusterDescription;
       self.configuration.config.projectId = self.projectId;
-      let payload = { clusterName: self.configuration.config.clusterName };
 
       let checkNameEndpoint = ""
 
       if (this.configuration.type == 6) {
-        checkNameEndpoint = "/server/isComputeNameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/compute-name-available/" +
+          self.configuration.config.clusterName;
       } else if (this.configuration.type == 7) {
-        checkNameEndpoint = "/server/isDLCMv2NameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/dlcmv2-name-available/" +
+          self.configuration.config.clusterName;
       } else {
-        checkNameEndpoint = "/server/isClusterNameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/cluster-name-available/" +
+          self.configuration.config.clusterName;
       }
 
       this.axios
-        .post(checkNameEndpoint, payload, this.get_axiosConfig())
+        .get(checkNameEndpoint, this.get_axiosConfig())
         .then(function (response) {
           if (response.data.free == true) {
             self.sendToCorrectEndpoint();
@@ -484,7 +504,10 @@ export default {
       let self = this;
       this.axios
         .get(
-          "/server/environmenttemplates/get/" + environmentTemplateId,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environmenttemplates/" +
+            environmentTemplateId,
           this.get_axiosConfig()
         )
         .then(function (response) {

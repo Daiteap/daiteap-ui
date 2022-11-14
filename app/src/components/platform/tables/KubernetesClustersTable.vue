@@ -1307,7 +1307,12 @@ export default {
       });
     },
     updateCluster(cluster) {
-      let endpoint = "/server/updateCluster/" + cluster.id;
+      let endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        cluster.id +
+        "/update";
       let isCapi = false;
       let isYaookCapi = false;
       if(cluster.type == 5) {
@@ -1318,7 +1323,7 @@ export default {
       }
       let self = this;
       this.axios
-        .post(
+        .put(
           endpoint,
           {
             name: cluster.Name,

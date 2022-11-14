@@ -440,7 +440,12 @@ export default {
       });
     },
     updateCluster(cluster) {
-      let endpoint = "/server/updateCluster/" + this.clusterID;
+      let endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/update";
       let isCapi = false;
       let isYaookCapi = false;
       if (cluster.type == 5) {
@@ -450,8 +455,9 @@ export default {
         isYaookCapi = true;
       }
       let self = this;
+
       this.axios
-        .post(
+        .put(
           endpoint,
           {
             name: cluster.Name,

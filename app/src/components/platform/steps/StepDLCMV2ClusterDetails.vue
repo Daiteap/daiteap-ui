@@ -374,11 +374,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isDLCMv2NameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/dlcmv2-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {

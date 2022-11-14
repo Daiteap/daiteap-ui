@@ -368,11 +368,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isClusterNameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/cluster-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {

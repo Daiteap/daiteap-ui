@@ -68,7 +68,7 @@ export default {
           if (self.deleteDialogParams.endpoint=="/server/deleteService"){
             self.$bvModal.hide("bv-modal-deletedialog");
             self.$emit('closeModal');
-          } else if (self.deleteDialogParams.endpoint=="/server/environmenttemplates/delete"){
+          } else if (self.deleteDialogParams.endpoint.includes("environmenttemplates")){
             self.closeModal();
           } else if (self.deleteDialogParams.endpoint=="/server/deleteCapiCluster" ||
                       self.deleteDialogParams.endpoint=="/server/deleteCluster"){

@@ -145,11 +145,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/environmenttemplates/isnamefree",
-                    {
-                      name: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/environmenttemplates/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {

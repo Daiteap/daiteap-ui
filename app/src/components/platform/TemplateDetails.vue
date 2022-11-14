@@ -520,7 +520,10 @@ export default {
       let self = this;
       this.axios
         .get(
-          "/server/environmenttemplates/get/" + environmentTemplateId,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environmenttemplates/" +
+            environmentTemplateId,
           this.get_axiosConfig()
         )
         .then(function (response) {

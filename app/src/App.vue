@@ -237,7 +237,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getClusterList", {}, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);
@@ -280,7 +283,12 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/environmenttemplates/list", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/environmenttemplates",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data.environmentTemplates);
