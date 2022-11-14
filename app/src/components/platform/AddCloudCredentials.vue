@@ -436,7 +436,7 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post("/server/gettaskmessage", { taskId: taskId }, self.get_axiosConfig())
+              .get("/server/task-message/" + taskId, self.get_axiosConfig())
               .then(function (response) {
                 if (response.data.status == "PENDING") {
                   self.statusOfValidation = "pending";

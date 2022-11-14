@@ -394,7 +394,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/profilepicture", this.get_axiosConfig())
+        .get("/server/profile/picture", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           self.$store.commit(
@@ -413,7 +413,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       return this.axios
-        .get("/server/getusage", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id + "/user-quotas",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           let quota = response.data;
@@ -502,7 +505,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/getActiveTenants", this.get_axiosConfig())
+        .get("/server/active-tenants", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           if (response.data.activeTenants.length < 2) {
@@ -604,7 +607,7 @@ Vue.mixin({
       this.usingToken += 1;
       this.axios
         .delete(
-          "/server/profilepicture",
+          "/server/profile/picture",
           this.get_axiosConfig()
         )
         .then(function () {
@@ -624,7 +627,7 @@ Vue.mixin({
         self.usingToken += 1;
         this.axios
           .put(
-            "/server/profilepicture",
+            "/server/profile/picture",
             request,
             this.get_axiosConfig()
           )

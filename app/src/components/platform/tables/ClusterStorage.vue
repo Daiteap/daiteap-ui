@@ -128,7 +128,7 @@ export default {
     gettaskmessage(taskId) {
       let self = this;
       self.axios
-        .post("/server/gettaskmessage", { taskId: taskId }, this.get_axiosConfig())
+        .get("/server/task-message/" + taskId, this.get_axiosConfig())
         .then(function (response) {
           if (response.data.status !== "PENDING") {
             clearInterval(self.intervalGetTaskMessage);

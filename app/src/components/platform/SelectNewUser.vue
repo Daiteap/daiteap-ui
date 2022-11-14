@@ -97,7 +97,7 @@ export default {
       let tenantID = this.tenant.id;
       axios
         .get(
-          "/server/tenants/" + tenantID + "/users/unregistered",
+          "/server/tenants/" + tenantID + "/unregistered-users",
           this.get_axiosConfig()
         )
         .then(function (response) {

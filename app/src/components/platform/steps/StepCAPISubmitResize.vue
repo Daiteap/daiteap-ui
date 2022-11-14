@@ -128,9 +128,8 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post(
-                "/server/gettaskmessage",
-                { taskId: taskId },
+              .get(
+                "/server/task-message/" + taskId,
                 self.get_axiosConfig()
               )
               .then(function (response) {
