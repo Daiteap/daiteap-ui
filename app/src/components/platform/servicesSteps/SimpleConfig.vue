@@ -1023,12 +1023,14 @@ export default {
     setDefaultName() {
       let self = this;
       axios
-        .post(
-          "/server/generateClusterServiceDefaultName",
-          {
-            service: self.$finalModel.serviceName,
-            clusterID: self.$finalModel.selectedCluster,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.$finalModel.selectedCluster +
+            "/services/" +
+            self.$finalModel.serviceName +
+            "/default-name",
           this.get_axiosConfig()
         )
         .then(function (response) {

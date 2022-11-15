@@ -671,7 +671,13 @@ export default {
       this.confirmDialogParams.text = "Are you sure you want to delete user:";
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.action = "Delete";
-      this.confirmDialogParams.endpoint = "/server/deleteUserFromCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/users/" +
+        user.username;
       this.confirmDialogParams.successMessage =
         'You have successfully submitted deletion for user "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -836,61 +842,6 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialog");
     },
-    stopMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to stop machine:";
-      this.confirmDialogParams.endpoint = "/server/stopMachine";
-      this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    startMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to start machine:";
-      this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/startMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted start for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit start of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    restartMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text =
-        "Are you sure you want to restart machine:";
-      this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/restartMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
     deleteAllServices() {
       this.deleteManyDialogParams.requestBody = [];
       for (let i = 0; i < this.servicesListTable.length; i++) {
@@ -903,7 +854,15 @@ export default {
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Services";
-      this.deleteManyDialogParams.endpoint = "/server/deleteService";
+      this.deleteManyDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/services/" +
+        this.serviceName +
+        "/" +
+        this.serviceNamespace;
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
@@ -931,7 +890,15 @@ export default {
       };
       this.deleteDialogParams.text =
         'Are you sure you want to delete "' + name + '"?';
-      this.deleteDialogParams.endpoint = "/server/deleteService";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/services/" +
+        name +
+        "/" +
+        namespace;
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =

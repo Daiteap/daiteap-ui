@@ -79,12 +79,11 @@ export default {
     },
     submitEnvironmentRename() {
       let self = this;
-      let endpoint = "/server/renameCluster";
+      let endpoint = "/server/tenants/" + self.computed_active_tenant_id + "/clusters/" + self.clusterID + "/rename";
       this.axios
         .post(
           endpoint,
           {
-            clusterID: self.clusterID,
             clusterName: self.newName
           },
           this.get_axiosConfig()

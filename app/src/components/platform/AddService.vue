@@ -433,7 +433,15 @@ export default {
       self.currentAccordion = "submitted";
 
       this.axios
-        .post("/server/addService", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.clusterID +
+            "/services",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           Vue.prototype.$finalModel = {};
           self.$router.push({

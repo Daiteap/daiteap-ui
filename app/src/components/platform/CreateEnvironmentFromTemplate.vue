@@ -640,7 +640,13 @@ export default {
       request.clusterDescription = this.clusterDescription;
 
       this.axios
-        .post("/server/createDlcmV2", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/dlcmv2-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitKubernetesCluster",
@@ -674,7 +680,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createDlcm", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/dlcm-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitKubernetesCluster",
@@ -702,7 +714,7 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createCapiCluster", request, this.get_axiosConfig())
+        .post("/server/tenants/" + this.computed_active_tenant_id + "/clusters/capi-create", request, this.get_axiosConfig())
         .then(function (response) {
           self.$router.push({
             name: "SubmitCAPICluster",
@@ -730,7 +742,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createK3sCluster", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/k3s-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitK3sCluster",
@@ -758,7 +776,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createComputeVMs", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/compute-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitVMs",
@@ -786,7 +810,7 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createYaookCluster", request, this.get_axiosConfig())
+        .post("/server/tenants/" + this.computed_active_tenant_id + "/clusters/yaook-create", request, this.get_axiosConfig())
         .then(function (response) {
           self.$router.push({
             name: "SubmitYaookCluster",

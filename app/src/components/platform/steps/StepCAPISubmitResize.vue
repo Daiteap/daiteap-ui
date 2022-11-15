@@ -119,7 +119,11 @@ export default {
 
       this.axios
         .post(
-          "/server/getTerraformPlan",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.$finalModel.clusterID +
+            "/terraform-plan",
           this.$finalModel,
           this.get_axiosConfig()
         )

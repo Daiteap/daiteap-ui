@@ -185,7 +185,15 @@ export default {
       }
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = this.serviceName;
-      this.deleteDialogParams.endpoint = "/server/deleteService";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/services/" +
+        this.serviceName +
+        "/" +
+        this.serviceNamespace;
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' +
         this.serviceName +
@@ -199,17 +207,29 @@ export default {
     },
     getConnectionInfo(currentObject) {
       let self = currentObject;
-      let request = {
-            clusterID: self.clusterID,
-            name: self.serviceName,
-          }
+      let endpoint =
+        "/server/tenants/" +
+        self.computed_active_tenant_id +
+        "/clusters/" +
+        self.clusterID +
+        "/services/" +
+        self.serviceName +
+        "/connection-info";
       if (self.serviceNamespace != null) {
-        request.namespace = self.serviceNamespace
+        endpoint =
+          "/server/tenants/" +
+          self.computed_active_tenant_id +
+          "/clusters/" +
+          self.clusterID +
+          "/services/" +
+          self.serviceName +
+          "/" +
+          self.serviceNamespace +
+          "/connection-info";
       }
       axios
-        .post(
-          "/server/getServiceConnectionInfo",
-          request,
+        .get(
+          endpoint,
           this.get_axiosConfig()
         )
         .then(function (response) {

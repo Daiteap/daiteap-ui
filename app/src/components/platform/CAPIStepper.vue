@@ -209,7 +209,7 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/createCapiCluster", request, this.get_axiosConfig())
+        .post("/server/tenants/" + this.computed_active_tenant_id + "/clusters/capi-create", request, this.get_axiosConfig())
         .then(function(response) {
           self.$router.push({
             name: "SubmitCAPICluster",

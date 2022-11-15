@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view v-if="!loadingTenant"></router-view>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   </div>
@@ -18,6 +18,7 @@ export default {
     return {
       updatingToken: false,
       usingToken: 0,
+      loadingTenant: true,
     };
   },
   created() {
@@ -385,14 +386,16 @@ Vue.mixin({
           self.handleRequestError(error, "Error while getting workspace settings!");
         });
     },
-    removeComputeNode(nodeID) {
+    removeComputeNode(nodeID, clusterID) {
       let self = this;
       return this.axios
-        .post(
-          "/server/removeComputeNode",
-          {
-            nodeID: nodeID,
-          },
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            clusterID +
+            "/nodes/" +
+            nodeID,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -540,6 +543,7 @@ Vue.mixin({
             self.hasMultipleTenants = true;
           }
           self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+          self.loadingTenant = false;
         })
         .catch(function (error) {
           self.handleRequestError(error, "Error while getting active tenants!");

@@ -251,7 +251,13 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/createDlcmV2", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/dlcmv2-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitKubernetesCluster",

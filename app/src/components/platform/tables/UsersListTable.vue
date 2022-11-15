@@ -163,7 +163,7 @@ export default {
       let request;
       if(user.password != '') {
         request = {
-          username = user.username,
+          username: user.username,
           user_id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
@@ -173,7 +173,7 @@ export default {
         }
       } else {
         request = {
-          username = user.username,
+          username: user.username,
           user_id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,

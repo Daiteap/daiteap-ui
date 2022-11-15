@@ -62,9 +62,7 @@ export default {
               text: self.deleteDialogParams.successMessage,
             });
           }
-          if (self.deleteDialogParams.endpoint=="/server/deleteService"){
-            self.closeModal()
-          }
+          self.closeModal()
         })
         .catch(function (error) {
           console.log(error);

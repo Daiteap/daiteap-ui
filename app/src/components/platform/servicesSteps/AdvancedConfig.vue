@@ -85,11 +85,16 @@ export default {
     setDefaultName(currentObject) {
       let self = currentObject;
       axios
-        .post("/server/generateClusterServiceDefaultName", 
-        {
-          "service": self.$finalModel.serviceName,
-          "clusterID": self.$parent.$parent.clusterID
-        }, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.$parent.$parent.clusterID +
+            "/services/" +
+            self.$finalModel.serviceName +
+            "/default-name",
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.defaultName = response.data.defaultName;
           self.form.name = response.data.defaultName;

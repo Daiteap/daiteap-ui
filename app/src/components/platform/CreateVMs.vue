@@ -278,7 +278,13 @@ export default {
 
       let self = this;
       this.axios
-        .post("/server/createComputeVMs", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/compute-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
             self.$router.push({
               name: 'ProjectDetails',

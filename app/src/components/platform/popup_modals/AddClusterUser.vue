@@ -411,7 +411,11 @@ export default {
       }
       this.axios
         .post(
-          "/server/addUserToCluster",
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/users",
           {
             kubernetesUser: is_kubernetes_user,
             username: self.user.username,

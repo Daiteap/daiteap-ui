@@ -155,12 +155,8 @@ export default {
       if (value.length > 7 && value.length < 15) {
         return new Promise((resolve) => {
           axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value
-              },
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
               self.get_axiosConfig()
             )
             .then(function (response) {

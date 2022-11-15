@@ -584,13 +584,9 @@ export default {
       ) {
         return new Promise((resolve) => {
           self.axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value,
-              },
-              this.get_axiosConfig()
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
+              self.get_axiosConfig()
             )
             .then(function (response) {
               if (response.data.error == true) {
