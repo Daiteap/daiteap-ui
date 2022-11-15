@@ -44,24 +44,14 @@ export default {
     confirmAction() {
       let self = this;
 
-      if(self.deleteManyDialogParams.requestBody.length > 0) {
-        for(let i=0; i < self.deleteManyDialogParams.requestBody.length; i++){
-          this.axios
-            .post(
-              self.deleteManyDialogParams.endpoint,
-              self.deleteManyDialogParams.requestBody[i],
-              this.get_axiosConfig()
-            )
-        }
-      } else {
-        for(let i=0; i < self.deleteManyDialogParams.endpoint.length; i++){
-          this.axios
-            .delete(
-              self.deleteManyDialogParams.endpoint[i],
-              this.get_axiosConfig()
-            )
-        }
+      for(let i=0; i < self.deleteManyDialogParams.endpoint.length; i++) {
+        this.axios
+          .delete(
+            self.deleteManyDialogParams.endpoint[i],
+            this.get_axiosConfig()
+          )
       }
+
       self.closeModal();
     },
   },

@@ -331,25 +331,22 @@ export default {
       this.removeUsername = user.username;
     },
     deleteAllKubernetesClusters() {
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.clustersList.length; i++) {
-        this.deleteManyDialogParams.requestBody.push({
-          clusterID: this.clustersList[i].ID,
-        });
+        this.deleteManyDialogParams.endpoint.push(
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          this.clustersList[i].ID +
+          "/delete"
+        );
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Kubernetes Clusters";
-      this.deleteManyDialogParams.endpoint =
-        "/server/tenants/" +
-        this.computed_active_tenant_id +
-        "/clusters/" +
-        id +
-        "/delete";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
     deleteAllUsers() {
-      this.deleteManyDialogParams.requestBody = [];
       this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].role != "Owner") {
@@ -369,24 +366,21 @@ export default {
     },
     deleteAllVms() {
       let self = this;
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < self.vmsClusters.length; i++) {
         if (self.vmsClusters[i].type == 2 || self.vmsClusters[i].type == 6) {
-          this.deleteManyDialogParams.requestBody.push({
-            clusterID: self.vmsClusters[i].id,
-          });
+          this.deleteManyDialogParams.endpoint.push(
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            self.vmsClusters[i].id +
+            "/delete"
+          );
         }
       }
 
-      console.log(this.deleteManyDialogParams.requestBody);
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Compute (VMs)";
-      this.deleteDialogParams.endpoint =
-        "/server/tenants/" +
-        this.computed_active_tenant_id +
-        "/clusters/" +
-        id +
-        "/delete";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },

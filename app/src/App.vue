@@ -95,7 +95,6 @@ Vue.mixin({
       });
     },
     deleteClusterMain(cluster) {
-      let requestBody = { clusterID: cluster.ID };
       let endpoint;
       if (cluster.Type == 5) {
         endpoint =
@@ -122,7 +121,7 @@ Vue.mixin({
 
       let self = this;
       return this.axios
-        .post(endpoint, requestBody, this.get_axiosConfig())
+        .delete(endpoint, this.get_axiosConfig())
         .then(function () {
           self.$notify({
             group: "msg",

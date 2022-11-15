@@ -48,9 +48,8 @@ export default {
     confirmAction() {
       let self = this;
       this.axios
-        .post(
+        .delete(
           self.deleteDialogParams.endpoint,
-          self.deleteDialogParams.requestBody,
           this.get_axiosConfig()
         )
         .then(function () {

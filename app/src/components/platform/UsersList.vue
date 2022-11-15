@@ -167,7 +167,6 @@ export default {
           .join("")
       );
 
-      this.deleteManyDialogParams.requestBody = [];
       this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].username != JSON.parse(jsonPayload).username) {

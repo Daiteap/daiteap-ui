@@ -1155,7 +1155,6 @@ export default {
     deleteCluster(clusterToRemove) {
       this.$bvModal.hide(this.popupId);
 
-      let requestBody = { clusterID: clusterToRemove.id };
       let endpoint;
       if (clusterToRemove.type == 5) {
         endpoint =
@@ -1182,9 +1181,8 @@ export default {
 
       let self = this;
       this.axios
-        .post(
+        .delete(
           endpoint,
-          requestBody,
           this.get_axiosConfig()
         )
         .then(function () {

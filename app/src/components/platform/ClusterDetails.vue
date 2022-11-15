@@ -752,7 +752,6 @@ export default {
         });
     },
     deleteCluster(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = name;
       this.deleteDialogParams.envId = id;
@@ -843,26 +842,21 @@ export default {
       this.$bvModal.show("bv-modal-confirmdialog");
     },
     deleteAllServices() {
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.servicesListTable.length; i++) {
-        this.deleteManyDialogParams.requestBody.push({
-          clusterID: this.servicesListTable[i].clusterId,
-          name: this.servicesListTable[i].name,
-          namespace: this.servicesListTable[i].namespace,
-          connectionInfo: this.servicesListTable[i].connection_info,
-        });
+        this.deleteManyDialogParams.endpoint.push(
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          this.servicesListTable[i].clusterId +
+          "/services/" +
+          this.servicesListTable[i].name +
+          "/" +
+          this.servicesListTable[i].namespace
+        );
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Services";
-      this.deleteManyDialogParams.endpoint =
-        "/server/tenants/" +
-        this.computed_active_tenant_id +
-        "/clusters/" +
-        this.clusterID +
-        "/services/" +
-        this.serviceName +
-        "/" +
-        this.serviceNamespace;
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },

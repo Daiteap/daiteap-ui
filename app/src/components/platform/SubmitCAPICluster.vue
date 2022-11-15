@@ -262,7 +262,6 @@ export default {
       }
     },
     deleteCluster(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = name;
       this.deleteDialogParams.endpoint =
