@@ -271,7 +271,6 @@ export default {
       showClusterUserInfoModal: false,
       showAddClusterUser: false,
       showAddClusterMachines: false,
-      showRenameCluster: false,
       showAddClusterAccount: false,
       showUpgradeKubernetesCluster: false,
       showUpgradeK3sCluster: false,

@@ -459,30 +459,16 @@ export default {
       });
     },
     updateCluster(cluster) {
-      let endpoint =
-        "/server/tenants/" +
-        this.computed_active_tenant_id +
-        "/clusters/" +
-        this.clusterID +
-        "/update";
-      let isCapi = false;
-      let isYaookCapi = false;
-      if (cluster.type == 5) {
-        isCapi = true;
-      }
-      if (cluster.type == 8) {
-        isYaookCapi = true;
-      }
       let self = this;
-
       this.axios
         .put(
-          endpoint,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.clusterID,
           {
             name: cluster.Name,
             description: cluster.Description,
-            isCapi: isCapi,
-            isYaookCapi: isYaookCapi,
           },
           this.get_axiosConfig()
         )

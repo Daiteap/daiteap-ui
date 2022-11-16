@@ -190,10 +190,10 @@ export default {
                 self.computed_active_tenant_id +
                 "/buckets/" +
                 self.bucket.id +
-                "/files/" +
+                "/files/-" +
                 fileName,
               request,
-              this.get_axiosConfig()
+              self.get_axiosConfig()
             )
             .then(function () {
               self.$notify({
@@ -242,7 +242,7 @@ export default {
             this.computed_active_tenant_id +
             "/buckets/" +
             this.bucket.id +
-            "/files/" +
+            "/files/-" +
             fileName,
           request,
           this.get_axiosConfig()

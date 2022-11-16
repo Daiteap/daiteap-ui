@@ -277,8 +277,7 @@ Vue.mixin({
             "/server/tenants/" +
               this.computed_active_tenant_id +
               "/clusters/" +
-              clusterID +
-              "/details",
+              clusterID,
             this.get_axiosConfig()
           )
           .then(function (response) {

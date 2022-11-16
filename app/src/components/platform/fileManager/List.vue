@@ -184,7 +184,7 @@ export default {
               this.computed_active_tenant_id +
               "/buckets/" +
               this.bucket.id +
-              "/files/" +
+              "/files/-" +
               this.path,
             this.get_axiosConfig()
           )
@@ -233,7 +233,7 @@ export default {
             this.computed_active_tenant_id +
             "/buckets/" +
             this.bucket.id +
-            "/files/" +
+            "/files/-" +
             this.fileToDelete.path,
           this.get_axiosConfig()
         )
@@ -268,9 +268,8 @@ export default {
             this.computed_active_tenant_id +
             "/buckets/" +
             this.bucket.id +
-            "/files/" +
-            item.path +
-            "/download",
+            "/files/-" +
+            item.path,
           this.get_axiosConfig()
         )
         .then(function (response) {

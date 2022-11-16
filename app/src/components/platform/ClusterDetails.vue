@@ -44,11 +44,6 @@
           :clusterID="clusterID"
           @exceededResources="setExceededResources"
         ></AddClusterMachines>
-        <RenameCluster
-          ref="renameClusterComponent"
-          v-show="showRenameCluster"
-          :clusterID="clusterID"
-        ></RenameCluster>
         <ConfirmDialog
           v-show="showConfirmDialog"
           :confirmDialogParams="confirmDialogParams"
@@ -439,7 +434,6 @@ import AddClusterAccount from "./popup_modals/AddClusterAccount";
 import UpgradeKubernetesCluster from "./popup_modals/UpgradeKubernetesCluster";
 import UpgradeK3sCluster from "./popup_modals/UpgradeK3sCluster";
 import AddClusterMachines from "./popup_modals/AddMachinesToVMs";
-import RenameCluster from "./popup_modals/RenameCluster";
 import ConfirmDialog from "./popup_modals/ConfirmDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import ClusterGrafana from "./clusterDetailsComponents/ClusterGrafana";
@@ -491,7 +485,6 @@ export default {
       showClusterUserInfoModal: false,
       showAddClusterUser: false,
       showAddClusterMachines: false,
-      showRenameCluster: false,
       showAddClusterAccount: false,
       showUpgradeKubernetesCluster: false,
       showUpgradeK3sCluster: false,
@@ -545,7 +538,6 @@ export default {
     UpgradeKubernetesCluster,
     UpgradeK3sCluster,
     AddClusterMachines,
-    RenameCluster,
     ClusterStorage,
     ConfirmDialog,
     DeleteDialog,
@@ -657,10 +649,6 @@ export default {
     addMachineToCluster() {
       this.showAddClusterMachines = true;
       this.$bvModal.show("bv-modal-addclustermachines");
-    },
-    renameCluster() {
-      this.showRenameCluster = true;
-      this.$bvModal.show("bv-modal-renamecluster");
     },
     deleteUserFromCluster(user) {
       this.confirmDialogParams.requestBody = {

@@ -563,6 +563,7 @@ export default {
             "/cloud-credentials/" +
             account_id +
             "/validate",
+          {},
           this.get_axiosConfig()
         )
         .then(function (response) {
