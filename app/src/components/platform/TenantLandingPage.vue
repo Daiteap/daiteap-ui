@@ -241,9 +241,10 @@ export default {
   },
   created() {
     this.getUserInfo();
-
     this.getCredentials();
-    this.getUsers();
+    if (this.computed_isAdmin) {
+      this.getUsers();
+    }
     this.getProjects();
     this.getClusters();
     this.getAccountSettings();
@@ -255,7 +256,9 @@ export default {
     self.interval = setInterval(() => {
       self.getProjects();
       self.getCredentials();
-      self.getUsers();
+      if (self.computed_isAdmin) {
+        self.getUsers();
+      }
       self.getClusters();
       self.getBuckets();
     }, 15000);

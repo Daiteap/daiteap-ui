@@ -71,6 +71,7 @@ export default {
             });
           }
           self.closeModal();
+          self.getActiveTenants();
           self.$router.push({
             name: self.confirmAndRedirectDialogParams.redirect
           });
