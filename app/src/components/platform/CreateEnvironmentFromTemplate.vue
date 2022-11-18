@@ -506,7 +506,7 @@ export default {
         .get(
           "/server/tenants/" +
             this.computed_active_tenant_id +
-            "/environmenttemplates/" +
+            "/environment-templates/" +
             environmentTemplateId,
           this.get_axiosConfig()
         )

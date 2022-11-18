@@ -132,7 +132,7 @@ export default {
         .post(
           "/server/tenants/" +
             this.computed_active_tenant_id +
-            "/environmenttemplates",
+            "/environment-templates",
           request,
           this.get_axiosConfig()
         )
@@ -189,7 +189,7 @@ export default {
                   .get(
                     "/server/tenants/" +
                       this.computed_active_tenant_id +
-                      "/environmenttemplates/name-available/" +
+                      "/environment-templates/name-available/" +
                       value,
                     this.get_axiosConfig()
                   )

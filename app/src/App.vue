@@ -300,7 +300,7 @@ Vue.mixin({
           .get(
             "/server/tenants/" +
               this.computed_active_tenant_id +
-              "/environmenttemplates",
+              "/environment-templates",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -441,7 +441,7 @@ Vue.mixin({
       this.usingToken += 1;
       return this.axios
         .get(
-          "/server/tenants/" + this.computed_active_tenant_id + "/user-quotas",
+          "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
           this.get_axiosConfig()
         )
         .then(function (response) {

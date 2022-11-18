@@ -156,7 +156,7 @@ export default {
         .delete(
           "/server/tenants/" +
             this.computed_active_tenant_id +
-            "/environmenttemplates/" +
+            "/environment-templates/" +
             templateToRemove.id,
           this.get_axiosConfig()
         )
