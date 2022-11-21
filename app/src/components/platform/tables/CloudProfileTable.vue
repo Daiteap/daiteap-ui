@@ -68,15 +68,7 @@
               white-space: normal;
             "
           >
-            <div v-if="account.provider == 'aws'">
-              {{ account.cloud_account_info["account_email"] }}
-            </div>
-            <div v-else-if="account.provider == 'google'">
-              {{ account.cloud_account_info["email"] }}
-            </div>
-            <div v-else-if="account.provider == 'azure'">
-              {{ account.cloud_account_info["created_by"] }}
-            </div>
+            {{ account.cloud_account_info }}
           </td>
           <td>
             {{ account.created_at_pretty }}
