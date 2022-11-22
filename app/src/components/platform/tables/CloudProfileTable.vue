@@ -68,17 +68,7 @@
               white-space: normal;
             "
           >
-            <div v-if="account.provider == 'aws'">
-              {{ account.cloud_account_info["account_email"] }}
-            </div>
-            <div
-              v-else
-              v-for="(value, key) in account.cloud_account_info"
-              :key="key"
-            >
-              <strong>{{ key | upperCase }}</strong
-              >: {{ value }}
-            </div>
+            {{ account.cloud_account_info }}
           </td>
           <td>
             {{ account.created_at_pretty }}
