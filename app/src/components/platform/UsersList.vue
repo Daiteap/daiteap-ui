@@ -208,12 +208,21 @@ export default {
         .catch(function (error) {
           console.error("Error deleting user.");
           console.log(error.response);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: error.response.data.message || "Error deleting user.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: error.response.data.message || "Error deleting user.",
+            });
+          }
         });
 
       this.onUsersChanged();

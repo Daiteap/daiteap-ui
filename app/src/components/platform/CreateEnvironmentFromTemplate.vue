@@ -393,6 +393,14 @@ export default {
                 })
                 .catch(function (error) {
                   console.log(error);
+                  if (error.response && error.response.status == "403") {
+                    self.$notify({
+                      group: "msg",
+                      type: "error",
+                      title: "Notification:",
+                      text: "Access Denied",
+                    });
+                  }
                   resolve(false);
                 });
             }, 350);
@@ -449,12 +457,21 @@ export default {
         })
         .catch(function (error) {
           console.info(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error confirming name availability " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error confirming name availability " + error,
+            });
+          }
         });
     },
     sendToCorrectEndpoint() {
@@ -528,12 +545,21 @@ export default {
         })
         .catch(function (error) {
           self.error = error;
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error getting template configuration " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error getting template configuration " + error,
+            });
+          }
         });
     },
     formatDate(date) {
@@ -667,12 +693,21 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error.response);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: error.response.data.error.message,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: error.response.data.error.message,
+            });
+          }
         });
     },
     submitKubernetesCluster() {
@@ -707,6 +742,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error.status.code);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitCAPICluster() {
@@ -735,6 +778,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitK3sCluster() {
@@ -769,6 +820,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitVM() {
@@ -803,6 +862,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitYaookCluster() {
@@ -831,6 +898,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

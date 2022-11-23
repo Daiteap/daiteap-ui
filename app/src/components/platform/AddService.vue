@@ -474,22 +474,31 @@ export default {
                 text: "Error while adding service!",
               });
             } else {
-              if (
-                error.response.data.error.message ==
-                "Service can't be installed more than once in a cluster."
-              ) {
-                self.alert.msg =
-                  "Service can't be installed more than once in a cluster.";
-                self.alert.link = "";
-                self.alert.show = true;
-                self.alert.key += 1;
-              } else {
+              if (error.response && error.response.status == "403") {
                 self.$notify({
                   group: "msg",
                   type: "error",
                   title: "Notification:",
-                  text: error,
+                  text: "Access Denied",
                 });
+              } else {
+                if (
+                  error.response.data.error.message ==
+                  "Service can't be installed more than once in a cluster."
+                ) {
+                  self.alert.msg =
+                    "Service can't be installed more than once in a cluster.";
+                  self.alert.link = "";
+                  self.alert.show = true;
+                  self.alert.key += 1;
+                } else {
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: error,
+                  });
+                }
               }
             }
           }

@@ -165,10 +165,19 @@ export default {
           self.loading = false;
           console.log(error);
           let msg = error.message;
-          if (msg.includes("400")) {
-            self.showAlert("Invalid request");
-          } else if (msg.includes("401")) {
-            self.showAlert("Invalid password");
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (msg.includes("400")) {
+              self.showAlert("Invalid request");
+            } else if (msg.includes("401")) {
+              self.showAlert("Invalid password");
+            }
           }
         });
     },

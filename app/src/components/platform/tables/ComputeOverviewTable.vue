@@ -439,12 +439,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cluster.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cluster.",
+            });
+          }
         });
     },
     showModal(node){
@@ -724,12 +733,21 @@ export default {
         )
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving Template. " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving Template. " + error,
+            });
+          }
         });
     },
   },

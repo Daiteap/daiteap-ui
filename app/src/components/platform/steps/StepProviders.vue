@@ -327,12 +327,21 @@ export default {
       })
       .catch(function (error) {
         console.log(error);
-        self.$notify({
-          group: "msg",
-          type: "error",
-          title: "Notification:",
-          text: "Error while getting user information!",
-        });
+        if (error.response && error.response.status == "403") {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting user information!",
+          });
+        }
       });
 
     this.getCloudCredentials();
@@ -542,12 +551,21 @@ export default {
             clearInterval(self.interval);
             console.log(error);
             regions.updating = false;
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while getting regions information.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while getting regions information.",
+              });
+            }
           });
       }, 1000);
       window.intervals.push(self.interval);
@@ -576,12 +594,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting regions information. " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting regions information. " + error,
+            });
+          }
         });
     },
     stopAllIntervals() {

@@ -186,12 +186,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: "Error while getting storage accounts.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: "Error while getting storage accounts.",
+            });
+          }
         });
     },
     saveBucket() {
@@ -229,12 +238,21 @@ export default {
             self.$emit("showAlert", false)
             self.$emit("alertKey", 1)
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while creating container.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while creating container.",
+              });
+            }
           }
         });
     },

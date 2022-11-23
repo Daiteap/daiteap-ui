@@ -237,6 +237,14 @@ export default {
         })
         .catch(function(error) {
           console.error(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     changeInstallationStatus() {

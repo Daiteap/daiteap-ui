@@ -167,6 +167,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
           return "";
         });
     },
@@ -217,12 +225,21 @@ export default {
             if (error.response) {
               console.log(error.response.data);
             }
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while submitting cluster resize.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while submitting cluster resize.",
+              });
+            }
           }
         });
     },

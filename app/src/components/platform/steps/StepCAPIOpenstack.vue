@@ -275,12 +275,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting instances information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting instances information! " + error,
+            });
+          }
         });
     },
     getOperatingSystemsList() {
@@ -326,12 +335,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting operating systems information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting operating systems information! " + error,
+            });
+          }
         });
     },
     stopAllIntervals() {

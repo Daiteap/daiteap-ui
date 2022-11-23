@@ -167,12 +167,21 @@ export default {
         .catch(function (error) {
           console.error("Error deleting template.");
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while deleting template!",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while deleting template!",
+            });
+          }
         });
 
       this.onTemplatesChanged();

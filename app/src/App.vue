@@ -87,12 +87,21 @@ Vue.mixin({
       if (error.response) {
         console.log(error.response.data);
       }
-      this.$notify({
-        group: "msg",
-        type: "error",
-        title: "Notification:",
-        text: message,
-      });
+      if (error.response && error.response.status == "403") {
+        this.$notify({
+          group: "msg",
+          type: "error",
+          title: "Notification:",
+          text: "Access Denied",
+        });
+      } else {
+        this.$notify({
+          group: "msg",
+          type: "error",
+          title: "Notification:",
+          text: message,
+        });
+      }
     },
     deleteClusterMain(cluster) {
       let endpoint;

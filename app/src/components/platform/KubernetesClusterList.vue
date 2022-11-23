@@ -262,6 +262,14 @@ export default {
             ].Providers.substring(0, self.clustersList[i].Providers.length - 2);
           } catch (error) {
             console.log(error);
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            }
           }
         }
 

@@ -433,12 +433,21 @@ export default {
               }
             }
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while deleting cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while deleting cloud credentials.",
+            });
+          }
         });
     },
     updateAccountName(accountWithEditedName, id, provider) {
@@ -474,12 +483,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cloud credentials.",
+            });
+          }
         });
     },
     saveNewAccount(provider, account) {
@@ -510,12 +528,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving the user information",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving the user information",
+            });
+          }
         });
     },
     validateCredentials(account_id) {
@@ -671,12 +698,21 @@ export default {
             if (error.response) {
               console.log(error.response.data);
             }
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while validating the user information",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while validating the user information",
+              });
+            }
           }
         });
     },

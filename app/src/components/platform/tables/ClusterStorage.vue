@@ -145,6 +145,14 @@ export default {
           self.loadingTable = false;
           self.showStorage = false;
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     getClusterStorage() {
@@ -169,6 +177,14 @@ export default {
           self.loadingTable = false;
           self.showStorage = false;
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

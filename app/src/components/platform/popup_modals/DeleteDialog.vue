@@ -84,20 +84,29 @@ export default {
           if (error.response) {
             error= error.response.data.error.message;
           }
-          if (self.deleteDialogParams.failureMessage) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: self.deleteDialogParams.failureMessage,
+              text: "Access Denied",
             });
           } else {
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error deleting template: " + error,
-            });
+            if (self.deleteDialogParams.failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: self.deleteDialogParams.failureMessage,
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error deleting template: " + error,
+              });
+            }
           }
           self.closeModal();
         });

@@ -174,6 +174,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);
@@ -247,7 +255,16 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
           self.errorMsg = error;
-          self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.showAlert(error);
+          }
         });
     },
   },

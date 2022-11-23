@@ -480,12 +480,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting cloud credentials information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting cloud credentials information! " + error,
+            });
+          }
         });
     },
     getAvailableAccounts() {
@@ -532,12 +541,21 @@ export default {
         })
         .catch(function (error) {
           self.error = error;
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error getting template configuration " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error getting template configuration " + error,
+            });
+          }
         });
     },
   },

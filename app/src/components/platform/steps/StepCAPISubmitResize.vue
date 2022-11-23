@@ -199,13 +199,21 @@ export default {
         })
         .catch(function (error) {
           self.loadingPlan = false;
-
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting terraform plan.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting terraform plan.",
+            });
+          }
         });
     },
   },

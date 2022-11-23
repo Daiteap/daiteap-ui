@@ -107,12 +107,21 @@ export default {
       })
       .catch(function (error) {
         console.log(error);
-        self.$notify({
-          group: "msg",
-          type: "error",
-          title: "Notification:",
-          text: "Error while getting user information!",
-        });
+        if (error.response && error.response.status == "403") {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting user information!",
+          });
+        }
       });
 
     this.$root.$on(
@@ -262,6 +271,14 @@ export default {
           console.log(error);
           self.errorMsg = error;
           // self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

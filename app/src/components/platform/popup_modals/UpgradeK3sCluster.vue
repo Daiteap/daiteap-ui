@@ -113,6 +113,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     upgradeK3sCluster() {
@@ -135,6 +143,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     closeModal() {
