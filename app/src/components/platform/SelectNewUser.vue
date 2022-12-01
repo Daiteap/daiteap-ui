@@ -96,7 +96,10 @@ export default {
       let self = this;
       let tenantID = this.tenant.id;
       axios
-        .get("/server/tenant/" + tenantID + "/getUnregisteredUsers", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + tenantID + "/unregistered-users",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.allUsers = response.data.unregisteredUsers;
 					self.filteredUsers = response.data.unregisteredUsers;
@@ -105,6 +108,14 @@ export default {
         .catch(function (error) {
           console.error("Error on getting unregistered users occurred.");
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
 		},
 		onSearchChange() {

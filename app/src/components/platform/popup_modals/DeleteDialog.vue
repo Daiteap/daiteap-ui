@@ -51,9 +51,8 @@ export default {
     confirmAction() {
       let self = this;
       this.axios
-        .post(
+        .delete(
           self.deleteDialogParams.endpoint,
-          self.deleteDialogParams.requestBody,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -65,13 +64,12 @@ export default {
               text: self.deleteDialogParams.successMessage,
             });
           }
-          if (self.deleteDialogParams.endpoint=="/server/deleteService"){
+          if (self.deleteDialogParams.endpoint.includes("services")){
             self.$bvModal.hide("bv-modal-deletedialog");
             self.$emit('closeModal');
-          } else if (self.deleteDialogParams.endpoint=="/server/environmenttemplates/delete"){
+          } else if (self.deleteDialogParams.endpoint.includes("environmenttemplates")){
             self.closeModal();
-          } else if (self.deleteDialogParams.endpoint=="/server/deleteCapiCluster" ||
-                      self.deleteDialogParams.endpoint=="/server/deleteCluster"){
+          } else if (self.deleteDialogParams.endpoint.includes("clusters")){
             self.closeModal();
           } else {
             if (self.deleteDialogParams.redirectPage){
@@ -86,20 +84,29 @@ export default {
           if (error.response) {
             error= error.response.data.error.message;
           }
-          if (self.deleteDialogParams.failureMessage) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: self.deleteDialogParams.failureMessage,
+              text: "Access Denied",
             });
           } else {
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error deleting template: " + error,
-            });
+            if (self.deleteDialogParams.failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: self.deleteDialogParams.failureMessage,
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error deleting template: " + error,
+              });
+            }
           }
           self.closeModal();
         });

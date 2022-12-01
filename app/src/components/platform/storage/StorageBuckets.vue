@@ -143,7 +143,13 @@ export default {
       let self = this;
 
       this.axios
-        .delete(`/server/buckets/${this.bucketToDelete.id}`, this.get_axiosConfig())
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucketToDelete.id,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -160,12 +166,21 @@ export default {
             self.showAlert = false;
             self.alertKey += 1;
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while deleting bucket.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while deleting bucket.",
+              });
+            }
           }
         });
     },

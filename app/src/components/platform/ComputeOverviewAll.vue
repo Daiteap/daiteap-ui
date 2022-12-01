@@ -109,61 +109,6 @@ export default {
     },
   },
   methods: {
-    stopMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to stop machine:";
-      this.confirmDialogParams.endpoint = "/server/stopMachine";
-      this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    startMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to start machine:";
-      this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/startMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted start for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit start of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    restartMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text =
-        "Are you sure you want to restart machine:";
-      this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/restartMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
     async getClusterDetails(currentObject) {
       let self = currentObject;
       self.cluster = await this.getClusterDetailsMain(self.clusterID);

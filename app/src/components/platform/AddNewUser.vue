@@ -190,11 +190,11 @@ export default {
   methods: {
     setCompany() {
       if (!this.isBAO) {
-        this.axios.get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+        this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
           this.form.company = response.data.tenant.company;
         });
       } else {
-        this.axios.get("/server/account/tenant/" + this.tenant.id, this.get_axiosConfig()).then((response) => {
+        this.axios.get("/server/tenants/" + this.tenant.id, this.get_axiosConfig()).then((response) => {
           this.form.company = response.data.tenant.company;
         });
       }
@@ -214,7 +214,11 @@ export default {
       let self = this;
       let request = this.form;
       this.axios
-        .post("/server/addnewuser", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/users",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           if (response.data.user_created == false) {
             self.showAlert("Cannot create user");
@@ -228,7 +232,16 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
           self.errorMsg = error;
-          self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.showAlert(error);
+          }
         });
     },
     showAlert(msg) {

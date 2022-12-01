@@ -242,7 +242,14 @@ export default {
         };
         this.confirmDialogParams.text =
           'Are you sure you want to stop this machine?';
-        this.confirmDialogParams.endpoint = "/server/stopMachine";
+        this.confirmDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/machines/" +
+          name +
+          "/stop";
         this.confirmDialogParams.action = "Stop";
         this.confirmDialogParams.envName = name;
         this.confirmDialogParams.envId = id;
@@ -267,7 +274,14 @@ export default {
         this.confirmDialogParams.action = "Start";
         this.confirmDialogParams.envId = id;
         this.confirmDialogParams.envName = name;
-        this.confirmDialogParams.endpoint = "/server/startMachine";
+        this.confirmDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/machines/" +
+          name +
+          "/start";
         this.confirmDialogParams.successMessage =
           'You have successfully submitted start for "' + name + '".';
         this.confirmDialogParams.failureMessage =
@@ -289,7 +303,14 @@ export default {
         this.confirmDialogParams.action = "Restart";
         this.confirmDialogParams.envId = id;
         this.confirmDialogParams.envName = name;
-        this.confirmDialogParams.endpoint = "/server/restartMachine";
+        this.confirmDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/machines/" +
+          name +
+          "/restart";
         this.confirmDialogParams.successMessage =
           'You have successfully submitted stop for "' + name + '".';
         this.confirmDialogParams.failureMessage =

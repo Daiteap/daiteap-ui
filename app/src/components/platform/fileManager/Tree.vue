@@ -111,18 +111,17 @@ export default {
     async readFolder(item) {
       this.$emit("loading", true);
       let self = this;
-      let request = {
-        provider: this.bucket.provider,
-        credential_id: this.bucket.credential.id,
-        bucket_name: this.bucket.name,
-        path: this.path,
-      };
-      if (this.bucket.provider == "azure") {
-        request.storage_account = this.bucket.storage_account;
-      }
 
       this.axios
-        .post("/server/getBucketFiles", request, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucket.id +
+            "/files/-" +
+            this.path,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           item.children = response.data.files.map((item) => {
             if (item.type === "dir") {
@@ -135,12 +134,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: "Error while getting files.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: "Error while getting files.",
+            });
+          }
         });
     },
     activeChanged(active) {

@@ -145,7 +145,10 @@ export default {
       let self = this;
       this.axios
         .delete(
-          `/server/projects/${project.ID}`,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/projects/" +
+            project.ID,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -161,20 +164,29 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          if (error.response.data.error.message != undefined) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: error.response.data.error.message,
+              text: "Access Denied",
             });
           } else {
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while deleting project!",
-            });
+            if (error.response.data.error.message != undefined) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: error.response.data.error.message,
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while deleting project!",
+              });
+            }
           }
         });
     },
@@ -187,11 +199,13 @@ export default {
       });
     },
     updateProject(project) {
-      let endpoint = "/server/projects/" + project.id;
       let self = this;
       this.axios
         .put(
-          endpoint,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/projects/" +
+            project.id,
           {
             name: project.Name,
             description: project.Description,
@@ -211,12 +225,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating project.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating project.",
+            });
+          }
         });
     },
   },

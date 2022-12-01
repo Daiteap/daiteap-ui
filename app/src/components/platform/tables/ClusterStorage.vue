@@ -128,7 +128,7 @@ export default {
     gettaskmessage(taskId) {
       let self = this;
       self.axios
-        .post("/server/gettaskmessage", { taskId: taskId }, this.get_axiosConfig())
+        .get("/server/task-message/" + taskId, this.get_axiosConfig())
         .then(function (response) {
           if (response.data.status !== "PENDING") {
             clearInterval(self.intervalGetTaskMessage);
@@ -145,16 +145,25 @@ export default {
           self.loadingTable = false;
           self.showStorage = false;
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     getClusterStorage() {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterStorage",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/storage",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -168,6 +177,14 @@ export default {
           self.loadingTable = false;
           self.showStorage = false;
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

@@ -433,7 +433,15 @@ export default {
       self.currentAccordion = "submitted";
 
       this.axios
-        .post("/server/addService", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.clusterID +
+            "/services",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           Vue.prototype.$finalModel = {};
           self.$router.push({
@@ -466,22 +474,31 @@ export default {
                 text: "Error while adding service!",
               });
             } else {
-              if (
-                error.response.data.error.message ==
-                "Service can't be installed more than once in a cluster."
-              ) {
-                self.alert.msg =
-                  "Service can't be installed more than once in a cluster.";
-                self.alert.link = "";
-                self.alert.show = true;
-                self.alert.key += 1;
-              } else {
+              if (error.response && error.response.status == "403") {
                 self.$notify({
                   group: "msg",
                   type: "error",
                   title: "Notification:",
-                  text: error,
+                  text: "Access Denied",
                 });
+              } else {
+                if (
+                  error.response.data.error.message ==
+                  "Service can't be installed more than once in a cluster."
+                ) {
+                  self.alert.msg =
+                    "Service can't be installed more than once in a cluster.";
+                  self.alert.link = "";
+                  self.alert.show = true;
+                  self.alert.key += 1;
+                } else {
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: error,
+                  });
+                }
               }
             }
           }
@@ -500,7 +517,7 @@ export default {
       let self = currentObject;
 
       axios
-        .post("/server/getServiceList", {}, this.get_axiosConfig())
+        .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           let servicesList = [];
           for (let i = 0; i < response.data.serviceList.length; i++) {

@@ -360,7 +360,10 @@ export default {
       let self = this;
       this.axios
         .delete(
-          `/server/cloud-credentials/${account.id}`,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account.id,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -430,20 +433,31 @@ export default {
               }
             }
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while deleting cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while deleting cloud credentials.",
+            });
+          }
         });
     },
     updateAccountName(accountWithEditedName, id, provider) {
-      let endpointAccountNameChange = "/server/cloud-credentials/" + id;
       let self = this;
       this.axios
         .put(
-          endpointAccountNameChange,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            id,
           {
             label: accountWithEditedName.label,
             description: accountWithEditedName.description,
@@ -469,12 +483,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cloud credentials.",
+            });
+          }
         });
     },
     saveNewAccount(provider, account) {
@@ -483,7 +506,9 @@ export default {
       let self = this;
       this.axios
         .post(
-          "/server/cloud-credentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials",
           {
             provider: provider,
             account_params: account_params,
@@ -503,12 +528,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving the user information",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving the user information",
+            });
+          }
         });
     },
     validateCredentials(account_id) {
@@ -549,12 +583,14 @@ export default {
       self.errorMsg = "";
       self.error = false;
 
-      let request = { account_id: account_id };
-
       this.axios
         .post(
-          "/server/validateCredentials",
-          request,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account_id +
+            "/validate",
+          {},
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -574,9 +610,8 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post(
-                "/server/gettaskmessage",
-                { taskId: taskId },
+              .get(
+                "/server/task-message/" + taskId,
                 self.get_axiosConfig()
               )
               .then(function (response) {
@@ -663,12 +698,21 @@ export default {
             if (error.response) {
               console.log(error.response.data);
             }
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while validating the user information",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while validating the user information",
+              });
+            }
           }
         });
     },

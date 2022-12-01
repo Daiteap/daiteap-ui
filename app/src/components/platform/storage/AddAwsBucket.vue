@@ -180,7 +180,11 @@ export default {
       };
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -199,12 +203,21 @@ export default {
             self.$emit("showAlert", false)
             self.$emit("alertKey", 1)
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while creating bucket.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while creating bucket.",
+              });
+            }
           }
         });
     },

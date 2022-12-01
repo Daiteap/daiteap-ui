@@ -113,15 +113,23 @@ export default {
     getValues() {
       let self = this;
       axios
-        .post("/server/getServiceValues", 
-        {
-          service: self.$finalModel.serviceName, 
-        }, this.get_axiosConfig())
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/values",
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.textPopupParams.text = response.data.values;
         })
         .catch(function(error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     showValues() {

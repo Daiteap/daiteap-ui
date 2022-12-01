@@ -584,13 +584,9 @@ export default {
       ) {
         return new Promise((resolve) => {
           self.axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value,
-              },
-              this.get_axiosConfig()
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
+              self.get_axiosConfig()
             )
             .then(function (response) {
               if (response.data.error == true) {
@@ -601,12 +597,21 @@ export default {
             })
             .catch(function (error) {
               console.log(error);
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Notification:",
-                text: "Error while checking IP address! " + error,
-              });
+              if (error.response && error.response.status == "403") {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Access Denied",
+                });
+              } else {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Error while checking IP address! " + error,
+                });
+              }
             });
         });
       }

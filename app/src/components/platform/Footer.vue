@@ -34,7 +34,7 @@ export default {
     getAPIVersion(currentObject) {
       let self = currentObject;
       this.axios
-        .get("/server/getVersion", this.get_axiosConfig())
+        .get("/server/get-version", this.get_axiosConfig())
         .then(function (response) {
           self.API_COMMIT_INFO =
             response.data.version +

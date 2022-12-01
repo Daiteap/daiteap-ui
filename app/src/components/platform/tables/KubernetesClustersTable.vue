@@ -800,11 +800,12 @@ export default {
     getResizeStatus(environment) {
       let self = this;
       this.axios
-        .post(
-          "/server/getResizeStatus",
-          {
-            ID: environment.ID,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            environment.ID +
+            "/resize-status",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -819,12 +820,21 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting resize status!",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting resize status!",
+            });
+          }
         });
     },
     resizeStatus(resizeStep, type) {
@@ -1098,7 +1108,15 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/environmenttemplates/save", templateForm, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            templateForm.environmentId +
+            "/template",
+          templateForm,
+          this.get_axiosConfig()
+        )
         .then(
           self.$notify({
             group: "msg",
@@ -1109,12 +1127,21 @@ export default {
         )
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving Template! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving Template! " + error,
+            });
+          }
         });
     },
     deleteError(deleteItem) {
@@ -1146,21 +1173,34 @@ export default {
     deleteCluster(clusterToRemove) {
       this.$bvModal.hide(this.popupId);
 
-      let requestBody = { clusterID: clusterToRemove.id };
       let endpoint;
       if (clusterToRemove.type == 5) {
-        endpoint = "/server/deleteCapiCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/capi-delete";
       } else if (clusterToRemove.type == 8) {
-        endpoint = "/server/deleteYaookCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/yaook-delete";
       } else {
-        endpoint = "/server/deleteCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/delete";
       }
 
       let self = this;
       this.axios
-        .post(
+        .delete(
           endpoint,
-          requestBody,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -1179,12 +1219,21 @@ export default {
           if (error.response) {
             error= error.response.data.error.message;
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: 'Error occured while you tried to submit deletion of "' + clusterToRemove.name + '".',
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: 'Error occured while you tried to submit deletion of "' + clusterToRemove.name + '".',
+            });
+          }
         });
     },
     deleteClusterPopup(id, name, type) {
@@ -1199,7 +1248,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.endpoint = "/server/stopCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/stop";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1213,7 +1267,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.endpoint = "/server/startCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/start";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted start for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1227,7 +1286,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.endpoint = "/server/restartCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/restart";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1238,11 +1302,12 @@ export default {
     downloadKubeconfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterKubeconfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1257,22 +1322,32 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Kubeconfig file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Kubeconfig file! " + error,
+            });
+          }
         });
     },
     downloadWireguardConfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getWireguardConfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/wireguard-config",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1287,12 +1362,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Wireguard file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Wireguard file! " + error,
+            });
+          }
         });
     },
     openEditPopup(cluster) {
@@ -1304,24 +1388,16 @@ export default {
       });
     },
     updateCluster(cluster) {
-      let endpoint = "/server/updateCluster/" + cluster.id;
-      let isCapi = false;
-      let isYaookCapi = false;
-      if(cluster.type == 5) {
-        isCapi = true;
-      }
-      if(cluster.type == 8) {
-        isYaookCapi = true;
-      }
       let self = this;
       this.axios
-        .post(
-          endpoint,
+        .put(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.id,
           {
             name: cluster.Name,
             description: cluster.Description,
-            isCapi: isCapi,
-            isYaookCapi: isYaookCapi
           },
           this.get_axiosConfig()
         )
@@ -1338,12 +1414,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cluster.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cluster.",
+            });
+          }
         });
     },
     setExceededResources(resources) {

@@ -119,7 +119,11 @@ export default {
 
       this.axios
         .post(
-          "/server/getTerraformPlan",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.$finalModel.clusterID +
+            "/terraform-plan",
           this.$finalModel,
           this.get_axiosConfig()
         )
@@ -128,9 +132,8 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post(
-                "/server/gettaskmessage",
-                { taskId: taskId },
+              .get(
+                "/server/task-message/" + taskId,
                 self.get_axiosConfig()
               )
               .then(function (response) {
@@ -196,13 +199,21 @@ export default {
         })
         .catch(function (error) {
           self.loadingPlan = false;
-
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting terraform plan.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting terraform plan.",
+            });
+          }
         });
     },
   },

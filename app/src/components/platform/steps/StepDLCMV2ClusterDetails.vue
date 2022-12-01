@@ -374,11 +374,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isDLCMv2NameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/dlcmv2-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -394,6 +394,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 0);
@@ -553,7 +561,7 @@ export default {
       let self = this;
       self.loadingKubernetesConfigurations = true;
       axios
-        .get("/server/getsupporteddlcmv2configurations", this.get_axiosConfig())
+        .get("/server/clusters/dlcmv2-supported-configurations", this.get_axiosConfig())
         .then(function (response) {
           self.supportedKubernetesVersions =
             response.data.supportedKubernetesVersions;

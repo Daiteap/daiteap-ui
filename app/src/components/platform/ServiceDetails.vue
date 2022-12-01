@@ -212,7 +212,15 @@ export default {
       };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = this.serviceName;
-      this.deleteDialogParams.endpoint = "/server/deleteService";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/services/" +
+        this.serviceName +
+        "/" +
+        this.serviceNamespace;
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' +
         this.serviceName +
@@ -227,13 +235,16 @@ export default {
     getConnectionInfo(currentObject) {
       let self = currentObject;
       axios
-        .post(
-          "/server/getServiceConnectionInfo",
-          {
-            clusterID: self.clusterID,
-            name: self.serviceName,
-            namespace: self.serviceNamespace,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/services/" +
+            self.serviceName +
+            "/" +
+            self.serviceNamespace +
+            "/connection-info",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -241,6 +252,14 @@ export default {
           self.loading = false;
         })
         .catch(function (error) {
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
           console.log(error);
         });
     },

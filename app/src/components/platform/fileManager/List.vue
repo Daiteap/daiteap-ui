@@ -177,25 +177,38 @@ export default {
       if (this.isDir) {
         let self = this;
         this.loadingFiles = true;
-        let request = {
-          bucket_id: this.bucket.id,
-          path: this.path,
-        };
 
         this.axios
-          .post("/server/getBucketFiles", request, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/buckets/" +
+              this.bucket.id +
+              "/files/-" +
+              this.path,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.items = response.data.files;
             self.loadingFiles = false;
           })
           .catch(function (error) {
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while getting files.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while getting files.",
+              });
+            }
           });
       }
       this.$emit("loading", false);
@@ -213,25 +226,26 @@ export default {
       this.$emit("loading", true);
 
       let self = this;
-      let request = {
-        bucket_id: this.bucket.id,
-      };
 
-      let endpoint, successMsg, errorMsg;
+      let successMsg, errorMsg;
       if (this.fileToDelete.content_type == "folder") {
-        endpoint = "/server/deleteBucketFolder";
         successMsg = "Successfully deleted folder!";
         errorMsg = "Error while deleting folder.";
-        request.folder_path = this.fileToDelete.path;
       } else {
-        endpoint = "/server/deleteBucketFile";
         successMsg = "Successfully deleted file!";
         errorMsg = "Error while deleting file.";
-        request.file_name = this.fileToDelete.path;
       }
 
       this.axios
-        .post(endpoint, request, this.get_axiosConfig())
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucket.id +
+            "/files/-" +
+            this.fileToDelete.path,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -244,25 +258,38 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: errorMsg,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: errorMsg,
+            });
+          }
         });
 
       this.$emit("loading", false);
     },
     downloadItem(item) {
       let self = this;
-      let request = {
-        bucket_id: this.bucket.id,
-        file_name: item.path,
-      };
 
       this.axios
-        .post("/server/downloadBucketFile", request, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucket.id +
+            "/files/-" +
+            item.path,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           let contents = response.data["contents"];
           let contentType = response.data["content_type"];
@@ -278,12 +305,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: "Error while downloading file.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: "Error while downloading file.",
+            });
+          }
         });
     },
   },

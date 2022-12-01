@@ -67,24 +67,33 @@ export default {
     getActiveTenants() {
       let self = this;
       this.axios
-        .get("/server/getActiveTenants", this.get_axiosConfig())
+        .get("/server/user/active-tenants", this.get_axiosConfig())
         .then(function (response) {
           self.activeTenants = response.data.activeTenants;
           self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting active tenants!",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting active tenants!",
+            });
+          }
         });
     },
     getSelectedTenant() {
       this.axios
-        .get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+        .get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
           this.selectedTenant = response.data.tenant.id;
         });
     }

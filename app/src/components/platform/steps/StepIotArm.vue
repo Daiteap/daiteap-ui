@@ -161,12 +161,8 @@ export default {
       if (value.length > 7 && value.length < 15) {
         return new Promise((resolve) => {
           axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value
-              },
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
               self.get_axiosConfig()
             )
             .then(function (response) {
@@ -282,7 +278,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios        
         .get(
-          "/server/getValidOperatingSystems/" + self.computed_userInfo.username + "/" + self.provider + "/" + self.form.iotarm.account + "/0/" + self.form.iotarm.account,
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.iotarm.account +
+            "/regions/" +
+            self.form.iotarm.region +
+            "/environment-type/0/operating-systems",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -300,12 +302,21 @@ export default {
         .catch(function(error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting operating systems information! "+error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting operating systems information! "+error,
+            });
+          }
           self.$emit("can-continue", { value: false })
         });
     },

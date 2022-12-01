@@ -145,11 +145,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/environmenttemplates/isnamefree",
-                    {
-                      name: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/environment-templates/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -165,6 +165,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);

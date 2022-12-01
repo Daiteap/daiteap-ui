@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view v-if="!loadingTenant"></router-view>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   </div>
@@ -18,6 +18,7 @@ export default {
     return {
       updatingToken: false,
       usingToken: 0,
+      loadingTenant: true,
     };
   },
   created() {
@@ -86,27 +87,50 @@ Vue.mixin({
       if (error.response) {
         console.log(error.response.data);
       }
-      this.$notify({
-        group: "msg",
-        type: "error",
-        title: "Notification:",
-        text: message,
-      });
+      if (error.response && error.response.status == "403") {
+        this.$notify({
+          group: "msg",
+          type: "error",
+          title: "Notification:",
+          text: "Access Denied",
+        });
+      } else {
+        this.$notify({
+          group: "msg",
+          type: "error",
+          title: "Notification:",
+          text: message,
+        });
+      }
     },
     deleteClusterMain(cluster) {
-      let requestBody = { clusterID: cluster.ID };
       let endpoint;
       if (cluster.Type == 5) {
-        endpoint = "/server/deleteCapiCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/capi-delete";
       } else if (cluster.Type == 8) {
-        endpoint = "/server/deleteYaookCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/yaook-delete";
       } else {
-        endpoint = "/server/deleteCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          cluster.ID +
+          "/delete";
       }
 
       let self = this;
       return this.axios
-        .post(endpoint, requestBody, this.get_axiosConfig())
+        .delete(endpoint, this.get_axiosConfig())
         .then(function () {
           self.$notify({
             group: "msg",
@@ -145,7 +169,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/getuserslist", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/users",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateUsers", response.data.users_list);
@@ -164,7 +191,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/projects", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateProjects", response.data);
@@ -183,7 +213,12 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/cloud-credentials", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateCredentials", response.data);
@@ -202,7 +237,13 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/cloud-credentials/" + credentialId, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);
@@ -220,7 +261,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getClusterList", {}, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);
@@ -238,9 +282,13 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getClusterDetails",
-            { clusterID: clusterID },
-            this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/clusters/" +
+              clusterID,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data);
@@ -258,7 +306,12 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/environmenttemplates/list", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/environment-templates",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data.environmentTemplates);
@@ -276,7 +329,10 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .get("/server/buckets", this.get_axiosConfig())
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             self.$store.commit("updateBuckets", response.data);
@@ -295,7 +351,13 @@ Vue.mixin({
         }
         self.usingToken += 1;
         this.axios
-          .post("/server/getBucketDetails", { bucket_id: bucketID }, this.get_axiosConfig())
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/buckets/" +
+              bucketID,
+            this.get_axiosConfig()
+          )
           .then(function (response) {
             self.usingToken -= 1;
             resolve(response.data.bucket_details[0]);
@@ -312,7 +374,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/account/get/settings", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id + "/settings",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           if (response.status == 200) {
@@ -328,14 +393,16 @@ Vue.mixin({
           self.handleRequestError(error, "Error while getting workspace settings!");
         });
     },
-    removeComputeNode(nodeID) {
+    removeComputeNode(nodeID, clusterID) {
       let self = this;
       return this.axios
-        .post(
-          "/server/removeComputeNode",
-          {
-            nodeID: nodeID,
-          },
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            clusterID +
+            "/nodes/" +
+            nodeID,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -363,7 +430,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/profilepicture", this.get_axiosConfig())
+        .get("/server/user/profile/picture", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           self.$store.commit(
@@ -382,7 +449,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       return this.axios
-        .get("/server/getusage", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           let quota = response.data;
@@ -411,7 +481,7 @@ Vue.mixin({
       let user = {}
       this.usingToken += 1;
       this.axios
-        .get("/server/profile", this.get_axiosConfig())
+        .get("/server/user/profile", this.get_axiosConfig())
         .then(function (response) {
           profile = response.data;
 
@@ -455,7 +525,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/canUpdateUserPassword", this.get_axiosConfig())
+        .get("/server/user/password/can-update", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
@@ -471,7 +541,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/getActiveTenants", this.get_axiosConfig())
+        .get("/server/user/active-tenants", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           if (response.data.activeTenants.length < 2) {
@@ -480,6 +550,7 @@ Vue.mixin({
             self.hasMultipleTenants = true;
           }
           self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+          self.loadingTenant = false;
         })
         .catch(function (error) {
           self.handleRequestError(error, "Error while getting active tenants!");
@@ -492,7 +563,10 @@ Vue.mixin({
       }
       this.usingToken += 1;
       return this.axios
-        .get("/server/getSpecificUserInfo/" + tenantId + "/" + username, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + tenantId + "/users/" + username,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.usingToken -= 1;
           return response.data;
@@ -511,12 +585,12 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .get("/server/isRegistered", this.get_axiosConfig())
+        .get("/server/is-registered", this.get_axiosConfig())
         .then(function (response) {
           self.usingToken -= 1;
           if (!response.data.isRegistered) {
                   self.axios
-                    .post("/server/registerTenantUser", {}, self.get_axiosConfig())
+                    .post("/server/tenants", {}, self.get_axiosConfig())
                     .then(function () {
                       self.getUserInfo();
                       self.checkCanChangePassword();
@@ -570,7 +644,7 @@ Vue.mixin({
       this.usingToken += 1;
       this.axios
         .delete(
-          "/server/profilepicture",
+          "/server/user/profile/picture",
           this.get_axiosConfig()
         )
         .then(function () {
@@ -590,7 +664,7 @@ Vue.mixin({
         self.usingToken += 1;
         this.axios
           .put(
-            "/server/profilepicture",
+            "/server/user/profile/picture",
             request,
             this.get_axiosConfig()
           )
@@ -611,7 +685,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", profile, this.get_axiosConfig())
+        .put("/server/user/profile", profile, this.get_axiosConfig())
         .then(function () {
 
           self.axios
@@ -648,7 +722,11 @@ Vue.mixin({
       if (this.computed_isBusinessAccountOwner) {
         endpoint = "/server/businessaccountowner/updateUser";
       } else {
-        endpoint = "/server/updateUser";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/users/" +
+          request.username;
       }
 
       let self = this;
@@ -657,7 +735,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .post(
+        .put(
           endpoint,
           request,
           this.get_axiosConfig()
@@ -684,7 +762,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", { news_subscribbed: false }, this.get_axiosConfig())
+        .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
         .then(function () {
           self.usingToken -= 1;
           self.$notify({
@@ -705,7 +783,7 @@ Vue.mixin({
       }
       this.usingToken += 1;
       this.axios
-        .put("/server/profile", { news_subscribbed: true }, this.get_axiosConfig())
+        .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
         .then(function () {
           self.usingToken -= 1;
           self.$notify({
@@ -726,6 +804,12 @@ Vue.mixin({
         return null;
       }
       return this.$store.state.account_settings;
+    },
+    computed_active_tenant_id() {
+      if (!this.$store) {
+        return null;
+      }
+      return this.$store.state.activeTenantId;
     },
     computed_account() {
       if (!this.$store) {

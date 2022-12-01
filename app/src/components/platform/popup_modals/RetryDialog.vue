@@ -63,13 +63,22 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          if (self.retryDialogParams.failureMessage) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: self.retryDialogParams.failureMessage,
+              text: "Access Denied",
             });
+          } else {
+            if (self.retryDialogParams.failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: self.retryDialogParams.failureMessage,
+              });
+            }
           }
           self.closeModal();
         });

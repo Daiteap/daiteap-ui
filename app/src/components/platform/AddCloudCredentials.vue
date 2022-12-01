@@ -413,9 +413,11 @@ export default {
 
       this.axios
         .post(
-          "/server/validateCredentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/validate",
           {
-            credentials: accountRequest
+            credentials: accountRequest,
           },
           this.get_axiosConfig()
         )
@@ -434,7 +436,7 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post("/server/gettaskmessage", { taskId: taskId }, self.get_axiosConfig())
+              .get("/server/task-message/" + taskId, self.get_axiosConfig())
               .then(function (response) {
                 if (response.data.status == "PENDING") {
                   self.statusOfValidation = "pending";
@@ -496,7 +498,9 @@ export default {
                     ) {
                       self.axios
                         .post(
-                          "/server/cloud-credentials",
+                          "/server/tenants/" +
+                            self.computed_active_tenant_id +
+                            "/cloud-credentials",
                           {
                             provider: provider,
                             account_params: account_params,
@@ -518,12 +522,21 @@ export default {
                           if (error.response) {
                             console.log(error.response.data);
                           }
-                          self.$notify({
-                            group: "msg",
-                            type: "error",
-                            title: "Notification:",
-                            text: "Error while saving cloud credentials.",
-                          });
+                          if (error.response && error.response.status == "403") {
+                            self.$notify({
+                              group: "msg",
+                              type: "error",
+                              title: "Notification:",
+                              text: "Access Denied",
+                            });
+                          } else {
+                            self.$notify({
+                              group: "msg",
+                              type: "error",
+                              title: "Notification:",
+                              text: "Error while saving cloud credentials.",
+                            });
+                          }
                         });                     
                     }
                   }
@@ -546,6 +559,14 @@ export default {
             console.log(error);
             if (error.response) {
               console.log(error.response.data);
+            }
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
             }
           }
         })
@@ -618,11 +639,11 @@ export default {
             return new Promise((resolve) => {
               setTimeout(() => {
                 this.axios
-                  .post(
-                    "/server/isProjectNameFree",
-                    {
-                      projectName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/projects/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -634,6 +655,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);

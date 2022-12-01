@@ -44,14 +44,14 @@ export default {
     confirmAction() {
       let self = this;
 
-      for(let i=0; i<self.deleteManyDialogParams.requestBody.length; i++){
+      for(let i=0; i < self.deleteManyDialogParams.endpoint.length; i++) {
         this.axios
-          .post(
-            self.deleteManyDialogParams.endpoint,
-            self.deleteManyDialogParams.requestBody[i],
+          .delete(
+            self.deleteManyDialogParams.endpoint[i],
             this.get_axiosConfig()
           )
       }
+
       self.closeModal();
     },
   },

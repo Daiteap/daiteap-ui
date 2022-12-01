@@ -118,7 +118,7 @@ export default {
   },
   mounted() {
     this.interval = setInterval(() => {
-      this.axios.get("/server/account/tenant", this.get_axiosConfig()).then((response) => {
+      this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
         this.tenant = response.data.tenant;
       });
 
@@ -167,18 +167,21 @@ export default {
           .join("")
       );
 
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].username != JSON.parse(jsonPayload).username) {
-          this.deleteManyDialogParams.requestBody.push({
-            username: this.users[i].username,
-            project_id: this.projectID,
-          });
+          this.deleteManyDialogParams.endpoint.push(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/projects/" +
+              this.projectID +
+              "/users/" +
+              this.users[i].username
+          );
         }
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Users";
-      this.deleteManyDialogParams.endpoint = "/server/removeUserFromProject";
 
       this.showDeleteManyDialog = true;
     },
@@ -192,11 +195,11 @@ export default {
       let self = this;
 
       axios
-        .post(
-          "/server/delete_user",
-          {
-            username: userToDelete,
-          },
+        .delete(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/users/" +
+            userToDelete,
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -205,12 +208,21 @@ export default {
         .catch(function (error) {
           console.error("Error deleting user.");
           console.log(error.response);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: error.response.data.message || "Error deleting user.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: error.response.data.message || "Error deleting user.",
+            });
+          }
         });
 
       this.onUsersChanged();

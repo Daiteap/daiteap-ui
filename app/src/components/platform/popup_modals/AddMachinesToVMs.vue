@@ -405,12 +405,8 @@ export default {
       if (value.length > 7 && value.length < 15) {
         return new Promise((resolve) => {
           axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value,
-              },
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
               self.get_axiosConfig()
             )
             .then(function (response) {
@@ -463,13 +459,14 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidZones",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/zones",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -506,14 +503,16 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            zone: self.machines.zone,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/zones/" +
+            self.machines.zone +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -537,13 +536,14 @@ export default {
       let selectedProvider = self.providers.filter((el) => el.provider == self.machines.provider.provider)[0]
 
       axios
-        .post(
-          "/server/getValidOperatingSystems",
-          {
-            provider: self.machines.provider.provider,
-            region: self.machines.provider.region,
-            accountLabel: selectedProvider.accountLabel,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            selectedProvider.accountLabel +
+            "/regions/" +
+            self.machines.provider.region +
+            "/environment-type/2/operating-systems",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -599,15 +599,35 @@ export default {
         };
       }
 
-      let endpoint = "/server/addMachinesToVMs";
+      let endpoint =
+        "/server/tenants/" +
+        self.computed_active_tenant_id +
+        "/clusters/" +
+        self.clusterID +
+        "/machines/compute-add";
       if (self.clusterType == 1) {
-        endpoint = "/server/addMachinesToDlcm";
+        endpoint =
+        "/server/tenants/" +
+        self.computed_active_tenant_id +
+        "/clusters/" +
+        self.clusterID +
+        "/machines/dlcm-add";
       }
       if (self.clusterType == 3) {
-        endpoint = "/server/addMachinesToK3s";
+        endpoint =
+        "/server/tenants/" +
+        self.computed_active_tenant_id +
+        "/clusters/" +
+        self.clusterID +
+        "/machines/k3s-add";
       }
       if (self.clusterType == 7) {
-        endpoint = "/server/addMachinesToDlcmV2";
+        endpoint =
+        "/server/tenants/" +
+        self.computed_active_tenant_id +
+        "/clusters/" +
+        self.clusterID +
+        "/machines/dlcmv2-add";
       }
 
       this.axios

@@ -80,10 +80,13 @@ export default {
         let self = this;
         axios
           .post(
-            "/server/userUserToProject",
+            "/server/tenants/" +
+              self.computed_active_tenant_id +
+              "/projects/" +
+              self.projectID +
+              "/users",
             {
               username: self.newuser_username,
-              project_id: self.projectID,
             },
             this.get_axiosConfig()
           )
@@ -91,6 +94,14 @@ export default {
           .catch(function (error) {
             console.error("Error on get_project_userlist occurred.");
             console.log(error);
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            }
           });
       });
       this.$router.push({
@@ -125,11 +136,12 @@ export default {
       let self = this;
 
       axios
-        .post(
-          "/server/get_project_userlist",
-          {
-            project_id: self.projectID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/projects/" +
+            self.projectID +
+            "/users",
           this.get_axiosConfig()
         )
         .then(async function (response) {
@@ -148,6 +160,14 @@ export default {
         .catch(function (error) {
           console.error("Error on get_project_userlist occurred.");
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

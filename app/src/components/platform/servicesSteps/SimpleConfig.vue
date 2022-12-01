@@ -875,11 +875,8 @@ export default {
     setServiceOptions() {
       let self = this;
       axios
-        .post(
-          "/server/getServiceOptions",
-          {
-            service: self.$finalModel.serviceName,
-          },
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/options",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1021,17 +1018,27 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     setDefaultName() {
       let self = this;
       axios
-        .post(
-          "/server/generateClusterServiceDefaultName",
-          {
-            service: self.$finalModel.serviceName,
-            clusterID: self.$finalModel.selectedCluster,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.$finalModel.selectedCluster +
+            "/services/" +
+            self.$finalModel.serviceName +
+            "/default-name",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1040,6 +1047,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     parseReplicaCount() {

@@ -462,7 +462,7 @@ export default {
   },
   methods: {
     suggestParams() {
-      this.axios.get("/server/suggestAccountParams/openstack", this.get_axiosConfig()).then((response) => {
+      this.axios.get("/server/cloud-credentials/providers/openstack/account-params", this.get_axiosConfig()).then((response) => {
         for (let key in response.data) {
           this.openstack[key] = response.data[key];
         }
