@@ -325,7 +325,7 @@ export default {
         return new Promise((resolve) => {
           axios
             .post(
-              "/server/checkforipconflicts",
+              "/server/check-ip-conflicts",
               {
                 networks: networks,
               },

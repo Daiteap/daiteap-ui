@@ -1042,7 +1042,7 @@ export default {
       return new Promise((resolve) => {
         this.axios
           .post(
-            "/server/checkforipconflicts",
+            "/server/check-ip-conflicts",
             {
               networks: networks,
             },
