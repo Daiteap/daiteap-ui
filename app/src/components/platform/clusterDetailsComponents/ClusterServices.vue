@@ -191,11 +191,11 @@ export default {
         .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           self.serviceStoreList = [];
-          for (let i = 0; i < response.data.serviceList.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             self.serviceStoreList.push({
-              name: response.data.serviceList[i].name,
-              description: response.data.serviceList[i].description,
-              logo_url: response.data.serviceList[i].logo_url,
+              name: response.data[i].name,
+              description: response.data[i].description,
+              logo_url: response.data[i].logo_url,
             });
           }
           self.loadingSrvices = false;

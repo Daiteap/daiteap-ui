@@ -314,7 +314,7 @@ Vue.mixin({
           )
           .then(function (response) {
             self.usingToken -= 1;
-            resolve(response.data.environmentTemplates);
+            resolve(response.data);
           })
           .catch(function (error) {
             self.handleRequestError(error, "Error while getting templates.");
@@ -381,11 +381,8 @@ Vue.mixin({
         .then(function (response) {
           self.usingToken -= 1;
           if (response.status == 200) {
-            self.$store.commit(
-              "updateAccountSettings",
-              response.data.account_settings
-            );
-            self.$store.commit("updateAccount", response.data.account);
+            self.$store.commit("updateAccountSettings", response.data);
+            self.$store.commit("updateAccount", response.data.tenant);
             self.$root.$emit("accountSettingsChanged", undefined);
           }
         })

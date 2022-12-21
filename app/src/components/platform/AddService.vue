@@ -520,11 +520,11 @@ export default {
         .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           let servicesList = [];
-          for (let i = 0; i < response.data.serviceList.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             let categories = ["other"];
-            if (response.data.serviceList[i].categories) {
-              if (response.data.serviceList[i].categories.length > 0) {
-                categories = response.data.serviceList[i].categories;
+            if (response.data[i].categories) {
+              if (response.data[i].categories.length > 0) {
+                categories = response.data[i].categories;
               }
             }
             for (let cat in categories) {
@@ -535,11 +535,11 @@ export default {
             }
 
             servicesList.push({
-              name: response.data.serviceList[i].name,
-              description: response.data.serviceList[i].description,
-              logo_url: response.data.serviceList[i].logo_url,
+              name: response.data[i].name,
+              description: response.data[i].description,
+              logo_url: response.data[i].logo_url,
               categories: categories,
-              implemented: response.data.serviceList[i].implemented,
+              implemented: response.data[i].implemented,
             });
           }
 

@@ -189,15 +189,14 @@ export default {
   },
   methods: {
     setCompany() {
-      if (!this.isBAO) {
-        this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
-          this.form.company = response.data.tenant.company;
+      this.axios
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id,
+          this.get_axiosConfig()
+        )
+        .then((response) => {
+          this.form.company = response.data.company;
         });
-      } else {
-        this.axios.get("/server/tenants/" + this.tenant.id, this.get_axiosConfig()).then((response) => {
-          this.form.company = response.data.tenant.company;
-        });
-      }
     },
     onCancel() {
       if (!this.isBAO) {

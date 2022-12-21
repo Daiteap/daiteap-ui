@@ -368,9 +368,9 @@ export default {
         .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           self.servicesList = [];
-          for (let i = 0; i < response.data.serviceList.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             self.servicesList.push({
-              name: response.data.serviceList[i].name
+              name: response.data[i].name
             });
           }
           self.loadingSrvices=false
