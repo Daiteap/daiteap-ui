@@ -72,8 +72,15 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input autocomplete="off" v-model="aws.description" class="form-control" :class="['input']" type="text"
-                id="awsdescription" data-test-id="input-description" />
+              <b-form-textarea
+                autocomplete="off"
+                v-model="aws.description"
+                class="form-control"
+                :class="['input']"
+                type="text"
+                id="awsdescription"
+                data-test-id="input-description"
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.aws.description.$invalid" class="help text-danger">

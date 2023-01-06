@@ -170,7 +170,7 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input
+              <b-form-textarea
                 autocomplete="off"
                 v-model="onpremise.description"
                 class="form-control"
@@ -178,7 +178,7 @@
                 type="text"
                 id="onpremisedescription"
                 data-test-id="input-description"
-              />
+              ></b-form-textarea>
             </div>
             <div class="">
               <p

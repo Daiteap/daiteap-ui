@@ -61,11 +61,19 @@
                 Description:
               </label>
               <div class="">
-                <input v-model="clusterDescription" v-on:change="$v.clusterDescription.$touch" placeholder="Description"
-                  class="form-control" :class="[
+                <b-form-textarea
+                  v-model="clusterDescription"
+                  v-on:change="$v.clusterDescription.$touch"
+                  placeholder="Description"
+                  class="form-control"
+                  :class="[
                     'input',
                     $v.clusterDescription.$invalid ? 'is-danger' : '',
-                  ]" autocomplete="off" type="text" id="clusterDescriptionField" />
+                  ]"
+                  autocomplete="off"
+                  type="text"
+                  id="clusterDescriptionField"
+                ></b-form-textarea>
                 <p v-if="$v.clusterDescription.$invalid" class="help text-danger">
                   Invalid cluster description
                 </p>

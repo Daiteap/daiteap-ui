@@ -124,8 +124,15 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input autocomplete="off" v-model="google.description" class="form-control" :class="['input']" type="text"
-                id="googledescription" data-test-id="input-description" />
+              <b-form-textarea
+                autocomplete="off"
+                v-model="google.description"
+                class="form-control"
+                :class="['input']"
+                type="text"
+                id="googledescription"
+                data-test-id="input-description"
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.google.description.$invalid" class="help text-danger">
