@@ -53,7 +53,7 @@
             <div>
               <label> Description: </label>
               <div>
-                <input
+                <b-form-textarea
                   v-model="form.description"
                   v-on:input="$v.form.description.$touch"
                   class="form-control"
@@ -62,7 +62,7 @@
                   autocomplete="off"
                   type="text"
                   id="form.descriptionField"
-                />
+                ></b-form-textarea>
               </div>
               <div>
                 <p

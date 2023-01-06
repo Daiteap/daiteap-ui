@@ -156,7 +156,7 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input
+              <b-form-textarea
                 autocomplete="off"
                 v-model="openstack.description"
                 class="form-control"
@@ -164,7 +164,7 @@
                 type="text"
                 id="openstackdescription"
                 data-test-id="input-description"
-              />
+              ></b-form-textarea>
             </div>
             <div class="">
               <p

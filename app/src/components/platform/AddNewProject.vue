@@ -38,12 +38,12 @@
 
         <div>
             <label for="project-description">Project Description:</label>
-            <b-form-input
+            <b-form-textarea
               v-model="form.description"
               id="project-description"
               placeholder="Project Description"
               v-on:change="$v.form.description.$touch"
-            ></b-form-input>
+            ></b-form-textarea>
             <p
               v-if="$v.form.description.$invalid"
               class="help text-danger"

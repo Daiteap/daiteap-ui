@@ -62,12 +62,12 @@
             <label for="template-description">Template Description:</label>
           </b-col>
           <b-col sm="6">
-            <b-form-input
+            <b-form-textarea
               id="template-description"
               placeholder="Template Description"
               v-on:change="$v.form.description.$touch"
               v-model="form.description"
-            ></b-form-input>
+            ></b-form-textarea>
             <p
               v-if="$v.form.description.$invalid && $v.form.description.$dirty"
               class="help text-danger"

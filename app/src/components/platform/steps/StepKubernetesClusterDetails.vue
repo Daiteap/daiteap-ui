@@ -103,7 +103,7 @@
         <div>
           <label>Description:</label>
         </div>
-        <input
+        <b-form-textarea
           class="form-control"
           :class="[
             'input',
@@ -117,7 +117,7 @@
           v-model="form.clusterDescription"
           @input="$v.form.clusterDescription.$touch"
           @change="changeClusterDescription()"
-        />
+        ></b-form-textarea>
         <p
           v-if="
             $v.form.clusterDescription.$invalid &&

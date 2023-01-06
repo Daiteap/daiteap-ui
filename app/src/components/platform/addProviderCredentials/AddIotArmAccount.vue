@@ -164,7 +164,7 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input
+              <b-form-textarea
                 autocomplete="off"
                 v-model="iotarm.description"
                 class="form-control"
@@ -172,7 +172,7 @@
                 type="text"
                 id="iotarmdescription"
                 data-test-id="input-description"
-              />
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.iotarm.description.$invalid" class="help text-danger">

@@ -44,14 +44,14 @@
                 Cluster Description:
               </label>
               <div>
-                <input
+                <b-form-textarea
                   autocomplete="off"
                   v-model="currentCluster.Description"
                   class="form-control"
                   :class="['input']"
                   type="text"
                   id="description"
-                />
+                ></b-form-textarea>
               </div>
               <div v-if="$v.currentCluster.Description.$invalid">
                 <p class="help text-danger">

@@ -45,14 +45,14 @@
                 Project Description:
               </label>
               <div>
-                <input
+                <b-form-textarea
                   autocomplete="off"
                   v-model="currentProject.Description"
                   class="form-control"
                   :class="['input']"
                   type="text"
                   id="description"
-                />
+                ></b-form-textarea>
               </div>
               <div v-if="$v.currentProject.Description.$invalid">
                 <p class="help text-danger">

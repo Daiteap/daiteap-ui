@@ -30,14 +30,14 @@
           <div>
             <label> Cloud Credentials Description: </label>
             <div>
-              <input
+              <b-form-textarea
                 autocomplete="off"
                 v-model="accountToEdit.description"
                 class="form-control"
                 :class="['input']"
                 type="text"
                 id="description"
-              />
+              ></b-form-textarea>
             </div>
             <div>
             <p v-if="$v.accountToEdit.description.$invalid" class="help text-danger">
