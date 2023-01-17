@@ -2,6 +2,10 @@
   <div class="container">
     <br>
     <br>
+    <ConfirmAndRedirectDialog
+      v-show="showConfirmDialog"
+      :confirmAndRedirectDialogParams="confirmDialogParams"
+    ></ConfirmAndRedirectDialog>
     <DeleteDialog
       v-show="showDeleteDialog"
       :deleteDialogParams="deleteDialogParams"
@@ -189,6 +193,7 @@
 
 <script>
 import axios from "axios";
+import ConfirmAndRedirectDialog from "./popup_modals/ConfirmAndRedirectDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import RetryDialog from "./popup_modals/RetryDialog";
 
@@ -196,6 +201,7 @@ export default {
   name: 'SubmitKubernetesCluster',
   data() {
     return {
+      showConfirmDialog: false,
       showDeleteDialog: false,
       showRetryDialog: false,
       clusterName: "",
@@ -215,6 +221,16 @@ export default {
         failureMessage: "",
         envName: "",
       },
+      confirmDialogParams: {
+        requestBody: {},
+        text: "",
+        endpoint: "",
+        successMessage: "",
+        failureMessage: "",
+        envName: "",
+        envId: "",
+        action: ""
+      },
       errorMsg: undefined,
       loading: true,
       details: "",
@@ -231,6 +247,7 @@ export default {
     };
   },
   components: {
+    ConfirmAndRedirectDialog,
     DeleteDialog,
     RetryDialog
   },
@@ -392,23 +409,23 @@ export default {
       this.$bvModal.show("bv-modal-deletedialog");
     },
     cancelInstallation(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
-      this.deleteDialogParams.text =
+      this.confirmDialogParams.text =
         'Are you sure you want to cancel the installation and delete the existing resources:';
-      this.deleteDialogParams.envName = name
-      this.deleteDialogParams.redirectPage = "KubernetesClusterList";
-      this.deleteDialogParams.endpoint =
+      this.confirmDialogParams.envName = name;
+      this.confirmDialogParams.redirect = "KubernetesClusterList";
+      this.confirmDialogParams.endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         id +
         "/cancel-creation";
-      this.deleteDialogParams.successMessage =
+      this.confirmDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
-      this.deleteDialogParams.failureMessage =
+      this.confirmDialogParams.failureMessage =
         'Error occured while you tried to submit deletion of "' + name + '".';
-      this.showDeleteDialog = true;
-      this.$bvModal.show("bv-modal-deletedialog");
+      this.confirmDialogParams.action = 'Delete';
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialog");
     },
     retryCluster(id, name) {
       this.retryDialogParams.requestBody = { clusterID: id };
