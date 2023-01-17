@@ -731,26 +731,101 @@ export default {
         if (this.form.awsSelected == false) {
           Vue.prototype.$finalModel.awsSelected = false;
           delete Vue.prototype.$finalModel.aws;
+        } else {
+          if (
+            this.selectedCredentials.aws &&
+            this.selectedCredentials.awsRegion
+          ) {
+            Vue.prototype.$finalModel.aws = {
+              account: this.selectedCredentials.aws,
+              region: this.selectedCredentials.awsRegion,
+              nodes: [],
+              vpcCidr: "10.10.0.0/16",
+            };
+          }
         }
         if (this.form.azureSelected == false) {
           Vue.prototype.$finalModel.azureSelected = false;
           delete Vue.prototype.$finalModel.azure;
+        } else {
+          if (
+            this.selectedCredentials.azure &&
+            this.selectedCredentials.azureRegion
+          ) {
+            Vue.prototype.$finalModel.azure = {
+              account: this.selectedCredentials.azure,
+              region: this.selectedCredentials.azureRegion,
+              nodes: [],
+              vpcCidr: "10.20.0.0/16",
+            };
+          }
         }
         if (this.form.googleSelected == false) {
           Vue.prototype.$finalModel.googleSelected = false;
           delete Vue.prototype.$finalModel.google;
+        } else {
+          if (
+            this.selectedCredentials.google &&
+            this.selectedCredentials.googleRegion
+          ) {
+            Vue.prototype.$finalModel.google = {
+              account: this.selectedCredentials.google,
+              region: this.selectedCredentials.googleRegion,
+              nodes: [],
+              vpcCidr: "10.30.0.0/16",
+            };
+          }
         }
         if (this.form.openstackSelected == false) {
           Vue.prototype.$finalModel.openstackSelected = false;
           delete Vue.prototype.$finalModel.openstack;
+        } else {
+          if (
+            this.selectedCredentials.openstack &&
+            this.selectedCredentials.openstackRegion
+          ) {
+            if (this.$selectedType == 5 || this.$selectedType == 8) {
+              Vue.prototype.$finalModel.openstack = {
+                account: this.selectedCredentials.openstack,
+                region: this.selectedCredentials.openstackRegion,
+                workerNodes: [],
+                controlPlane: {},
+              };
+            } else {
+              Vue.prototype.$finalModel.openstack = {
+                account: this.selectedCredentials.openstack,
+                region: this.selectedCredentials.openstackRegion,
+                nodes: [],
+                vpcCidr: "10.30.0.0/16",
+              };
+            }
+          }
         }
         if (this.form.onpremiseSelected == false) {
           Vue.prototype.$finalModel.onpremiseSelected = false;
           delete Vue.prototype.$finalModel.onpremise;
+        } else {
+          if (this.selectedCredentials.onpremise) {
+            Vue.prototype.$finalModel.onpremise = {
+              account: this.selectedCredentials.onpremise,
+              operatingSystem: "",
+              machines: [],
+              vpcCidr: "",
+            };
+          }
         }
         if (this.form.iotarmSelected == false) {
           Vue.prototype.$finalModel.iotarmSelected = false;
           delete Vue.prototype.$finalModel.iotarm;
+        } else {
+          if (this.selectedCredentials.iotarm) {
+            Vue.prototype.$finalModel.iotarm = {
+              account: this.selectedCredentials.iotarm,
+              operatingSystem: "",
+              machines: [],
+              vpcCidr: "",
+            };
+          }
         }
 
         this.checkCanContinue();
