@@ -5,6 +5,40 @@
         <h6 class="m-0 font-weight-bold">Longhorn Storage:</h6>
       </div>
       <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th v-if="cluster.longhorn_username">Username</th>
+              <th v-if="cluster.longhorn_password">Password</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td v-if="cluster.longhorn_username">{{ cluster.longhorn_username }}</td>
+              <td v-if="cluster.longhorn_password" style="display: flex">
+                <div style="flex: 1" id="pwd">
+                  {{
+                  "*".repeat(cluster.longhorn_password.length)
+                  }}
+                </div>
+                <div style="margin-left: auto; margin: 5px" type="button" id="copy" class="child far fa-copy" alt="copy"
+                  title="Double click to copy password" @click="$emit('copyLonghornPassword')">
+                  <span v-if="longhornPWCopied" style="margin-left: auto; margin: 5px">Copied</span>
+                </div>
+              </td>
+              <td>
+                <a :href="'http://' + cluster.longhorn_address" target="_blank" rel="noopener noreferrer">{{
+                  cluster.longhorn_address
+                  }}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
         <div v-if="loadingTable" class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
@@ -19,55 +53,6 @@
         </div>
 
         <div v-else >
-          <div class="table-responsive">
-          <table
-            class="table table-bordered"
-            id="dataTable"
-            width="100%"
-            cellspacing="0"
-          >
-            <thead>
-              <tr>
-                <th v-if="cluster.longhorn_username">Username</th>
-                <th v-if="cluster.longhorn_password">Password</th>
-                <th>Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td v-if="cluster.longhorn_username">{{ cluster.longhorn_username }}</td>
-                <td v-if="cluster.longhorn_password" style="display: flex">
-                  <div style="flex: 1" id="pwd">
-                    {{
-                      "*".repeat(cluster.longhorn_password.length)
-                    }}
-                  </div>
-                  <div
-                    style="margin-left: auto; margin: 5px"
-                    type="button"
-                    id="copy"
-                    class="child far fa-copy"
-                    alt="copy"
-                    title="Double click to copy password"
-                    @click="$emit('copyLonghornPassword')"
-                  >
-                    <span
-                      v-if="longhornPWCopied"
-                      style="margin-left: auto; margin: 5px"
-                      >Copied</span
-                    >
-                  </div>
-                </td>
-                  <td>
-                      <a :href="'http://' + cluster.longhorn_address" target="_blank" rel="noopener noreferrer">{{
-                        cluster.longhorn_address
-                      }}</a>
-                  </td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-
           <div class="table-responsive">
             <table
               class="table table-bordered"
