@@ -150,7 +150,7 @@ By clicking on the cluster name, a cluster details page is shown with detailed i
 Following information is shown:  
 
 - `Nodes` - includes the kubernetes nodes, their roles, count and resource configuration (CPU, RAM, DISK)  
-- `Longhorn storage` - by default, the platform installs a longhorn storage on the node disks which are part of the cluster. A default storage class `Longhorn` is configured, which can be used by the user and apps in the service catalog for persistent storage. This part of the page shows the storage space on each of the installed nodes.  
+- `Longhorn storage` - the platform installs a longhorn storage on separate node disks. To ensure no data loss each volume has three replicas. On cluster resize the longhorn cluster is also resized. A default storage class `Longhorn` is configured, which can be used by the user and apps in the service catalog for persistent storage. This part of the page shows login info and the storage space on each of the installed nodes.
 - `Services` - installed services from the [Service Catalog](service_catalog.md)  
 - `Grafana` - Used for monitoring cluster resources.  
 - `User Cloud Credentials` - list of the cloud credentials for the cluster  
