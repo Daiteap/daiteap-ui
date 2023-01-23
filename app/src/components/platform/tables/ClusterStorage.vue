@@ -165,7 +165,7 @@ export default {
       type: String,
       required: true,
     },
-    grafanaPWCopied: {
+    longhornPWCopied: {
       type: Boolean,
     },
   },
