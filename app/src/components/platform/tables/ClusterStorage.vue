@@ -5,6 +5,40 @@
         <h6 class="m-0 font-weight-bold">Longhorn Storage:</h6>
       </div>
       <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th v-if="cluster.longhorn_username">Username</th>
+              <th v-if="cluster.longhorn_password">Password</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td v-if="cluster.longhorn_username">{{ cluster.longhorn_username }}</td>
+              <td v-if="cluster.longhorn_password" style="display: flex">
+                <div style="flex: 1" id="pwd">
+                  {{
+                  "*".repeat(cluster.longhorn_password.length)
+                  }}
+                </div>
+                <div style="margin-left: auto; margin: 5px" type="button" id="copy" class="child far fa-copy" alt="copy"
+                  title="Double click to copy password" @click="$emit('copyLonghornPassword')">
+                  <span v-if="longhornPWCopied" style="margin-left: auto; margin: 5px">Copied</span>
+                </div>
+              </td>
+              <td>
+                <a :href="'http://' + cluster.longhorn_address" target="_blank" rel="noopener noreferrer">{{
+                  cluster.longhorn_address
+                  }}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
         <div v-if="loadingTable" class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
@@ -18,79 +52,81 @@
           Storage information not available
         </div>
 
-        <div v-else class="table-responsive">
-          <table
-            class="table table-bordered"
-            id="dataTable"
-            width="100%"
-            cellspacing="0"
-          >
-            <thead>
-              <tr>
-                <th>Node</th>
-                <th>Type</th>
-                <th>Storage</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(node, index) in allNodes" :key="index">
-                <td class="node-name col-2">
-                  {{ node.name }}
-                </td>
-                <td class="col-2">
-                  <span
-                    v-if="
-                      (!!cluster.machinesList &&
-                        !!cluster.machinesList.length > 0 &&
-                        cluster.machinesList.filter(
-                          (el) => el.kube_name === node.name
-                        )[0].kube_master) ||
-                      node.name.includes('-control-plane-')
-                    "
-                    >Control plane</span
-                  >
-                  <span v-else>Worker</span>
-                </td>
-
-                <td>
-                  <b-progress
-                    :max="(node.storageMaximum / 1024 / 1024 / 1024).toFixed(2)"
-                    height="1rem"
-                    class="daiteap-progress"
-                  >
-                    <b-progress-bar
-                      class="daiteap-progress-bar"
-                      :value="
-                        (node.storageMaximum - node.storageAvailable) /
-                        1024 /
-                        1024 /
-                        1024
+        <div v-else >
+          <div class="table-responsive">
+            <table
+              class="table table-bordered"
+              id="dataTable"
+              width="100%"
+              cellspacing="0"
+            >
+              <thead>
+                <tr>
+                  <th>Node</th>
+                  <th>Type</th>
+                  <th>Storage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(node, index) in allNodes" :key="index">
+                  <td class="node-name col-2">
+                    {{ node.name }}
+                  </td>
+                  <td class="col-2">
+                    <span
+                      v-if="
+                        (!!cluster.machinesList &&
+                          !!cluster.machinesList.length > 0 &&
+                          cluster.machinesList.filter(
+                            (el) => el.kube_name === node.name
+                          )[0].kube_master) ||
+                        node.name.includes('-control-plane-')
                       "
+                      >Control plane</span
                     >
-                    </b-progress-bar>
-                  </b-progress>
-                  <span
-                    >Used:
-                    <strong
-                      >{{
-                        (
+                    <span v-else>Worker</span>
+                  </td>
+
+                  <td>
+                    <b-progress
+                      :max="(node.storageMaximum / 1024 / 1024 / 1024).toFixed(2)"
+                      height="1rem"
+                      class="daiteap-progress"
+                    >
+                      <b-progress-bar
+                        class="daiteap-progress-bar"
+                        :value="
                           (node.storageMaximum - node.storageAvailable) /
                           1024 /
                           1024 /
                           1024
-                        ).toFixed(2)
-                      }}
-                      GB /
-                      {{
-                        (node.storageMaximum / 1024 / 1024 / 1024).toFixed(2)
-                      }}
-                      GB</strong
-                    ></span
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                        "
+                      >
+                      </b-progress-bar>
+                    </b-progress>
+                    <span
+                      >Used:
+                      <strong
+                        >{{
+                          (
+                            (node.storageMaximum - node.storageAvailable) /
+                            1024 /
+                            1024 /
+                            1024
+                          ).toFixed(2)
+                        }}
+                        GB /
+                        {{
+                          (node.storageMaximum / 1024 / 1024 / 1024).toFixed(2)
+                        }}
+                        GB</strong
+                      ></span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -113,6 +149,9 @@ export default {
     clusterID: {
       type: String,
       required: true,
+    },
+    longhornPWCopied: {
+      type: Boolean,
     },
   },
   data() {

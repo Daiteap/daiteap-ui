@@ -290,6 +290,8 @@
             $route.path ===
             '/app/platform/clusterdetails/' + clusterID + '/overview'
           "
+          :longhornPWCopied="longhornPWCopied"
+          @copyLonghornPassword="copyLonghornPassword"
         ></ClusterStorage>
 
         <div
@@ -465,6 +467,7 @@ export default {
       },
       kibanaPWCopied: false,
       grafanaPWCopied: false,
+      longhornPWCopied: false,
       loading: true,
       cluster: {},
       clusterType: 0,
@@ -611,6 +614,18 @@ export default {
       this.grafanaPWCopied = true;
       setTimeout(() => {
         this.grafanaPWCopied = false;
+      }, 2000);
+    },
+    copyLonghornPassword() {
+      var dummyLonghorn = document.createElement("textarea");
+      document.body.appendChild(dummyLonghorn);
+      dummyLonghorn.value = this.cluster.longhorn_password;
+      dummyLonghorn.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummyLonghorn);
+      this.longhornPWCopied = true;
+      setTimeout(() => {
+        this.longhornPWCopied = false;
       }, 2000);
     },
     copyESPassword() {
