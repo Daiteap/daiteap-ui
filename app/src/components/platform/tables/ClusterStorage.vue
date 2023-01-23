@@ -165,6 +165,9 @@ export default {
       type: String,
       required: true,
     },
+    grafanaPWCopied: {
+      type: Boolean,
+    },
   },
   data() {
     return {
