@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-2">
+  <div class="pl-2" :key="updateStatus">
     <div
       class="d-flex cangeIconOnHover"
       v-if="validationStatus === false"
@@ -63,6 +63,7 @@ export default {
     alerts: Array,
     validationStatus: {},
     listOfAccountsInDeletion: Array,
+    updateStatus: Number,
   },
 };
 </script>

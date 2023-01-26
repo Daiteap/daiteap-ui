@@ -50,7 +50,6 @@
           :allAccounts="allAccounts"
           :providers="providers"
           :alerts="alerts"
-          :returnCurrentStatusOfValidation="returnCurrentStatusOfValidation"
           :listOfAccountsInDeletion="listOfAccountsInDeletion"
           @validateAllCredentials="validateCredentialsList"
           @openEditPopup="openEditAccountNameModal"
@@ -205,7 +204,6 @@ export default {
         provider: "",
       },
       allAccounts: [],
-      allValidations: [],
       userAccount: {
         type: "",
         id: "",
@@ -281,6 +279,7 @@ export default {
       let credentials;
       credentials = await this.getCredentials();
 
+      let accounts = self.allAccounts;
       self.allAccounts = [];
       for (let i = 0; i < credentials.length; i++) {
         self.allAccounts[i] = {};
@@ -316,6 +315,22 @@ export default {
         } else if (credentials[i].type === "iotarm") {
           self.allAccounts[i].provider = "iotarm";
         }
+
+        let currentAccount = accounts.filter(
+          (x) => x.id == self.allAccounts[i].id
+        )[0];
+        if (currentAccount && currentAccount.validating) {
+          self.allAccounts[i].statusOfValidation = "loading";
+        } else {
+          if (self.allAccounts[i].valid != null) {
+            self.allAccounts[i].statusOfValidation = self.allAccounts[i].valid
+              ? true
+              : "error";
+          } else {
+            self.allAccounts[i].statusOfValidation = "loading";
+          }
+        }
+
         self.allAccounts.sort(function (a, b) {
           return a.created_at - b.created_at;
         });
@@ -334,24 +349,6 @@ export default {
         }
       }
 
-      self.allValidations = [];
-
-      self.allAccounts.forEach((account) => {
-        if (account.valid != null) {
-          self.allValidations.push({
-            id: account.id,
-            label: account.label,
-            statusOfValidation: account.valid ? true : "error",
-          });
-        } else {
-          self.allValidations.push({
-            id: account.id,
-            label: account.label,
-            statusOfValidation: "loading",
-          });
-        }
-      });
-
       self.loadingTable = false;
     },
     deleteAccount(account) {
@@ -367,7 +364,7 @@ export default {
           this.get_axiosConfig()
         )
         .then(function () {
-          self.markAccountAsBeingInDeletion(account);
+          account.statusOfValidation = "deleting";
           let thisLabelIndex = self.allCurrentLabels.findIndex(
             (thisLabel) => thisLabel === account
           );
@@ -545,41 +542,18 @@ export default {
           }
         });
     },
-    validateCredentials(account_id) {
-      if (
-        this.returnCurrentStatusOfValidation(account_id) === "loading" ||
-        this.returnCurrentStatusOfValidation(account_id) === "pending"
-      ) {
-        return;
-      }
+    validateCredentials(account_credentials) {
       // Check if account is on-premise account and stop validating
-      let checkIfAccountCanBeValidated = this.allAccounts.find(
-        (labels) => labels.id === account_id
-      );
       if (
-        checkIfAccountCanBeValidated.type === "ONPREM" ||
-        checkIfAccountCanBeValidated.type === "IOTARM"
+        account_credentials.type === "ONPREM" ||
+        account_credentials.type === "IOTARM"
       ) {
         return;
       }
 
-      // Check if account is is being tracked in the list of validations; if not add
-      let accountToValidate = this.allValidations.find(
-        (labels) => labels.id === account_id
-      );
-      if (!accountToValidate) {
-        this.allValidations.push({
-          label: account_id,
-          statusOfValidation: false,
-        });
-      }
-
-      // Find the account in the list of validations and continue to validate
-      let account_credentials = this.allValidations.find(
-        (labels) => labels.id === account_id
-      );
       let self = this;
-
+      account_credentials.statusOfValidation = "loading";
+      account_credentials.validating = true;
       self.errorMsg = "";
       self.error = false;
 
@@ -588,7 +562,7 @@ export default {
           "/server/tenants/" +
             this.computed_active_tenant_id +
             "/cloud-credentials/" +
-            account_id +
+            account_credentials.id +
             "/validate",
           {},
           this.get_axiosConfig()
@@ -615,7 +589,7 @@ export default {
                 self.get_axiosConfig()
               )
               .then(function (response) {
-                let alert = self.alerts.find(alert => alert.id === account_id);
+                let alert = self.alerts.find(alert => alert.id === account_credentials.id);
 
                 if (response.data.status == "PENDING") {
                   account_credentials.statusOfValidation = "pending";
@@ -625,6 +599,8 @@ export default {
                     }
                   }, 1000);
                 } else {
+                  account_credentials.validating = false;
+
                   if (response.data.error) {
                     account_credentials.statusOfValidation = "error";
                     self.error = true;
@@ -674,6 +650,7 @@ export default {
                 }
               })
               .catch(function (error) {
+                account_credentials.validating = false;
                 account_credentials.statusOfValidation = "error";
                 self.loading = false;
                 self.error = true;
@@ -694,6 +671,7 @@ export default {
               "Cloud credentials validation is not finished yet"
             )
           ) {
+            account_credentials.validating = false;
             account_credentials.statusOfValidation = "error";
             if (error.response) {
               console.log(error.response.data);
@@ -902,7 +880,7 @@ export default {
       var allAccountsCount = this.allAccounts.length;
       var allAccountsToCheck = 0;
       while (allAccountsToCheck < allAccountsCount) {
-        this.validateCredentials(this.allAccounts[allAccountsToCheck].id);
+        this.validateCredentials(this.allAccounts[allAccountsToCheck]);
         allAccountsToCheck++;
       }
     },
@@ -950,36 +928,6 @@ export default {
       }
       let indexToRemove = this.allCurrentLabels.findIndex(findIndexToRemove);
       this.allCurrentLabels.splice(indexToRemove, 1);
-    },
-    returnCurrentStatusOfValidation(account_label) {
-      function fundIndexToValidate(labelOfIndex) {
-        return labelOfIndex.label === account_label;
-      }
-      let indexofAccountToValidate =
-        this.allValidations.findIndex(fundIndexToValidate);
-      let result = false;
-      if (indexofAccountToValidate >= 0) {
-        result =
-          this.allValidations[indexofAccountToValidate].statusOfValidation;
-      } else {
-        result = false;
-      }
-      return result;
-    },
-    markAccountAsBeingInDeletion(account_id) {
-      let accountToDelete = this.allValidations.find(
-        (labels) => labels.label === account_id
-      );
-      if (!accountToDelete) {
-        this.allValidations.push({
-          label: account_id,
-          statusOfValidation: false,
-        });
-      }
-      let accountInDeletion = this.allValidations.find(
-        (labels) => labels.label === account_id
-      );
-      accountInDeletion.statusOfValidation = "deleting";
     },
   },
 };
