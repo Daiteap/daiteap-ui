@@ -19,7 +19,13 @@
           <th>Delete</th>
           <th
             class="cellAsALink"
-            @click="$emit('validateAllCredentials')"
+            @click="
+              allAccounts.forEach((acc) => {
+                acc.statusOfValidation = 'loading';
+                validationStatusKeys[acc.id] += 1;
+              });
+              $emit('validateAllCredentials');
+            "
           >
             <div class="pl-2">
               <i
@@ -91,13 +97,18 @@
           <td
             v-if="account.type != 'ONPREM' && account.type != 'IOTARM'"
             class="cellAsALink"
-            @click="$emit('validateCredential', account.id)"
+            @click="
+              account.statusOfValidation = 'loading';
+              validationStatusKeys[account.id] += 1;
+              $emit('validateCredential', account);
+            "
             data-test-id="validate-button"
           >
             <ValidateButton
+              :validationStatusKeys="validationStatusKeys[account.id]"
               :account="account"
               :alerts="alerts"
-              :validationStatus="returnCurrentStatusOfValidation(account.label)"
+              :validationStatus="account.statusOfValidation"
               :listOfAccountsInDeletion="listOfAccountsInDeletion"
             />
           </td>
@@ -129,17 +140,22 @@ export default {
     allAccounts: Array,
     providers: Array,
     alerts: Array,
-    returnCurrentStatusOfValidation: Function,
     listOfAccountsInDeletion: Array,
     showTenant: Boolean,
   },
   data() {
     return {
-      allValidations: [],
+      validationStatusKeys: {},
     };
   },
   created() {
-    this.loadingTable = true;
+    let statusKeys = {};
+    this.allAccounts.forEach((x) => {
+      if (!(x.id in Object.keys(statusKeys))) {
+        statusKeys[x.id] = 0;
+      }
+    });
+    this.validationStatusKeys = statusKeys;
   },
   methods: {
     goToRemoveAccountWarning(accountToRemove) {
