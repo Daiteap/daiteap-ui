@@ -14,6 +14,8 @@ When creating a new cloud credential, the platform will check the validity of th
 ### OAuth
 The easiest way to create a new Google cloud credentials is to use OAuth. To use OAuth, click the link `Use OAuth` and follow the on-screen instructions. Alternatively, one can create the credential manually by following the steps below.
 
+We will need access to the "https://www.googleapis.com/auth/cloud-platform" scope.
+
 ### Manual configuration
 
 Requirements:
@@ -69,6 +71,8 @@ Create the user. Copy and paste the **Access key ID** and **Secret access key** 
 
 ### OAuth
 The easiest way to create a new Azure cloud credentials is to use OAuth. To use OAuth, click the link `Use OAuth` and follow the on-screen instructions. Alternatively, one can create the credential manually by following the steps below.
+
+We will need access to the "https://management.azure.com/user_impersonation" scope.
 
 ### Manual configuration
 
