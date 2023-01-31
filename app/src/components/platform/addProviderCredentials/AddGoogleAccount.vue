@@ -6,7 +6,7 @@
       <div v-if="showHelp === true">
         <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
           Use OAuth:
-          <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/googleCloud_logo_small.png" />
         </div>
         <br />
         <hr />
@@ -87,7 +87,7 @@
           <d-row>
             <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
               Use OAuth:
-              <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/googleCloud_logo_small.png" />
             </div>
           </d-row>
           <br />
