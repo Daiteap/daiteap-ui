@@ -1,14 +1,5 @@
 <template>
   <div style="text-align: left">
-    <WarningAlert
-        v-if="showAlert"
-        :key="showAlert"
-        color="warning"
-        :closeOption="false"
-      >
-        <div v-html="alertMessage"></div>
-    </WarningAlert>
-
     <div class="field">
       <div class="columns">
         <div>
@@ -744,7 +735,6 @@ export default {
       })()
     );
     this.getUsersProjectsList();
-    this.checkForCredentials();
   },
   destroyed() {
     this.$finalModel = {};
@@ -1395,15 +1385,6 @@ export default {
         }
       }
     },
-    async checkForCredentials() {
-      let credentials = await this.getCredentials();
-      
-      if (credentials.length > 0) {
-        this.showAlert = false;
-      } else {
-        this.showAlert = true;
-      }
-    },
   },
   data() {
     return {
@@ -1449,8 +1430,6 @@ export default {
       formExtraFields: {},
       listNamespaces: [],
       YAMLUploadKey: 0,
-      showAlert: false,
-      alertMessage: 'No valid cloud credentials provided. To create a Kubernetes Cluster you need to provide valid cloud credentials from <a href="/#/app/platform/CloudProfile">here</a>.',
     };
   },
   components: {
