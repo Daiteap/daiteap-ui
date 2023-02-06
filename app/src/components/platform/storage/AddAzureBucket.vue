@@ -62,6 +62,7 @@
         <div class="">
           <p v-if="
             azureSelected &&
+            credential_id &&
             storageAccounts.filter(
               (acc) => acc.credential_id == credential_id
             ).length == 0
