@@ -116,12 +116,20 @@ export default {
       popupId: "userdeletewarning",
     };
   },
-  mounted() {
-    this.interval = setInterval(() => {
-      this.axios.get("/server/tenants/" + this.computed_active_tenant_id, this.get_axiosConfig()).then((response) => {
+  created() {
+    this.axios
+      .get(
+        "/server/tenants/" + this.computed_active_tenant_id,
+        this.get_axiosConfig()
+      )
+      .then((response) => {
         this.tenant = response.data;
       });
 
+    this.getUsersList();
+  },
+  mounted() {
+    this.interval = setInterval(() => {
       this.getUsersList();
     }, 5000);
   },
