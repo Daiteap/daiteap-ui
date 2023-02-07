@@ -84,21 +84,17 @@
         <tr v-for="item in clustersList" :key="item.ID">
           <td
             :title="item.ID"
-            v-if="item.InstallStep == 0"
+            v-if="
+              item.InstallStep == 0 ||
+              item.InstallStep == undefined ||
+              item.InstallStep == -100
+            "
             class="clickForDetails"
             v-on:click="goToClusterDetails(item)"
           >
             {{ item.Name }}
           </td>
-          <td
-            :title="item.ID"
-            v-else-if="item.InstallStep == undefined"
-            class="clickForDetails"
-            v-on:click="goToClusterDetails(item)"
-          >
-            {{ item.Name }}
-          </td>
-          <td v-else-if="item.InstallStep == 100 || item.InstallStep == -100">
+          <td v-else-if="item.InstallStep == 100">
             {{ item.Name }}
           </td>
           <td
@@ -150,7 +146,7 @@
           <td>
             <img
               v-if="item.Providers.includes('Azure')"
-              title="Azure"
+              :title="item.Credentials.azure"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -160,7 +156,7 @@
             />
             <img
               v-if="item.Providers.includes('Amazon')"
-              title="AWS"
+              :title="item.Credentials.aws"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -170,7 +166,7 @@
             />
             <img
               v-if="item.Providers.includes('Openstack') && computed_theme == 'daiteap'"
-              title="OpenStack"
+              :title="item.Credentials.openstack"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -180,7 +176,7 @@
             />
             <img
               v-if="item.Providers.includes('Google')"
-              title="Google Cloud"
+              :title="item.Credentials.google"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -190,7 +186,7 @@
             />
             <img
               v-if="item.Providers.includes('Onpremise')"
-              title="Onpremise"
+              :title="item.Credentials.onpremise"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -200,7 +196,7 @@
             />
             <img
               v-if="item.Providers.includes('IotArm')"
-              title="IoT-ARM"
+              :title="item.Credentials.iotarm"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
