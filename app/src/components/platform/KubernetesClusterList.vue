@@ -243,6 +243,7 @@ export default {
         self.clustersList[i].ResizeStep = kubernetesClusters[i].resizestep;
         self.clustersList[i].Type = kubernetesClusters[i].type;
         self.clustersList[i].Status = kubernetesClusters[i].status;
+        self.clustersList[i].Credentials = kubernetesClusters[i].credentials;
         self.clustersList[i].CreatedAt = new Date(
           kubernetesClusters[i].created_at
         );

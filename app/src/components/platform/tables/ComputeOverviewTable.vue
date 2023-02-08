@@ -56,15 +56,11 @@
           <tr v-for="item in clustersList" :key="item.ID">
             <td
               :title="item.ID"
-              v-if="item.InstallStep == 0"
-              class="clickForDetails"
-              v-on:click="goToClusterDetails(item)"
-            >
-              {{ item.Name }}
-            </td>
-            <td
-              :title="item.ID"
-              v-else-if="item.InstallStep == undefined"
+              v-if="
+                item.InstallStep == 0 ||
+                item.InstallStep == undefined ||
+                item.InstallStep == -100
+              "
               class="clickForDetails"
               v-on:click="goToClusterDetails(item)"
             >
@@ -117,7 +113,7 @@
             <td>
               <img
                 v-if="item.Providers.includes('Azure')"
-                title="Azure"
+                :title="item.Credentials.azure"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -127,7 +123,7 @@
               />
               <img
                 v-if="item.Providers.includes('Amazon')"
-                title="AWS"
+                :title="item.Credentials.aws"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -140,7 +136,7 @@
                   item.Providers.includes('Openstack') &&
                   computed_theme == 'daiteap'
                 "
-                title="OpenStack"
+                :title="item.Credentials.openstack"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -150,7 +146,7 @@
               />
               <img
                 v-if="item.Providers.includes('Google')"
-                title="Google Cloud"
+                :title="item.Credentials.google"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -160,7 +156,7 @@
               />
               <img
                 v-if="item.Providers.includes('Onpremise')"
-                title="Onpremise"
+                :title="item.Credentials.onpremise"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -170,7 +166,7 @@
               />
               <img
                 v-if="item.Providers.includes('IotArm')"
-                title="IoT-ARM"
+                :title="item.Credentials.iotarm"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -579,6 +575,7 @@ export default {
         self.clustersList[i].InstallStep = clusters[i].installstep;
         self.clustersList[i].Type = clusters[i].type;
         self.clustersList[i].Status = clusters[i].status;
+        self.clustersList[i].Credentials = clusters[i].credentials;
         self.clustersList[i].CreatedAt = new Date(clusters[i].created_at);
         self.clustersList[i].Contact = clusters[i].contact;
         self.clustersList[i].ErrorMsgDelete = clusters[i].error_msg_delete;
