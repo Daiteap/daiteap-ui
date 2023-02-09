@@ -94,7 +94,7 @@
           >
             {{ item.Name }}
           </td>
-          <td v-else-if="item.InstallStep == 100">
+          <td :title="item.ID" v-else-if="item.InstallStep == 100">
             {{ item.Name }}
           </td>
           <td

@@ -66,7 +66,7 @@
             >
               {{ item.Name }}
             </td>
-            <td v-else>
+            <td :title="item.ID" v-else>
               {{ item.Name }}
             </td>
             <td
