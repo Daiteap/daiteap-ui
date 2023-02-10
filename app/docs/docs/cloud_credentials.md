@@ -104,6 +104,10 @@ Go the the **IAM** tab and on Subscription you used. Click **Add -> Add custom r
 
 At last we create a RoleAssignment, which will map the role to the client application. Click on **Role assignments -> Add role assignment**, select the custom role **DaiteapRole**, click **Next -> Members -> Select members** and search the created client application by name. The select it and click Select and finish the creation of the role assignment.
 
+### Add Microsoft Graph permimission and admin consent
+![Screenshot](img/cloud_credentials_azure_microsoft_graph_permission.png)
+
+
 There's one API permission that you need to give your application. Go to App registrations -> Select your client application -> API permissions -> Add a permission -> Microsoft Graph -> Application permissions -> Directory.Read.All, after that the permission needs to be granted by an admin.
 After granting the permission, press the checkbox `Grant admin consent for Default Directory` and then make sure the Status fields shows that the access is granted.
 
