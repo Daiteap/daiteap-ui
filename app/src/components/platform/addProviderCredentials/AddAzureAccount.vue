@@ -4,13 +4,13 @@
     <div v-else @click="showHelp = false"></div>
     <div>
       <div v-if="showHelp === true">
-        <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
+        <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
           Use OAuth:
               <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
         </div>
         <br />
         <hr />
-        <br />
+        <br /> -->
         <div class="h4">Manual Configuration</div>
         <div class="text-right">
           <small class="showHelpLink" @click="showHelp = false">
@@ -97,13 +97,13 @@
 
       <div v-else class="box">
         <form class="form-horizontal" role="form">
-          <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
+          <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
             Use OAuth:
               <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
           </div>
           <br />
           <hr />
-          <br />
+          <br /> -->
           <h4>Manual Configuration</h4>
           <div class="text-right">
             <small class="showHelpLink" @click="showHelp = true">Credentials configuration instructions
