@@ -50,6 +50,26 @@
     </div>
 
     <div v-on:click.stop="" style="cursor: initial">
+      <div class="m-3">Description:</div>
+      <div class="m-3">
+        <b-form-textarea
+          v-model="description"
+          :disabled="!awsSelected"
+          class="form-control input"
+        ></b-form-textarea>
+      </div>
+      <div class="">
+        <p
+          v-if="awsSelected && $v.description.$invalid"
+          class="m-3 help text-danger"
+        >
+          Invalid Description
+        </p>
+        <div v-else></div>
+      </div>
+    </div>
+
+    <div v-on:click.stop="" style="cursor: initial">
       <div class="m-3">Location: * </div>
       <div class="m-3">
         <select class="custom-select" :disabled="!(awsSelected)" v-model="location">
@@ -131,6 +151,7 @@ export default {
       bucketName: "",
       locations: [],
       location: "",
+      description: "",
     };
   },
   props: {
@@ -177,6 +198,7 @@ export default {
         project: this.project_id,
         name: this.bucketName,
         bucket_location: this.location,
+        description: this.description,
       };
 
       return this.axios
@@ -243,6 +265,9 @@ export default {
       nameSymbolsValidation,
       bucketNameValidation,
       notIPAddress,
+    },
+    description: {
+      maxLength: maxLength(1024),
     },
   },
 };

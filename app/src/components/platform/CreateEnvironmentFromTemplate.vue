@@ -52,7 +52,7 @@
                 <div v-else style="height: 1.2rem"></div>
               </div>
             </div>
-            <div v-if="configuration.type != 2 && configuration.type != 6" class="form-group col-lg-12" :class="
+            <div class="form-group col-lg-12" :class="
               templateProvidersList.length == 5 ? 'px-1 mb-0' : 'px-1 mb-3'
             ">
               <label class="control-label" :class="

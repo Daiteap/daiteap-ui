@@ -50,6 +50,26 @@
     </div>
 
     <div v-on:click.stop="" style="cursor: initial">
+      <div class="m-3">Description:</div>
+      <div class="m-3">
+        <b-form-textarea
+          v-model="description"
+          :disabled="!azureSelected"
+          class="form-control input"
+        ></b-form-textarea>
+      </div>
+      <div class="">
+        <p
+          v-if="azureSelected && $v.description.$invalid"
+          class="m-3 help text-danger"
+        >
+          Invalid Description
+        </p>
+        <div v-else></div>
+      </div>
+    </div>
+
+    <div v-on:click.stop="" style="cursor: initial">
       <div class="m-3"> Storage Account: * </div>
       <div class="m-3">
         <select :disabled="!(azureSelected)" class="custom-select d-block w-100" v-model="storageAccount">
@@ -130,6 +150,7 @@ export default {
       bucketName: "",
       storageAccounts: [],
       storageAccount: "",
+      description: "",
     };
   },
   props: {
@@ -213,6 +234,7 @@ export default {
         name: this.bucketName,
         storage_account:
           "https://" + this.storageAccount + ".blob.core.windows.net/",
+        description: this.description,
       };
 
       return this.axios
@@ -278,6 +300,9 @@ export default {
       maxLength: maxLength(63),
       nameSymbolsValidation,
       bucketNameValidation,
+    },
+    description: {
+      maxLength: maxLength(1024),
     },
   },
 };

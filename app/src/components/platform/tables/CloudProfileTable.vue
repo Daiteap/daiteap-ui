@@ -1,5 +1,11 @@
 <template>
   <div class="table-responsive">
+    <SpecificUserInfo
+      v-if="showSpecificUserInfo"
+      :username="specificUserUsername"
+      @hideUserDetails="hideUserDetails"
+    />
+
     <table
       class="table table-bordered"
       id="dataTable"
@@ -9,7 +15,6 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th v-if="showTenant">Workspace</th>
           <th>Description</th>
           <th>Cloud</th>
           <th>Cloud Account</th>
@@ -42,18 +47,6 @@
           <td :title="account.label">
             {{ account.label }}
           </td>
-          <td
-            v-if="showTenant"
-            class="clickForDetails"
-            @click="
-              $router.push({
-                name: 'WorkspaceDetails',
-                params: {
-                  tenant: account.tenant,
-                },
-              })
-            "
-          >{{ account.tenant.name }}</td>
           <td :title="account.description">
             {{ account.description }}
           </td>
@@ -68,18 +61,18 @@
             />
           </td>
           <td
-            style="
-              word-wrap: break-word;
-              word-break: break-all;
-              white-space: normal;
-            "
+            :title="account.cloud_account_info"
           >
             {{ account.cloud_account_info }}
           </td>
           <td>
-            {{ account.created_at_pretty }}
+            {{ account.created_at_pretty | formatDate }}
           </td>
-          <td :title="account.contact">
+          <td
+            class="clickForDetails"
+            v-on:click="showUserDetails(account.contact)"
+            :title="account.contact"
+          >
             {{ account.contact }}
           </td>
           <td>
@@ -133,6 +126,7 @@
 <script>
 import ValidateButton from "@/components/platform/ValidateButton";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
 
 export default {
   name: 'CloudProfileTable',
@@ -146,6 +140,8 @@ export default {
   data() {
     return {
       validationStatusKeys: {},
+      showSpecificUserInfo: false,
+      specificUserUsername: "",
     };
   },
   created() {
@@ -161,10 +157,18 @@ export default {
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit('removeAccount', accountToRemove)
     },
+    showUserDetails(username) {
+      this.specificUserUsername = username;
+      this.showSpecificUserInfo = true;
+    },
+    hideUserDetails() {
+      this.showSpecificUserInfo = false;
+    },
   },
   components: {
     ValidateButton,
     RemoveAccountButton,
+    SpecificUserInfo,
   },
   filters: {
     upperCase: function (data) {

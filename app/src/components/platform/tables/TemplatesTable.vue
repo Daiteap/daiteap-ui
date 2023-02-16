@@ -15,6 +15,18 @@
 
   <div v-else class="mt-2">
     <div class="table-responsive">
+      <SpecificUserInfo
+        v-if="showSpecificUserInfo"
+        :username="specificUserUsername"
+        @hideUserDetails="hideUserDetails"
+      />
+      <EditTemplatePopup
+        v-if="showEditTemplatePopup"
+        :currentTemplate="templateToEdit"
+        :oldName="templateToEditName"
+        @updateTemplate="updateTemplate"
+      />
+
       <table
         class="table table-bordered"
         id="dataTable"
@@ -25,10 +37,11 @@
           <tr>
             <th>Name</th>
             <th>Description</th>
-            <th>Providers</th>
+            <th>Provider</th>
             <th>Type</th>
             <th>Created at</th>
             <th>Created by</th>
+            <th>Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -42,10 +55,11 @@
                   params: { templateID: template.id },
                 })
               "
+              :title="template.name"
             >
               <strong> {{ template.name }} </strong>
             </td>
-            <td>{{ template.description }}</td>
+            <td :title="template.description">{{ template.description }}</td>
             <td>
               <img
                 v-if="template.providers.includes('Azure')"
@@ -78,7 +92,10 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
               <img
-                v-if="template.providers.includes('Openstack') && computed_theme == 'daiteap'"
+                v-if="
+                  template.providers.includes('Openstack') &&
+                  computed_theme == 'daiteap'
+                "
                 title="OpenStack"
                 style="height: 20px; margin-right: 5px"
                 src="../../../assets/img/openstack_logo_small.png"
@@ -92,13 +109,28 @@
               <div v-else>Compute (VM)</div>
             </td>
             <td>
-              {{ template.created_at }}
+              {{ template.created_at | formatDate }}
             </td>
-            <td>{{ template.contact }}</td>
+            <td
+              class="clickForDetails"
+              v-on:click="showUserDetails(template.contact)"
+              :title="template.contact"
+            >
+              {{ template.contact }}
+            </td>
             <td>
               <div class="pl-2">
                 <div
-                  title="Delete template"
+                  title="Edit"
+                  @click="openEditPopup(template)"
+                  class="fas fa-edit editIcon"
+                ></div>
+              </div>
+            </td>
+            <td>
+              <div class="pl-2">
+                <div
+                  title="Delete"
                   class="far fa-trash-alt removeAccountIcon"
                   @click="removeTemplate(template)"
                 ></div>
@@ -118,6 +150,8 @@
 <script>
 import axios from "axios";
 import GenericPopupWarning from "@/components/platform/popup_modals/GenericPopupWarning";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
+import EditTemplatePopup from "@/components/platform/popup_modals/EditTemplatePopup";
 
 export default {
   name: "TemplatesTable",
@@ -136,6 +170,11 @@ export default {
       interval: "",
       allTemplates: [],
       templateToRemove: "",
+      showSpecificUserInfo: false,
+      specificUserUsername: "",
+      templateToEdit: {},
+      templateToEditName: "",
+      showEditTemplatePopup: false,
     };
   },
   created() {},
@@ -210,9 +249,70 @@ export default {
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit("removeAccount", accountToRemove);
     },
+    showUserDetails(username) {
+      this.specificUserUsername = username;
+      this.showSpecificUserInfo = true;
+    },
+    hideUserDetails() {
+      this.showSpecificUserInfo = false;
+    },
+    openEditPopup(template) {
+      this.templateToEdit = template;
+      this.templateToEditName = template.name;
+      this.showEditTemplatePopup = true;
+      this.$nextTick(function () {
+        this.$bvModal.show("bv-modal-edittemplate");
+      });
+    },
+    updateTemplate(template) {
+      let self = this;
+      this.axios
+        .put(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environment-templates/" +
+            template.id,
+          {
+            name: template.name,
+            description: template.description,
+          },
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          self.$notify({
+            group: "msg",
+            type: "success",
+            title: "Notification:",
+            text: "Successfuly updated template!",
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating template.",
+            });
+          }
+        });
+    },
   },
   components: {
     GenericPopupWarning,
+    SpecificUserInfo,
+    EditTemplatePopup,
   },
   destroyed() {
     if (window.intervals) {
@@ -263,5 +363,4 @@ td {
   padding-top: 0.2rem;
   color: #ea002f;
 }
-
 </style>

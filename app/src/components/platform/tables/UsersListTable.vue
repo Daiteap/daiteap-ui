@@ -43,6 +43,7 @@
         <td
           class="clickForDetails"
           v-on:click="showUserDetails(user)"
+          :title="user.username"
         >
           {{ user.username }}
         </td>
@@ -94,7 +95,7 @@
         <td v-if="showdelete == true">
           <div class="pl-2">
             <div
-              title="Remove user"
+              title="Remove"
               @click="user.role == 'Owner' ? null : onUserDelete(user)"
               class="far fa-trash-alt removeUserIcon"
               :class="user.role == 'Owner' ? 'disabledRemoveUserIcon' : ''"
@@ -241,6 +242,7 @@ td {
   overflow: hidden;
   white-space: nowrap;
 }
+
 .selectable_table_row:hover {
   cursor: pointer;
   box-shadow: 0 1px 6px 0 #a3a3a3;
