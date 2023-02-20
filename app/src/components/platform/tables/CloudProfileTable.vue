@@ -15,14 +15,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
-          <th>Cloud</th>
-          <th>Cloud Account</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Edit</th>
+          <th name="hidePriority2">Description</th>
+          <th name="hidePriority5">Cloud</th>
+          <th name="hidePriority4">Cloud Account</th>
+          <th name="hidePriority0">Created at</th>
+          <th name="hidePriority1">Created by</th>
+          <th name="hidePriority3">Edit</th>
           <th>Delete</th>
           <th
+            name="hidePriority6"
             class="cellAsALink"
             @click="
               allAccounts.forEach((acc) => {
@@ -43,39 +44,44 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(account, index) in allAccounts" :key="index" data-test-id="table">
+        <tr
+          v-for="(account, index) in allAccounts"
+          :key="index"
+          data-test-id="table"
+        >
           <td :title="account.label">
             {{ account.label }}
           </td>
-          <td :title="account.description">
+          <td name="hidePriority2" :title="account.description">
             {{ account.description }}
           </td>
-          <td>
+          <td name="hidePriority5">
             <img
               height="25pix"
               width="auto"
               :src="
                 require('../../../assets/img/' +
-                  providers.filter(provider => provider.name == account.provider)[0].logo_small)
+                  providers.filter(
+                    (provider) => provider.name == account.provider
+                  )[0].logo_small)
               "
             />
           </td>
-          <td
-            :title="account.cloud_account_info"
-          >
+          <td name="hidePriority4" :title="account.cloud_account_info">
             {{ account.cloud_account_info }}
           </td>
-          <td>
+          <td name="hidePriority0">
             {{ account.created_at_pretty | formatDate }}
           </td>
           <td
+            name="hidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(account.contact)"
             :title="account.contact"
           >
             {{ account.contact }}
           </td>
-          <td>
+          <td name="hidePriority3">
             <div class="pl-2">
               <i
                 title="Edit"
@@ -85,9 +91,13 @@
             </div>
           </td>
           <td>
-            <RemoveAccountButton :account=account @removeAccount="goToRemoveAccountWarning"/>
+            <RemoveAccountButton
+              :account="account"
+              @removeAccount="goToRemoveAccountWarning"
+            />
           </td>
           <td
+            name="hidePriority6"
             v-if="account.type != 'ONPREM' && account.type != 'IOTARM'"
             class="cellAsALink"
             @click="
@@ -129,7 +139,7 @@ import RemoveAccountButton from "@/components/platform/RemoveAccountButton";
 import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
 
 export default {
-  name: 'CloudProfileTable',
+  name: "CloudProfileTable",
   props: {
     allAccounts: Array,
     providers: Array,
@@ -153,9 +163,31 @@ export default {
     });
     this.validationStatusKeys = statusKeys;
   },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.changeColumnsVisibility);
+  },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [1890, 1725, 1565, 1295, 1240, 915, 835];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     goToRemoveAccountWarning(accountToRemove) {
-      this.$emit('removeAccount', accountToRemove)
+      this.$emit("removeAccount", accountToRemove);
     },
     showUserDetails(username) {
       this.specificUserUsername = username;

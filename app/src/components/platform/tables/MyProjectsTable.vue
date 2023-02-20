@@ -24,10 +24,10 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Edit</th>
+          <th name="hidePriority2">Description</th>
+          <th name="hidePriority0">Created at</th>
+          <th name="hidePriority1">Created by</th>
+          <th name="hidePriority3">Edit</th>
           <th>Delete</th>
         </tr>
       </thead>
@@ -48,20 +48,21 @@
           >
             {{ item.Name }}
           </td>
-          <td :title="item.Description">
+          <td name="hidePriority2" :title="item.Description">
             {{ item.Description }}
           </td>
-          <td>
+          <td name="hidePriority0">
             {{ item.CreatedAt | formatDate }}
           </td>
           <td
+            name="hidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(item.Contact)"
             :title="item.Contact"
           >
             {{ item.Contact }}
           </td>
-          <td>
+          <td name="hidePriority3">
             <div class="pl-2">
               <div
                 title="Edit"
@@ -118,7 +119,29 @@ export default {
   created() {
     this.loadingTable = true;
   },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.changeColumnsVisibility);
+  },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [1420, 1240, 1085, 750];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     goToRemoveProjectWarning(projectToRemove) {
       this.projectToRemove = projectToRemove;
       this.$bvModal.show("bv-modal-removeprojectwarning");

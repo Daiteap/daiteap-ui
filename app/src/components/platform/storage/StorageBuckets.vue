@@ -17,122 +17,129 @@
       @updateBucket="updateBucket"
     />
 
-    <table
-      class="table table-bordered"
-      width="100%"
-      cellspacing="0"
-      v-if="buckets.length > 0"
-    >
-      <GenericPopupWarning
-        v-if="bucketToDelete.provider == 'azure'"
-        :message="`Confirm deleting ${bucketToDelete.name} Warning: This will delete all files in the container.`"
-        @confirm="deleteBucket"
-        :modalId="popupId"
-      />
-      <GenericPopupWarning
-        v-else
-        :message="`Confirm deleting ${bucketToDelete.name}`"
-        @confirm="deleteBucket"
-        :modalId="popupId"
-      />
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th v-if="!projectID && !showTenant">Project</th>
-          <th>Provider</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in buckets" :key="item.name">
-          <td
-            class="clickForDetails"
-            v-on:click="
-              $router.push({
-                name: 'BucketDetails',
-                params: {
-                  bucket: item,
-                },
-              })
-            "
-            :title="item.name"
-          >
-            {{ item.name }}
-          </td>
-          <td :title="item.description">
-            {{ item.description }}
-          </td>
-          <td
-            class="clickForDetails"
-            @click="
-              $router.push({
-                name: 'ProjectDetails',
-                params: {
-                  projectID: item.project.id,
-                },
-              })
-            "
-            v-if="!projectID && !showTenant"
-            :title="item.project.name"
-          >
-            {{ item.project.name }}
-          </td>
-          <td>
-            <img
-              v-if="item.provider == 'aws'"
-              :title="item.credential.label"
-              height="25pix"
-              width="auto"
-              :src="require('../../../assets/img/aws_logo_small.png')"
-            />
-            <img
-              v-if="item.provider == 'azure'"
-              :title="item.credential.label"
-              height="25pix"
-              width="auto"
-              :src="require('../../../assets/img/azure_logo_small.png')"
-            />
-            <img
-              v-if="item.provider == 'google'"
-              :title="item.credential.label"
-              height="25pix"
-              width="auto"
-              :src="require('../../../assets/img/googleCloud_logo_small.png')"
-            />
-          </td>
-          <td>{{ item.created_at | formatDate }}</td>
-          <td
-            class="clickForDetails"
-            v-on:click="showUserDetails(item.contact)"
-            :title="item.contact"
-          >
-            {{ item.contact }}
-          </td>
-          <td>
-            <div class="pl-2">
-              <div
-                title="Edit"
-                @click="openEditPopup(item)"
-                class="fas fa-edit editIcon"
-              ></div>
-            </div>
-          </td>
-          <td>
-            <div class="pl-2">
-              <div
-                title="Delete"
-                @click="deleteBucketPopup(item)"
-                class="far fa-trash-alt deleteIcon"
-              ></div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table
+        class="table table-bordered"
+        id="dataTable"
+        width="100%"
+        cellspacing="0"
+        v-if="buckets.length > 0"
+      >
+        <GenericPopupWarning
+          v-if="bucketToDelete.provider == 'azure'"
+          :message="`Confirm deleting ${bucketToDelete.name} Warning: This will delete all files in the container.`"
+          @confirm="deleteBucket"
+          :modalId="popupId"
+        />
+        <GenericPopupWarning
+          v-else
+          :message="`Confirm deleting ${bucketToDelete.name}`"
+          @confirm="deleteBucket"
+          :modalId="popupId"
+        />
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th name="hidePriority2">Description</th>
+            <th name="hidePriority4" v-if="!projectID && !showTenant">
+              Project
+            </th>
+            <th name="hidePriority5">Provider</th>
+            <th name="hidePriority0">Created at</th>
+            <th name="hidePriority1">Created by</th>
+            <th name="hidePriority3">Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in buckets" :key="item.name">
+            <td
+              class="clickForDetails"
+              v-on:click="
+                $router.push({
+                  name: 'BucketDetails',
+                  params: {
+                    bucket: item,
+                  },
+                })
+              "
+              :title="item.name"
+            >
+              {{ item.name }}
+            </td>
+            <td name="hidePriority2" :title="item.description">
+              {{ item.description }}
+            </td>
+            <td
+              name="hidePriority4"
+              class="clickForDetails"
+              @click="
+                $router.push({
+                  name: 'ProjectDetails',
+                  params: {
+                    projectID: item.project.id,
+                  },
+                })
+              "
+              v-if="!projectID && !showTenant"
+              :title="item.project.name"
+            >
+              {{ item.project.name }}
+            </td>
+            <td name="hidePriority5">
+              <img
+                v-if="item.provider == 'aws'"
+                :title="item.credential.label"
+                height="25pix"
+                width="auto"
+                :src="require('../../../assets/img/aws_logo_small.png')"
+              />
+              <img
+                v-if="item.provider == 'azure'"
+                :title="item.credential.label"
+                height="25pix"
+                width="auto"
+                :src="require('../../../assets/img/azure_logo_small.png')"
+              />
+              <img
+                v-if="item.provider == 'google'"
+                :title="item.credential.label"
+                height="25pix"
+                width="auto"
+                :src="require('../../../assets/img/googleCloud_logo_small.png')"
+              />
+            </td>
+            <td name="hidePriority0">{{ item.created_at | formatDate }}</td>
+            <td
+              name="hidePriority1"
+              class="clickForDetails"
+              v-on:click="showUserDetails(item.contact)"
+              :title="item.contact"
+            >
+              {{ item.contact }}
+            </td>
+            <td name="hidePriority3">
+              <div class="pl-2">
+                <div
+                  title="Edit"
+                  @click="openEditPopup(item)"
+                  class="fas fa-edit editIcon"
+                ></div>
+              </div>
+            </td>
+            <td>
+              <div class="pl-2">
+                <div
+                  title="Delete"
+                  @click="deleteBucketPopup(item)"
+                  class="far fa-trash-alt deleteIcon"
+                ></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -167,7 +174,29 @@ export default {
       showEditBucketPopup: false,
     };
   },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.changeColumnsVisibility);
+  },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [1770, 1610, 1450, 1175, 1120, 800];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     deleteBucketPopup(bucket) {
       this.bucketToDelete = bucket;
       this.$bvModal.show(this.popupId);

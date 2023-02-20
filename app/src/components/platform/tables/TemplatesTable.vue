@@ -36,12 +36,12 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Description</th>
-            <th>Provider</th>
-            <th>Type</th>
-            <th>Created at</th>
-            <th>Created by</th>
-            <th>Edit</th>
+            <th name="hidePriority2">Description</th>
+            <th name="hidePriority5">Provider</th>
+            <th name="hidePriority4">Type</th>
+            <th name="hidePriority0">Created at</th>
+            <th name="hidePriority1">Created by</th>
+            <th name="hidePriority3">Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -59,8 +59,8 @@
             >
               <strong> {{ template.name }} </strong>
             </td>
-            <td :title="template.description">{{ template.description }}</td>
-            <td>
+            <td name="hidePriority2" :title="template.description">{{ template.description }}</td>
+            <td name="hidePriority5">
               <img
                 v-if="template.providers.includes('Azure')"
                 title="Azure"
@@ -101,24 +101,24 @@
                 src="../../../assets/img/openstack_logo_small.png"
               />
             </td>
-            <td>
+            <td name="hidePriority4">
               <div v-if="template.type == 1">DLCM</div>
               <div v-else-if="template.type == 3">DK3S</div>
               <div v-else-if="template.type == 5">CAPI</div>
               <div v-else-if="template.type == 7">DLCMv2</div>
               <div v-else>Compute (VM)</div>
             </td>
-            <td>
+            <td name="hidePriority0">
               {{ template.created_at | formatDate }}
             </td>
-            <td
+            <td name="hidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(template.contact)"
               :title="template.contact"
             >
               {{ template.contact }}
             </td>
-            <td>
+            <td name="hidePriority3">
               <div class="pl-2">
                 <div
                   title="Edit"
@@ -156,6 +156,9 @@ import EditTemplatePopup from "@/components/platform/popup_modals/EditTemplatePo
 export default {
   name: "TemplatesTable",
   mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+
     let self = this;
     this.getTemplatesList();
 
@@ -177,8 +180,26 @@ export default {
       showEditTemplatePopup: false,
     };
   },
-  created() {},
+  created() {
+    this.getTemplatesList();
+  },
   methods: {
+    changeColumnsVisibility() {
+      console.log(window.innerWidth);
+      let sizes = [1615, 1430, 1280, 1010, 900, 805];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     onTemplatesChanged() {
       setTimeout(() => this.getTemplatesList(), 500);
     },
@@ -245,6 +266,7 @@ export default {
       }
 
       self.loadingTable = false;
+      self.changeColumnsVisibility();
     },
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit("removeAccount", accountToRemove);
@@ -321,6 +343,8 @@ export default {
       }
     }
     clearInterval(this.interval);
+
+    window.removeEventListener("resize", this.changeColumnsVisibility);
   },
 };
 </script>

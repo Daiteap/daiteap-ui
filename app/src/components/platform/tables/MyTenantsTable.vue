@@ -13,36 +13,36 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Owner</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Company</th>
-          <th>Created at</th>
-          <th>Updated at</th>
+          <th name="hidePriority2">Owner</th>
+          <th name="hidePriority4">Email</th>
+          <th name="hidePriority3">Phone</th>
+          <th name="hidePriority5">Company</th>
+          <th name="hidePriority1">Created at</th>
+          <th name="hidePriority0">Updated at</th>
           <th>Activate</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in tenantsList" :key="item.id">
-          <td>
+          <td :title="item.name">
             {{ item.name }}
           </td>
-          <td>
+          <td name="hidePriority2" :title="item.owner">
             {{ item.owner }}
           </td>
-          <td>
+          <td name="hidePriority4" :title="item.email">
             {{ item.email }}
           </td>
-          <td>
+          <td name="hidePriority3">
             {{ item.phone }}
           </td>
-          <td>
+          <td name="hidePriority5" :title="item.company">
             {{ item.company }}
           </td>
-          <td>
+          <td name="hidePriority1">
             {{ item.createdAt | formatDate }}
           </td>
-          <td>
+          <td name="hidePriority0">
             {{ item.updatedAt | formatDate }}
           </td>
           <td>
@@ -83,7 +83,29 @@ export default {
   created() {
     this.loadingTable = true;
   },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.changeColumnsVisibility);
+  },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [1530, 1370, 1205, 1050, 920, 740];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     changeTenant(tenant) {
       this.confirmAndRedirectDialogParams.requestBody = {
         "selectedTenant": tenant.id
@@ -106,6 +128,13 @@ export default {
 </script>
 
 <style scoped>
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 a:not([href]):not([tabindex]) {
   color: #4e73df;
   text-decoration: none;

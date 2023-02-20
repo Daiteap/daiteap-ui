@@ -73,13 +73,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
-          <th v-if="showProject && !showTenant">Project</th>
-          <th>Provider</th>
-          <th>Type</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Status</th>
+          <th name="hidePriority3">Description</th>
+          <th name="hidePriority4" v-if="showProject && !showTenant">
+            Project
+          </th>
+          <th name="hidePriority5">Provider</th>
+          <th name="hidePriority2">Type</th>
+          <th name="hidePriority0">Created at</th>
+          <th name="hidePriority1">Created by</th>
+          <th name="hidePriority6">Status</th>
           <th>Operations</th>
         </tr>
       </thead>
@@ -108,8 +110,11 @@
           >
             {{ item.Name }}
           </td>
-          <td :title="item.Description">{{ item.Description }}</td>
+          <td name="hidePriority3" :title="item.Description">
+            {{ item.Description }}
+          </td>
           <td
+            name="hidePriority4"
             v-if="showProject && !showTenant"
             v-show="projectsList != 'loading'"
             class="clickForDetails"
@@ -127,7 +132,7 @@
           >
             {{ item.ProjectName }}
           </td>
-          <td>
+          <td name="hidePriority5">
             <img
               v-if="item.Providers.includes('Azure')"
               :title="item.Credentials.azure"
@@ -192,7 +197,7 @@
               src="../../../assets/img/IoTArm_logo_small.svg"
             />
           </td>
-          <td>
+          <td name="hidePriority2">
             <div v-if="item.Type == 1">DLCM</div>
             <div v-else-if="item.Type == 2">DMCV</div>
             <div v-else-if="item.Type == 3">DK3S</div>
@@ -201,15 +206,16 @@
             <div v-else-if="item.Type == 8">YaookCAPI</div>
             <div v-else>---</div>
           </td>
-          <td>{{ item.CreatedAt | formatDate }}</td>
+          <td name="hidePriority0">{{ item.CreatedAt | formatDate }}</td>
           <td
+            name="hidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(item.Contact)"
             :title="item.Contact"
           >
             {{ item.Contact }}
           </td>
-          <td style="max-width: none">
+          <td name="hidePriority6" style="max-width: none">
             <span v-if="item.ResizeStep > 0"
               ><b-spinner
                 style="width: 1rem; height: 1rem"
@@ -535,6 +541,13 @@ export default {
   created() {
     this.loadingTable = true;
   },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.changeColumnsVisibility);
+  },
   components: {
     SaveEnvironmentTemplate,
     DeleteError,
@@ -549,6 +562,21 @@ export default {
     QuotaExceededModal,
   },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [2090, 1930, 1770, 1675, 1410, 1130, 1040];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     showUserDetails(username) {
       this.$emit("showUserDetails", username);
     },

@@ -32,7 +32,7 @@
       </div>
     </div>
     <div v-else-if="clustersList.length == 0">No Compute (VMs) currently.</div>
-    <div v-else>
+    <div v-else class="table-responsive">
       <table
         class="table table-bordered"
         id="dataTable"
@@ -42,12 +42,12 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Description</th>
-            <th v-if="!projectName && !showTenant">Project</th>
-            <th>Provider</th>
-            <th>Created at</th>
-            <th>Created by</th>
-            <th>Status</th>
+            <th name="hidePriority2">Description</th>
+            <th name="hidePriority3" v-if="!projectName && !showTenant">Project</th>
+            <th name="hidePriority4">Provider</th>
+            <th name="hidePriority0">Created at</th>
+            <th name="hidePriority1">Created by</th>
+            <th name="hidePriority5">Status</th>
             <th>Operations</th>
           </tr>
         </thead>
@@ -68,10 +68,10 @@
             <td :title="item.ID" v-else>
               {{ item.Name }}
             </td>
-            <td :title="item.Description">
+            <td name="hidePriority2" :title="item.Description">
               {{ item.Description }}
             </td>
-            <td
+            <td name="hidePriority3"
               v-if="!projectName && !showTenant"
               v-show="projectsList != 'loading'"
               class="clickForDetails"
@@ -89,7 +89,7 @@
             >
               {{ item.ProjectName }}
             </td>
-            <td>
+            <td name="hidePriority4">
               <img
                 v-if="item.Providers.includes('Azure')"
                 :title="item.Credentials.azure"
@@ -154,15 +154,15 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
             </td>
-            <td>{{ item.CreatedAt | formatDate }}</td>
-            <td
+            <td name="hidePriority0">{{ item.CreatedAt | formatDate }}</td>
+            <td name="hidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(item.Contact)"
               :title="item.Contact"
             >
               {{ item.Contact }}
             </td>
-            <td style="max-width: none">
+            <td name="hidePriority5" style="max-width: none">
               <b-spinner
                 v-if="item.Status == 'starting'"
                 style="width: 1rem; height: 1rem"
@@ -333,8 +333,16 @@ export default {
       showEditClusterPopup: false,
     };
   },
-  mounted() {
+  created() {
     this.getClustersList();
+    this.getProjectsList();
+  },
+  mounted() {
+    this.changeColumnsVisibility();
+    window.addEventListener("resize", this.changeColumnsVisibility);
+
+    this.getClustersList();
+    this.getProjectsList();
 
     this.interval = setInterval(() => {
       this.getClustersList();
@@ -345,6 +353,21 @@ export default {
     window.intervals.push(this.interval);
   },
   methods: {
+    changeColumnsVisibility() {
+      let sizes = [1890, 1730, 1580, 1310, 1035, 890];
+      for (let i = 0; i < sizes.length; i++) {
+        let columns = document.getElementsByName("hidePriority" + i);
+        if (window.innerWidth < sizes[i]) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        } else {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+    },
     async getProjectsList() {
       let projects = await this.getProjects();
       this.projectsList = projects;
@@ -623,6 +646,7 @@ export default {
       self.machinesList = allMachines;
 
       self.loading = false;
+      self.changeColumnsVisibility();
     },
     updateSelectedMachineDetails(machine) {
       this.machineDetails = machine;
@@ -723,6 +747,8 @@ export default {
       clearInterval(window.intervals[i]);
     }
     clearInterval(this.interval);
+
+    window.removeEventListener("resize", this.changeColumnsVisibility);
   },
 };
 </script>
