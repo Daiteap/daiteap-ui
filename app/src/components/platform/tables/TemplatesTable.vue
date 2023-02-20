@@ -185,7 +185,6 @@ export default {
   },
   methods: {
     changeColumnsVisibility() {
-      console.log(window.innerWidth);
       let sizes = [1615, 1430, 1280, 1010, 900, 805];
       for (let i = 0; i < sizes.length; i++) {
         let columns = document.getElementsByName("hidePriority" + i);
