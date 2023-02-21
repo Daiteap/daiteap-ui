@@ -42,12 +42,14 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th name="hidePriority2">Description</th>
-            <th name="hidePriority3" v-if="!projectName && !showTenant">Project</th>
-            <th name="hidePriority4">Provider</th>
-            <th name="hidePriority0">Created at</th>
-            <th name="hidePriority1">Created by</th>
-            <th name="hidePriority5">Status</th>
+            <th name="computeHidePriority2">Description</th>
+            <th name="computeHidePriority3" v-if="!projectName && !showTenant">
+              Project
+            </th>
+            <th name="computeHidePriority4">Provider</th>
+            <th name="computeHidePriority0">Created at</th>
+            <th name="computeHidePriority1">Created by</th>
+            <th name="computeHidePriority5">Status</th>
             <th>Operations</th>
           </tr>
         </thead>
@@ -68,10 +70,11 @@
             <td :title="item.ID" v-else>
               {{ item.Name }}
             </td>
-            <td name="hidePriority2" :title="item.Description">
+            <td name="computeHidePriority2" :title="item.Description">
               {{ item.Description }}
             </td>
-            <td name="hidePriority3"
+            <td
+              name="computeHidePriority3"
               v-if="!projectName && !showTenant"
               v-show="projectsList != 'loading'"
               class="clickForDetails"
@@ -89,7 +92,7 @@
             >
               {{ item.ProjectName }}
             </td>
-            <td name="hidePriority4">
+            <td name="computeHidePriority4">
               <img
                 v-if="item.Providers.includes('Azure')"
                 :title="item.Credentials.azure"
@@ -154,15 +157,18 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
             </td>
-            <td name="hidePriority0">{{ item.CreatedAt | formatDate }}</td>
-            <td name="hidePriority1"
+            <td name="computeHidePriority0">
+              {{ item.CreatedAt | formatDate }}
+            </td>
+            <td
+              name="computeHidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(item.Contact)"
               :title="item.Contact"
             >
               {{ item.Contact }}
             </td>
-            <td name="hidePriority5" style="max-width: none">
+            <td name="computeHidePriority5" style="max-width: none">
               <b-spinner
                 v-if="item.Status == 'starting'"
                 style="width: 1rem; height: 1rem"
@@ -356,7 +362,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1890, 1730, 1580, 1310, 1035, 890];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("computeHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

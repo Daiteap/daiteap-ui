@@ -40,14 +40,14 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th name="hidePriority2">Description</th>
-            <th name="hidePriority4" v-if="!projectID && !showTenant">
+            <th name="bucketsHidePriority2">Description</th>
+            <th name="bucketsHidePriority4" v-if="!projectID && !showTenant">
               Project
             </th>
-            <th name="hidePriority5">Provider</th>
-            <th name="hidePriority0">Created at</th>
-            <th name="hidePriority1">Created by</th>
-            <th name="hidePriority3">Edit</th>
+            <th name="bucketsHidePriority5">Provider</th>
+            <th name="bucketsHidePriority0">Created at</th>
+            <th name="bucketsHidePriority1">Created by</th>
+            <th name="bucketsHidePriority3">Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -67,11 +67,11 @@
             >
               {{ item.name }}
             </td>
-            <td name="hidePriority2" :title="item.description">
+            <td name="bucketsHidePriority2" :title="item.description">
               {{ item.description }}
             </td>
             <td
-              name="hidePriority4"
+              name="bucketsHidePriority4"
               class="clickForDetails"
               @click="
                 $router.push({
@@ -86,7 +86,7 @@
             >
               {{ item.project.name }}
             </td>
-            <td name="hidePriority5">
+            <td name="bucketsHidePriority5">
               <img
                 v-if="item.provider == 'aws'"
                 :title="item.credential.label"
@@ -109,16 +109,18 @@
                 :src="require('../../../assets/img/googleCloud_logo_small.png')"
               />
             </td>
-            <td name="hidePriority0">{{ item.created_at | formatDate }}</td>
+            <td name="bucketsHidePriority0">
+              {{ item.created_at | formatDate }}
+            </td>
             <td
-              name="hidePriority1"
+              name="bucketsHidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(item.contact)"
               :title="item.contact"
             >
               {{ item.contact }}
             </td>
-            <td name="hidePriority3">
+            <td name="bucketsHidePriority3">
               <div class="pl-2">
                 <div
                   title="Edit"
@@ -185,7 +187,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1770, 1610, 1450, 1175, 1120, 800];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("bucketsHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

@@ -13,12 +13,12 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th name="hidePriority2">Owner</th>
-          <th name="hidePriority4">Email</th>
-          <th name="hidePriority3">Phone</th>
-          <th name="hidePriority5">Company</th>
-          <th name="hidePriority1">Created at</th>
-          <th name="hidePriority0">Updated at</th>
+          <th name="tenantsHidePriority2">Owner</th>
+          <th name="tenantsHidePriority4">Email</th>
+          <th name="tenantsHidePriority3">Phone</th>
+          <th name="tenantsHidePriority5">Company</th>
+          <th name="tenantsHidePriority1">Created at</th>
+          <th name="tenantsHidePriority0">Updated at</th>
           <th>Activate</th>
         </tr>
       </thead>
@@ -27,26 +27,32 @@
           <td :title="item.name">
             {{ item.name }}
           </td>
-          <td name="hidePriority2" :title="item.owner">
+          <td name="tenantsHidePriority2" :title="item.owner">
             {{ item.owner }}
           </td>
-          <td name="hidePriority4" :title="item.email">
+          <td name="tenantsHidePriority4" :title="item.email">
             {{ item.email }}
           </td>
-          <td name="hidePriority3">
+          <td name="tenantsHidePriority3">
             {{ item.phone }}
           </td>
-          <td name="hidePriority5" :title="item.company">
+          <td name="tenantsHidePriority5" :title="item.company">
             {{ item.company }}
           </td>
-          <td name="hidePriority1">
+          <td name="tenantsHidePriority1">
             {{ item.createdAt | formatDate }}
           </td>
-          <td name="hidePriority0">
+          <td name="tenantsHidePriority0">
             {{ item.updatedAt | formatDate }}
           </td>
           <td>
-            <toggle-button :value="item.selected" data-test-id="compute-option-button" @input="changeTenant(item)" :disabled="item.selected" sync />
+            <toggle-button
+              :value="item.selected"
+              data-test-id="compute-option-button"
+              @input="changeTenant(item)"
+              :disabled="item.selected"
+              sync
+            />
           </td>
         </tr>
       </tbody>
@@ -60,10 +66,10 @@ import ConfirmAndRedirectDialog from "../popup_modals/ConfirmAndRedirectDialog";
 export default {
   props: {
     tenantsList: Array,
-    selectedTenant: String
+    selectedTenant: String,
   },
   components: {
-    ConfirmAndRedirectDialog
+    ConfirmAndRedirectDialog,
   },
   data() {
     return {
@@ -94,7 +100,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1530, 1370, 1205, 1050, 920, 740];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("tenantsHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

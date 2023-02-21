@@ -36,12 +36,12 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th name="hidePriority2">Description</th>
-            <th name="hidePriority5">Provider</th>
-            <th name="hidePriority4">Type</th>
-            <th name="hidePriority0">Created at</th>
-            <th name="hidePriority1">Created by</th>
-            <th name="hidePriority3">Edit</th>
+            <th name="templatesHidePriority2">Description</th>
+            <th name="templatesHidePriority5">Provider</th>
+            <th name="templatesHidePriority4">Type</th>
+            <th name="templatesHidePriority0">Created at</th>
+            <th name="templatesHidePriority1">Created by</th>
+            <th name="templatesHidePriority3">Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -59,8 +59,10 @@
             >
               <strong> {{ template.name }} </strong>
             </td>
-            <td name="hidePriority2" :title="template.description">{{ template.description }}</td>
-            <td name="hidePriority5">
+            <td name="templatesHidePriority2" :title="template.description">
+              {{ template.description }}
+            </td>
+            <td name="templatesHidePriority5">
               <img
                 v-if="template.providers.includes('Azure')"
                 title="Azure"
@@ -101,24 +103,25 @@
                 src="../../../assets/img/openstack_logo_small.png"
               />
             </td>
-            <td name="hidePriority4">
+            <td name="templatesHidePriority4">
               <div v-if="template.type == 1">DLCM</div>
               <div v-else-if="template.type == 3">DK3S</div>
               <div v-else-if="template.type == 5">CAPI</div>
               <div v-else-if="template.type == 7">DLCMv2</div>
               <div v-else>Compute (VM)</div>
             </td>
-            <td name="hidePriority0">
+            <td name="templatesHidePriority0">
               {{ template.created_at | formatDate }}
             </td>
-            <td name="hidePriority1"
+            <td
+              name="templatesHidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(template.contact)"
               :title="template.contact"
             >
               {{ template.contact }}
             </td>
-            <td name="hidePriority3">
+            <td name="templatesHidePriority3">
               <div class="pl-2">
                 <div
                   title="Edit"
@@ -187,7 +190,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1615, 1430, 1280, 1010, 900, 805];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("templatesHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

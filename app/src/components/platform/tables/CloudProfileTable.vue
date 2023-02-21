@@ -15,15 +15,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th name="hidePriority2">Description</th>
-          <th name="hidePriority5">Cloud</th>
-          <th name="hidePriority4">Cloud Account</th>
-          <th name="hidePriority0">Created at</th>
-          <th name="hidePriority1">Created by</th>
-          <th name="hidePriority3">Edit</th>
+          <th name="credentialsHidePriority2">Description</th>
+          <th name="credentialsHidePriority5">Cloud</th>
+          <th name="credentialsHidePriority4">Cloud Account</th>
+          <th name="credentialsHidePriority0">Created at</th>
+          <th name="credentialsHidePriority1">Created by</th>
+          <th name="credentialsHidePriority3">Edit</th>
           <th>Delete</th>
           <th
-            name="hidePriority6"
+            name="credentialsHidePriority6"
             class="cellAsALink"
             @click="
               allAccounts.forEach((acc) => {
@@ -52,10 +52,10 @@
           <td :title="account.label">
             {{ account.label }}
           </td>
-          <td name="hidePriority2" :title="account.description">
+          <td name="credentialsHidePriority2" :title="account.description">
             {{ account.description }}
           </td>
-          <td name="hidePriority5">
+          <td name="credentialsHidePriority5">
             <img
               height="25pix"
               width="auto"
@@ -67,21 +67,24 @@
               "
             />
           </td>
-          <td name="hidePriority4" :title="account.cloud_account_info">
+          <td
+            name="credentialsHidePriority4"
+            :title="account.cloud_account_info"
+          >
             {{ account.cloud_account_info }}
           </td>
-          <td name="hidePriority0">
+          <td name="credentialsHidePriority0">
             {{ account.created_at_pretty | formatDate }}
           </td>
           <td
-            name="hidePriority1"
+            name="credentialsHidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(account.contact)"
             :title="account.contact"
           >
             {{ account.contact }}
           </td>
-          <td name="hidePriority3">
+          <td name="credentialsHidePriority3">
             <div class="pl-2">
               <i
                 title="Edit"
@@ -97,7 +100,7 @@
             />
           </td>
           <td
-            name="hidePriority6"
+            name="credentialsHidePriority6"
             v-if="account.type != 'ONPREM' && account.type != 'IOTARM'"
             class="cellAsALink"
             @click="
@@ -174,7 +177,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1890, 1725, 1565, 1295, 1240, 915, 835];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("credentialsHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

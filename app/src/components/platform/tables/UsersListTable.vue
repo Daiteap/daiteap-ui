@@ -17,13 +17,13 @@
         <tr>
           <th v-if="clickableRows"></th>
           <th>User</th>
-          <th name="hidePriority3" v-if="!showTenant">Role</th>
+          <th name="usersHidePriority3" v-if="!showTenant">Role</th>
           <th v-if="showTenant">Workspaces</th>
           <th v-if="showTenant">Created At</th>
-          <th name="hidePriority1" v-if="!showTenant">Projects</th>
-          <th name="hidePriority0">Phone Number</th>
+          <th name="usersHidePriority1" v-if="!showTenant">Projects</th>
+          <th name="usersHidePriority0">Phone Number</th>
           <th v-if="showTenant">Quotas</th>
-          <th name="hidePriority2" v-if="showEdit">Edit</th>
+          <th name="usersHidePriority2" v-if="showEdit">Edit</th>
           <th v-if="showdelete == true">
             Remove
           </th>
@@ -47,7 +47,7 @@
         >
           {{ user.username }}
         </td>
-        <td name="hidePriority3" v-if="!showTenant">
+        <td name="usersHidePriority3" v-if="!showTenant">
           {{ user.role }}
         </td>
         <td v-if="showTenant">
@@ -69,13 +69,13 @@
           {{ user.created | formatDate }}
         </td>
         <td
-          name="hidePriority1"
+          name="usersHidePriority1"
           :title="user.projects.toString()"
           v-if="!showTenant"
         >
           {{ user.projects.toString() }}
         </td>
-        <td name="hidePriority0">
+        <td name="usersHidePriority0">
           {{ user.phone }}
         </td>
         <td v-if="showTenant">
@@ -87,7 +87,7 @@
             ></div>
           </div>
         </td>
-        <td name="hidePriority2" v-if="showEdit">
+        <td name="usersHidePriority2" v-if="showEdit">
           <div class="pl-2">
             <div
               title="Edit"
@@ -157,7 +157,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1270, 1110, 790, 710];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("usersHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

@@ -73,15 +73,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th name="hidePriority3">Description</th>
-          <th name="hidePriority4" v-if="showProject && !showTenant">
+          <th name="clustersHidePriority3">Description</th>
+          <th name="clustersHidePriority4" v-if="showProject && !showTenant">
             Project
           </th>
-          <th name="hidePriority5">Provider</th>
-          <th name="hidePriority2">Type</th>
-          <th name="hidePriority0">Created at</th>
-          <th name="hidePriority1">Created by</th>
-          <th name="hidePriority6">Status</th>
+          <th name="clustersHidePriority5">Provider</th>
+          <th name="clustersHidePriority2">Type</th>
+          <th name="clustersHidePriority0">Created at</th>
+          <th name="clustersHidePriority1">Created by</th>
+          <th name="clustersHidePriority6">Status</th>
           <th>Operations</th>
         </tr>
       </thead>
@@ -110,11 +110,11 @@
           >
             {{ item.Name }}
           </td>
-          <td name="hidePriority3" :title="item.Description">
+          <td name="clustersHidePriority3" :title="item.Description">
             {{ item.Description }}
           </td>
           <td
-            name="hidePriority4"
+            name="clustersHidePriority4"
             v-if="showProject && !showTenant"
             v-show="projectsList != 'loading'"
             class="clickForDetails"
@@ -132,7 +132,7 @@
           >
             {{ item.ProjectName }}
           </td>
-          <td name="hidePriority5">
+          <td name="clustersHidePriority5">
             <img
               v-if="item.Providers.includes('Azure')"
               :title="item.Credentials.azure"
@@ -197,7 +197,7 @@
               src="../../../assets/img/IoTArm_logo_small.svg"
             />
           </td>
-          <td name="hidePriority2">
+          <td name="clustersHidePriority2">
             <div v-if="item.Type == 1">DLCM</div>
             <div v-else-if="item.Type == 2">DMCV</div>
             <div v-else-if="item.Type == 3">DK3S</div>
@@ -206,16 +206,18 @@
             <div v-else-if="item.Type == 8">YaookCAPI</div>
             <div v-else>---</div>
           </td>
-          <td name="hidePriority0">{{ item.CreatedAt | formatDate }}</td>
+          <td name="clustersHidePriority0">
+            {{ item.CreatedAt | formatDate }}
+          </td>
           <td
-            name="hidePriority1"
+            name="clustersHidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(item.Contact)"
             :title="item.Contact"
           >
             {{ item.Contact }}
           </td>
-          <td name="hidePriority6" style="max-width: none">
+          <td name="clustersHidePriority6" style="max-width: none">
             <span v-if="item.ResizeStep > 0"
               ><b-spinner
                 style="width: 1rem; height: 1rem"
@@ -565,7 +567,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [2090, 1930, 1770, 1675, 1410, 1130, 1040];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("clustersHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";

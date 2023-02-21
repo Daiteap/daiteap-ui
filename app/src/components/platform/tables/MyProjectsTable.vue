@@ -24,10 +24,10 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th name="hidePriority2">Description</th>
-          <th name="hidePriority0">Created at</th>
-          <th name="hidePriority1">Created by</th>
-          <th name="hidePriority3">Edit</th>
+          <th name="projectsHidePriority2">Description</th>
+          <th name="projectsHidePriority0">Created at</th>
+          <th name="projectsHidePriority1">Created by</th>
+          <th name="projectsHidePriority3">Edit</th>
           <th>Delete</th>
         </tr>
       </thead>
@@ -48,21 +48,21 @@
           >
             {{ item.Name }}
           </td>
-          <td name="hidePriority2" :title="item.Description">
+          <td name="projectsHidePriority2" :title="item.Description">
             {{ item.Description }}
           </td>
-          <td name="hidePriority0">
+          <td name="projectsHidePriority0">
             {{ item.CreatedAt | formatDate }}
           </td>
           <td
-            name="hidePriority1"
+            name="projectsHidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(item.Contact)"
             :title="item.Contact"
           >
             {{ item.Contact }}
           </td>
-          <td name="hidePriority3">
+          <td name="projectsHidePriority3">
             <div class="pl-2">
               <div
                 title="Edit"
@@ -130,7 +130,7 @@ export default {
     changeColumnsVisibility() {
       let sizes = [1420, 1240, 1085, 750];
       for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("hidePriority" + i);
+        let columns = document.getElementsByName("projectsHidePriority" + i);
         if (window.innerWidth < sizes[i]) {
           for (let j = 0; j < columns.length; j++) {
             columns[j].style.display = "none";
