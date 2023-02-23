@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view v-if="!loadingTenant"></router-view>
+    <router-view :key="loadingTenant" v-if="!loadingTenant"></router-view>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   </div>
