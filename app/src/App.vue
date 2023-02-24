@@ -31,7 +31,7 @@ export default {
 
     setTimeout(() => {
       this.loadingTenant = false;
-    }, 300);
+    }, 1000);
   },
   mounted() {
     let self = this;
