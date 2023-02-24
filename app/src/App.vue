@@ -28,6 +28,10 @@ export default {
       this.getActiveTenants();
       this.getUserInfo();
     }
+
+    setTimeout(() => {
+      this.loadingTenant = false;
+    }, 300);
   },
   mounted() {
     let self = this;
@@ -547,7 +551,6 @@ Vue.mixin({
             self.hasMultipleTenants = true;
           }
           self.$store.commit("updateActiveTenant", response.data.selectedTenant);
-          self.loadingTenant = false;
         })
         .catch(function (error) {
           self.handleRequestError(error, "Error while getting active tenants!");
