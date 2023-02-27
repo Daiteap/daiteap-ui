@@ -1,8 +1,8 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="usersDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -141,34 +141,21 @@ export default {
       userToEdit: {},
       userToEditName: "",
       showEditUserPopup: false,
+      columnsEvent: "",
     };
   },
   created() {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("users", 3);
+    this.columnsEvent = this.changeColumnsVisibility.bind(null, "users", 3);
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1270, 1110, 790, 710];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("usersHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     showUserDetails(user) {
       this.$emit("showUserDetails", user);
     },

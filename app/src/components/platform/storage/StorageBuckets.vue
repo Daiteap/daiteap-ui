@@ -17,10 +17,10 @@
       @updateBucket="updateBucket"
     />
 
-    <div class="table-responsive">
+    <div>
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="bucketsDataTable"
         width="100%"
         cellspacing="0"
         v-if="buckets.length > 0"
@@ -174,31 +174,18 @@ export default {
       specificUserUsername: "",
       bucketToEdit: {},
       showEditBucketPopup: false,
+      columnsEvent: "",
     };
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("buckets", 5);
+    this.columnsEvent = this.changeColumnsVisibility.bind(null, "buckets", 5);
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1770, 1610, 1450, 1175, 1120, 800];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("bucketsHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     deleteBucketPopup(bucket) {
       this.bucketToDelete = bucket;
       this.$bvModal.show(this.popupId);

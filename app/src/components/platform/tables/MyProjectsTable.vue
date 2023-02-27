@@ -1,8 +1,8 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="projectsDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -109,6 +109,7 @@ export default {
       showEditProjectPopup: false,
       showSpecificUserInfo: false,
       specificUserUsername: "",
+      columnsEvent: "",
     };
   },
   components: {
@@ -120,28 +121,14 @@ export default {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("projects", 3);
+    this.columnsEvent = this.changeColumnsVisibility.bind(null, "projects", 3);
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1420, 1240, 1085, 750];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("projectsHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     goToRemoveProjectWarning(projectToRemove) {
       this.projectToRemove = projectToRemove;
       this.$bvModal.show("bv-modal-removeprojectwarning");

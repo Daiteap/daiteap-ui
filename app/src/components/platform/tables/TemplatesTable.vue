@@ -14,7 +14,7 @@
   </div>
 
   <div v-else class="mt-2">
-    <div class="table-responsive">
+    <div>
       <SpecificUserInfo
         v-if="showSpecificUserInfo"
         :username="specificUserUsername"
@@ -29,7 +29,7 @@
 
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="templatesDataTable"
         width="100%"
         cellspacing="0"
       >
@@ -159,8 +159,15 @@ import EditTemplatePopup from "@/components/platform/popup_modals/EditTemplatePo
 export default {
   name: "TemplatesTable",
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    setTimeout(() => {
+      this.changeColumnsVisibility("templates", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "templates",
+        5
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 300);
 
     let self = this;
     this.getTemplatesList();
@@ -181,27 +188,13 @@ export default {
       templateToEdit: {},
       templateToEditName: "",
       showEditTemplatePopup: false,
+      columnsEvent: "",
     };
   },
   created() {
     this.getTemplatesList();
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1615, 1430, 1280, 1010, 900, 805];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("templatesHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     onTemplatesChanged() {
       setTimeout(() => this.getTemplatesList(), 500);
     },
@@ -256,19 +249,7 @@ export default {
 
       self.allTemplates = templates;
 
-      let options = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      };
-      for (let i = 0; i < self.allTemplates.length; i++) {
-        self.allTemplates[i].created_at = new Date(
-          self.allTemplates[i].created_at
-        ).toLocaleString("en-US", options);
-      }
-
       self.loadingTable = false;
-      self.changeColumnsVisibility();
     },
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit("removeAccount", accountToRemove);
@@ -346,7 +327,7 @@ export default {
     }
     clearInterval(this.interval);
 
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
 };
 </script>

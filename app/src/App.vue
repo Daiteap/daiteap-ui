@@ -107,6 +107,39 @@ Vue.mixin({
         });
       }
     },
+    changeColumnsVisibility(resourceType, lastIndex) {
+      // Show columns
+      for (let i = lastIndex; i >= 0; i--) {
+        let columns = document.getElementsByName(
+          resourceType + "HidePriority" + i
+        );
+        if (
+          document.getElementById(resourceType + "DataTable").clientWidth +
+            400 <=
+          window.innerWidth
+        ) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+
+      // Hide columns
+      for (let i = 0; i <= lastIndex; i++) {
+        let columns = document.getElementsByName(
+          resourceType + "HidePriority" + i
+        );
+        if (
+          document.getElementById(resourceType + "DataTable").clientWidth +
+            370 >
+          window.innerWidth
+        ) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        }
+      }
+    },
     deleteClusterMain(cluster) {
       let endpoint;
       if (cluster.Type == 5) {

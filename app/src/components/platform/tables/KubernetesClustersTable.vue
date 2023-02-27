@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <WarningAlert v-if="showAlert" color="warning" :key="alertKey">
       <i
         class="fas fa-exclamation-circle"
@@ -16,7 +16,7 @@
 
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="clustersDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -538,17 +538,19 @@ export default {
       showEditClusterPopup: false,
       templateClusterId: "",
       popupId: "clusterdeletewarning",
+      columnsEvent: "",
     };
   },
   created() {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("clusters", 6);
+    this.columnsEvent = this.changeColumnsVisibility.bind(null, "clusters", 6);
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   components: {
     SaveEnvironmentTemplate,
@@ -564,21 +566,6 @@ export default {
     QuotaExceededModal,
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [2090, 1930, 1770, 1675, 1410, 1130, 1040];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("clustersHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     showUserDetails(username) {
       this.$emit("showUserDetails", username);
     },

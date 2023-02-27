@@ -32,10 +32,10 @@
       </div>
     </div>
     <div v-else-if="clustersList.length == 0">No Compute (VMs) currently.</div>
-    <div v-else class="table-responsive">
+    <div v-else>
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="computeDataTable"
         width="100%"
         cellspacing="0"
       >
@@ -337,6 +337,7 @@ export default {
       clusterToEdit: {},
       clusterToEditName: "",
       showEditClusterPopup: false,
+      columnsEvent: "",
     };
   },
   created() {
@@ -344,8 +345,11 @@ export default {
     this.getProjectsList();
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    setTimeout(() => {
+      this.changeColumnsVisibility("compute", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "compute", 5);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 700);
 
     this.getClustersList();
     this.getProjectsList();
@@ -359,21 +363,6 @@ export default {
     window.intervals.push(this.interval);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1890, 1730, 1580, 1310, 1035, 890];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("computeHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     async getProjectsList() {
       let projects = await this.getProjects();
       this.projectsList = projects;
@@ -652,7 +641,6 @@ export default {
       self.machinesList = allMachines;
 
       self.loading = false;
-      self.changeColumnsVisibility();
     },
     updateSelectedMachineDetails(machine) {
       this.machineDetails = machine;
@@ -754,7 +742,7 @@ export default {
     }
     clearInterval(this.interval);
 
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
 };
 </script>

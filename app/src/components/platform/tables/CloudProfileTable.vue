@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <SpecificUserInfo
       v-if="showSpecificUserInfo"
       :username="specificUserUsername"
@@ -8,7 +8,7 @@
 
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="credentialsDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -155,6 +155,7 @@ export default {
       validationStatusKeys: {},
       showSpecificUserInfo: false,
       specificUserUsername: "",
+      columnsEvent: "",
     };
   },
   created() {
@@ -167,28 +168,18 @@ export default {
     this.validationStatusKeys = statusKeys;
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("credentials", 6);
+    this.columnsEvent = this.changeColumnsVisibility.bind(
+      null,
+      "credentials",
+      6
+    );
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1890, 1725, 1565, 1295, 1240, 915, 835];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("credentialsHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit("removeAccount", accountToRemove);
     },

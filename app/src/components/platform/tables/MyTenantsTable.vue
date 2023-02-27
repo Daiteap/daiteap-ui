@@ -6,7 +6,7 @@
     ></ConfirmAndRedirectDialog>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="tenantsDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -83,6 +83,7 @@ export default {
         envName: "",
         envId: "",
         action: "",
+        columnsEvent: "",
       },
     };
   },
@@ -90,28 +91,14 @@ export default {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility();
-    window.addEventListener("resize", this.changeColumnsVisibility);
+    this.changeColumnsVisibility("tenants", 5);
+    this.columnsEvent = this.changeColumnsVisibility.bind(null, "tenants", 5);
+    window.addEventListener("resize", this.columnsEvent);
   },
   destroyed() {
-    window.removeEventListener("resize", this.changeColumnsVisibility);
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeColumnsVisibility() {
-      let sizes = [1530, 1370, 1205, 1050, 920, 740];
-      for (let i = 0; i < sizes.length; i++) {
-        let columns = document.getElementsByName("tenantsHidePriority" + i);
-        if (window.innerWidth < sizes[i]) {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "none";
-          }
-        } else {
-          for (let j = 0; j < columns.length; j++) {
-            columns[j].style.display = "";
-          }
-        }
-      }
-    },
     changeTenant(tenant) {
       this.confirmAndRedirectDialogParams.requestBody = {
         "selectedTenant": tenant.id
