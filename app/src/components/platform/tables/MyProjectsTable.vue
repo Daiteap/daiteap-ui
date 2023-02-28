@@ -121,9 +121,15 @@ export default {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility("projects", 3);
-    this.columnsEvent = this.changeColumnsVisibility.bind(null, "projects", 3);
-    window.addEventListener("resize", this.columnsEvent);
+    setTimeout(() => {
+      this.changeColumnsVisibility("projects", 3);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "projects",
+        3
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
   },
   destroyed() {
     window.removeEventListener("resize", this.columnsEvent);

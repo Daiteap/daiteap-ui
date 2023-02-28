@@ -108,6 +108,9 @@ Vue.mixin({
       }
     },
     changeColumnsVisibility(resourceType, lastIndex) {
+      let offset =
+        document.getElementById("custom-sidebar-menu").clientWidth + 150;
+
       // Show columns
       for (let i = lastIndex; i >= 0; i--) {
         let columns = document.getElementsByName(
@@ -115,7 +118,7 @@ Vue.mixin({
         );
         if (
           document.getElementById(resourceType + "DataTable").clientWidth +
-            400 <=
+            offset <=
           window.innerWidth
         ) {
           for (let j = 0; j < columns.length; j++) {
@@ -131,7 +134,7 @@ Vue.mixin({
         );
         if (
           document.getElementById(resourceType + "DataTable").clientWidth +
-            370 >
+            offset >
           window.innerWidth
         ) {
           for (let j = 0; j < columns.length; j++) {

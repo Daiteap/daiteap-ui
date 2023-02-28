@@ -148,9 +148,11 @@ export default {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility("users", 3);
-    this.columnsEvent = this.changeColumnsVisibility.bind(null, "users", 3);
-    window.addEventListener("resize", this.columnsEvent);
+    setTimeout(() => {
+      this.changeColumnsVisibility("users", 3);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "users", 3);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
   },
   destroyed() {
     window.removeEventListener("resize", this.columnsEvent);

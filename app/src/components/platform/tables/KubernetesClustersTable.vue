@@ -545,9 +545,15 @@ export default {
     this.loadingTable = true;
   },
   mounted() {
-    this.changeColumnsVisibility("clusters", 6);
-    this.columnsEvent = this.changeColumnsVisibility.bind(null, "clusters", 6);
-    window.addEventListener("resize", this.columnsEvent);
+    setTimeout(() => {
+      this.changeColumnsVisibility("clusters", 6);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "clusters",
+        6
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
   },
   destroyed() {
     window.removeEventListener("resize", this.columnsEvent);

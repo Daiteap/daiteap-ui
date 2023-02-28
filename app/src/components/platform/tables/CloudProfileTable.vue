@@ -168,13 +168,15 @@ export default {
     this.validationStatusKeys = statusKeys;
   },
   mounted() {
-    this.changeColumnsVisibility("credentials", 6);
-    this.columnsEvent = this.changeColumnsVisibility.bind(
-      null,
-      "credentials",
-      6
-    );
-    window.addEventListener("resize", this.columnsEvent);
+    setTimeout(() => {
+      this.changeColumnsVisibility("credentials", 6);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "credentials",
+        6
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
   },
   destroyed() {
     window.removeEventListener("resize", this.columnsEvent);

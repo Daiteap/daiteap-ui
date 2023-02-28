@@ -178,9 +178,11 @@ export default {
     };
   },
   mounted() {
-    this.changeColumnsVisibility("buckets", 5);
-    this.columnsEvent = this.changeColumnsVisibility.bind(null, "buckets", 5);
-    window.addEventListener("resize", this.columnsEvent);
+    setTimeout(() => {
+      this.changeColumnsVisibility("buckets", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "buckets", 5);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
   },
   destroyed() {
     window.removeEventListener("resize", this.columnsEvent);
