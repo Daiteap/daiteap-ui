@@ -109,7 +109,7 @@ Vue.mixin({
     },
     changeColumnsVisibility(resourceType, lastIndex) {
       let offset =
-        document.getElementById("custom-sidebar-menu").clientWidth + 150;
+        document.getElementById("custom-sidebar-menu").clientWidth + 100;
 
       // Show columns
       for (let i = lastIndex; i >= 0; i--) {
