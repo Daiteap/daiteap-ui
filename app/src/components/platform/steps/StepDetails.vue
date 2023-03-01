@@ -40,6 +40,36 @@
           {{ clusterNameTakenMsg }}
         </p>
         <div v-else style="height: 1.2rem"></div>
+
+        <div>
+          <label>Description:</label>
+        </div>
+        <b-form-textarea
+          class="form-control"
+          :class="[
+            'input',
+            $v.form.clusterDescription.$invalid &&
+            $v.form.clusterDescription.$dirty
+              ? 'is-danger'
+              : '',
+          ]"
+          type="text"
+          placeholder="Description"
+          v-model="form.clusterDescription"
+          @input="$v.form.clusterDescription.$touch"
+          @change="changeClusterDescription()"
+        ></b-form-textarea>
+        <p
+          v-if="
+            $v.form.clusterDescription.$invalid &&
+            $v.form.clusterDescription.$dirty
+          "
+          class="help text-danger"
+        >
+          Invalid cluster description
+        </p>
+
+        <br />
       </div>
 
       <div v-if="computed_account_settings.enable_templates" class="control">
@@ -107,6 +137,7 @@ export default {
     return {
       form: {
         clusterName: "",
+        clusterDescription: "",
       },
       nameFocus: false,
       templateNamesList: [],
@@ -168,6 +199,9 @@ export default {
           }
         },
       },
+      clusterDescription: {
+        maxLength: maxLength(1024),
+      },
     },
   },
   watch: {
@@ -208,6 +242,12 @@ export default {
       this.$store.commit(
         "updateCreateClusterSettingsClusterName",
         this.form.clusterName
+      );
+    },
+    changeClusterDescription() {
+      this.$store.commit(
+        "updateCreateClusterSettingsClusterDescription",
+        this.form.clusterDescription
       );
     },
     async getTemplatesList(openModal) {

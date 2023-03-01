@@ -1,23 +1,29 @@
 <template>
-  <div class="table-responsive">
+  <div>
+    <SpecificUserInfo
+      v-if="showSpecificUserInfo"
+      :username="specificUserUsername"
+      @hideUserDetails="hideUserDetails"
+    />
+
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="credentialsDataTable"
       width="100%"
       cellspacing="0"
     >
       <thead>
         <tr>
           <th>Name</th>
-          <th v-if="showTenant">Workspace</th>
-          <th>Description</th>
-          <th>Cloud</th>
-          <th>Cloud Account</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Edit</th>
+          <th name="credentialsHidePriority2">Description</th>
+          <th name="credentialsHidePriority5">Cloud</th>
+          <th name="credentialsHidePriority4">Cloud Account</th>
+          <th name="credentialsHidePriority0">Created at</th>
+          <th name="credentialsHidePriority1">Created by</th>
+          <th name="credentialsHidePriority3">Edit</th>
           <th>Delete</th>
           <th
+            name="credentialsHidePriority6"
             class="cellAsALink"
             @click="
               allAccounts.forEach((acc) => {
@@ -38,51 +44,47 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(account, index) in allAccounts" :key="index" data-test-id="table">
+        <tr
+          v-for="(account, index) in allAccounts"
+          :key="index"
+          data-test-id="table"
+        >
           <td :title="account.label">
             {{ account.label }}
           </td>
-          <td
-            v-if="showTenant"
-            class="clickForDetails"
-            @click="
-              $router.push({
-                name: 'WorkspaceDetails',
-                params: {
-                  tenant: account.tenant,
-                },
-              })
-            "
-          >{{ account.tenant.name }}</td>
-          <td :title="account.description">
+          <td name="credentialsHidePriority2" :title="account.description">
             {{ account.description }}
           </td>
-          <td>
+          <td name="credentialsHidePriority5">
             <img
               height="25pix"
               width="auto"
               :src="
                 require('../../../assets/img/' +
-                  providers.filter(provider => provider.name == account.provider)[0].logo_small)
+                  providers.filter(
+                    (provider) => provider.name == account.provider
+                  )[0].logo_small)
               "
             />
           </td>
           <td
-            style="
-              word-wrap: break-word;
-              word-break: break-all;
-              white-space: normal;
-            "
+            name="credentialsHidePriority4"
+            :title="account.cloud_account_info"
           >
             {{ account.cloud_account_info }}
           </td>
-          <td>
-            {{ account.created_at_pretty }}
+          <td name="credentialsHidePriority0">
+            {{ account.created_at_pretty | formatDate }}
           </td>
-          <td :title="account.contact">
+          <td
+            name="credentialsHidePriority1"
+            class="clickForDetails"
+            v-on:click="showUserDetails(account.contact)"
+            :title="account.contact"
+          >
             {{ account.contact }}
           </td>
-          <td>
+          <td name="credentialsHidePriority3">
             <div class="pl-2">
               <i
                 title="Edit"
@@ -92,9 +94,13 @@
             </div>
           </td>
           <td>
-            <RemoveAccountButton :account=account @removeAccount="goToRemoveAccountWarning"/>
+            <RemoveAccountButton
+              :account="account"
+              @removeAccount="goToRemoveAccountWarning"
+            />
           </td>
           <td
+            name="credentialsHidePriority6"
             v-if="account.type != 'ONPREM' && account.type != 'IOTARM'"
             class="cellAsALink"
             @click="
@@ -133,9 +139,10 @@
 <script>
 import ValidateButton from "@/components/platform/ValidateButton";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
 
 export default {
-  name: 'CloudProfileTable',
+  name: "CloudProfileTable",
   props: {
     allAccounts: Array,
     providers: Array,
@@ -146,6 +153,9 @@ export default {
   data() {
     return {
       validationStatusKeys: {},
+      showSpecificUserInfo: false,
+      specificUserUsername: "",
+      columnsEvent: "",
     };
   },
   created() {
@@ -157,14 +167,36 @@ export default {
     });
     this.validationStatusKeys = statusKeys;
   },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("credentials", 6);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "credentials",
+        6
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.columnsEvent);
+  },
   methods: {
     goToRemoveAccountWarning(accountToRemove) {
-      this.$emit('removeAccount', accountToRemove)
+      this.$emit("removeAccount", accountToRemove);
+    },
+    showUserDetails(username) {
+      this.specificUserUsername = username;
+      this.showSpecificUserInfo = true;
+    },
+    hideUserDetails() {
+      this.showSpecificUserInfo = false;
     },
   },
   components: {
     ValidateButton,
     RemoveAccountButton,
+    SpecificUserInfo,
   },
   filters: {
     upperCase: function (data) {

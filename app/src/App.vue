@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view v-if="!loadingTenant"></router-view>
+    <router-view :key="loadingTenant" v-if="!loadingTenant"></router-view>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   </div>
@@ -28,6 +28,10 @@ export default {
       this.getActiveTenants();
       this.getUserInfo();
     }
+
+    setTimeout(() => {
+      this.loadingTenant = false;
+    }, 1000);
   },
   mounted() {
     let self = this;
@@ -101,6 +105,42 @@ Vue.mixin({
           title: "Notification:",
           text: message,
         });
+      }
+    },
+    changeColumnsVisibility(resourceType, lastIndex) {
+      let offset =
+        document.getElementById("custom-sidebar-menu").clientWidth + 100;
+
+      // Show columns
+      for (let i = lastIndex; i >= 0; i--) {
+        let columns = document.getElementsByName(
+          resourceType + "HidePriority" + i
+        );
+        if (
+          document.getElementById(resourceType + "DataTable").clientWidth +
+            offset <=
+          window.innerWidth
+        ) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "";
+          }
+        }
+      }
+
+      // Hide columns
+      for (let i = 0; i <= lastIndex; i++) {
+        let columns = document.getElementsByName(
+          resourceType + "HidePriority" + i
+        );
+        if (
+          document.getElementById(resourceType + "DataTable").clientWidth +
+            offset >
+          window.innerWidth
+        ) {
+          for (let j = 0; j < columns.length; j++) {
+            columns[j].style.display = "none";
+          }
+        }
       }
     },
     deleteClusterMain(cluster) {
@@ -547,7 +587,6 @@ Vue.mixin({
             self.hasMultipleTenants = true;
           }
           self.$store.commit("updateActiveTenant", response.data.selectedTenant);
-          self.loadingTenant = false;
         })
         .catch(function (error) {
           self.handleRequestError(error, "Error while getting active tenants!");

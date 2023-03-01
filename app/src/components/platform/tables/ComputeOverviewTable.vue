@@ -25,7 +25,6 @@
       :currentCluster="clusterToEdit"
       :oldName="clusterToEditName"
       @updateCluster="updateCluster"
-      :isCompute="true"
     />
     <div v-if="loading" class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
@@ -36,19 +35,21 @@
     <div v-else>
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="computeDataTable"
         width="100%"
         cellspacing="0"
       >
         <thead>
           <tr>
             <th>Name</th>
-            <th v-if="!projectName && !showTenant">Project</th>
-            <th v-if="showTenant">Workspace</th>
-            <th>Provider</th>
-            <th>Created at</th>
-            <th>Created by</th>
-            <th>Status</th>
+            <th name="computeHidePriority2">Description</th>
+            <th name="computeHidePriority3" v-if="!projectName && !showTenant">
+              Project
+            </th>
+            <th name="computeHidePriority4">Provider</th>
+            <th name="computeHidePriority0">Created at</th>
+            <th name="computeHidePriority1">Created by</th>
+            <th name="computeHidePriority5">Status</th>
             <th>Operations</th>
           </tr>
         </thead>
@@ -69,17 +70,12 @@
             <td :title="item.ID" v-else>
               {{ item.Name }}
             </td>
-            <td
-              v-if="
-                !projectName && computed_isBusinessAccountOwner && !showTenant
-              "
-              v-show="projectsList != 'loading'"
-              :title="item.ProjectName"
-            >
-              {{ item.ProjectName }}
+            <td name="computeHidePriority2" :title="item.Description">
+              {{ item.Description }}
             </td>
             <td
-              v-else-if="!projectName && !showTenant"
+              name="computeHidePriority3"
+              v-if="!projectName && !showTenant"
               v-show="projectsList != 'loading'"
               class="clickForDetails"
               v-on:click="
@@ -96,21 +92,7 @@
             >
               {{ item.ProjectName }}
             </td>
-            <td
-              v-if="showTenant"
-              class="clickForDetails"
-              @click="
-                $router.push({
-                  name: 'WorkspaceDetails',
-                  params: {
-                    tenant: item.Tenant,
-                  },
-                })
-              "
-            >
-              {{ item.Tenant.name }}
-            </td>
-            <td>
+            <td name="computeHidePriority4">
               <img
                 v-if="item.Providers.includes('Azure')"
                 :title="item.Credentials.azure"
@@ -175,19 +157,18 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
             </td>
-            <td>{{ item.CreatedAt | formatDate }}</td>
-            <td v-if="computed_isBusinessAccountOwner" :title="item.Contact">
-              {{ item.Contact }}
+            <td name="computeHidePriority0">
+              {{ item.CreatedAt | formatDate }}
             </td>
             <td
-              v-else
-              :title="item.Contact"
+              name="computeHidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(item.Contact)"
+              :title="item.Contact"
             >
               {{ item.Contact }}
             </td>
-            <td style="max-width: none">
+            <td name="computeHidePriority5" style="max-width: none">
               <b-spinner
                 v-if="item.Status == 'starting'"
                 style="width: 1rem; height: 1rem"
@@ -319,7 +300,7 @@ export default {
       showConfirmDialog: false,
       textPopupParams: {
         heading: "Error",
-        text: ""
+        text: "",
       },
       confirmDialogParams: {
         requestBody: {},
@@ -356,10 +337,22 @@ export default {
       clusterToEdit: {},
       clusterToEditName: "",
       showEditClusterPopup: false,
+      columnsEvent: "",
     };
   },
-  mounted() {
+  created() {
     this.getClustersList();
+    this.getProjectsList();
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("compute", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "compute", 5);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 700);
+
+    this.getClustersList();
+    this.getProjectsList();
 
     this.interval = setInterval(() => {
       this.getClustersList();
@@ -371,14 +364,7 @@ export default {
   },
   methods: {
     async getProjectsList() {
-      let projects;
-      if (this.computed_isBusinessAccountOwner && this.tenantID) {
-        projects = await this.getTenantProjects(this.tenantID);
-      } else if (this.computed_isBusinessAccountOwner) {
-        projects = await this.getAllPlatformProjects();
-      } else {
-        projects = await this.getProjects();
-      }
+      let projects = await this.getProjects();
       this.projectsList = projects;
     },
     showUserDetails(username) {
@@ -452,8 +438,9 @@ export default {
           }
         });
     },
-    showModal(node){
-      this.textPopupParams.heading = node.statusText.charAt(0).toUpperCase() + node.statusText.slice(1);
+    showModal(node) {
+      this.textPopupParams.heading =
+        node.statusText.charAt(0).toUpperCase() + node.statusText.slice(1);
       this.textPopupParams.text = node.error_msg.replace(/(^[ \t]*\n)/gm, "");
       this.$bvModal.show("bv-modal-textpopup");
     },
@@ -472,14 +459,14 @@ export default {
     async deleteCluster() {
       this.$bvModal.hide("bv-modal-deletecomputecluster");
 
-      await this.deleteClusterMain(this.clusterToRemove)
+      await this.deleteClusterMain(this.clusterToRemove);
     },
     async onNodeDeleteConfirmed() {
       this.$bvModal.hide("bv-modal-deletenodewarning");
 
       let nodeID = this.nodeForDeletion.id;
 
-      await this.removeComputeNode(nodeID)
+      await this.removeComputeNode(nodeID);
     },
     deleteNodePopup(nodeForDeletion) {
       this.nodeForDeletion = nodeForDeletion;
@@ -549,7 +536,7 @@ export default {
       let self = this;
 
       let clusters;
-        clusters = await this.getAllClusters();
+      clusters = await this.getAllClusters();
 
       let allMachines = [];
       self.clustersList = [];
@@ -571,6 +558,7 @@ export default {
           ID: "",
         };
         self.clustersList[i].Name = clusters[i].name;
+        self.clustersList[i].Description = clusters[i].description;
         self.clustersList[i].ID = clusters[i].id;
         self.clustersList[i].InstallStep = clusters[i].installstep;
         self.clustersList[i].Type = clusters[i].type;
@@ -753,13 +741,23 @@ export default {
       clearInterval(window.intervals[i]);
     }
     clearInterval(this.interval);
+
+    window.removeEventListener("resize", this.columnsEvent);
   },
 };
 </script>
 
 
 <style scoped>
-.fa-trash-alt, .fa-minus {
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fa-trash-alt,
+.fa-minus {
   color: red;
 }
 </style>

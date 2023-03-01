@@ -1,8 +1,8 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="projectsDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -16,14 +16,18 @@
         :oldName="projectToEditName"
         @updateProject="updateProject"
       />
+      <SpecificUserInfo
+        v-if="showSpecificUserInfo"
+        :username="specificUserUsername"
+        @hideUserDetails="hideUserDetails"
+      />
       <thead>
         <tr>
           <th>Name</th>
-          <th v-if="showTenant">Workspace</th>
-          <th>Description</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Edit</th>
+          <th name="projectsHidePriority2">Description</th>
+          <th name="projectsHidePriority0">Created at</th>
+          <th name="projectsHidePriority1">Created by</th>
+          <th name="projectsHidePriority3">Edit</th>
           <th>Delete</th>
         </tr>
       </thead>
@@ -40,29 +44,25 @@
                 },
               })
             "
+            :title="item.Name"
           >
             {{ item.Name }}
           </td>
-          <td
-            v-if="showTenant"
-            class="clickForDetails"
-            @click="
-              $router.push({
-                name: 'WorkspaceDetails',
-                params: {
-                  tenant: item.Tenant,
-                },
-              })
-            "
-          >{{ item.Tenant.name }}</td>
-          <td>
+          <td name="projectsHidePriority2" :title="item.Description">
             {{ item.Description }}
           </td>
-          <td>{{ item.CreatedAt }}</td>
-          <td>
+          <td name="projectsHidePriority0">
+            {{ item.CreatedAt | formatDate }}
+          </td>
+          <td
+            name="projectsHidePriority1"
+            class="clickForDetails"
+            v-on:click="showUserDetails(item.Contact)"
+            :title="item.Contact"
+          >
             {{ item.Contact }}
           </td>
-          <td>
+          <td name="projectsHidePriority3">
             <div class="pl-2">
               <div
                 title="Edit"
@@ -74,7 +74,7 @@
           <td>
             <div class="pl-2">
               <div
-                title="Delete project"
+                title="Delete"
                 @click="goToRemoveProjectWarning(item)"
                 class="far fa-trash-alt deleteIcon"
               ></div>
@@ -89,9 +89,10 @@
 <script>
 import RemoveProjectWarning from "@/components/platform/popup_modals/RemoveProjectWarning";
 import EditProjectPopup from "@/components/platform/popup_modals/EditProjectPopup";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
 
 export default {
-  name: 'MyProjectsTable',
+  name: "MyProjectsTable",
   props: {
     projectsList: Array,
     tenantID: String,
@@ -106,14 +107,32 @@ export default {
       projectToEdit: {},
       projectToEditName: "",
       showEditProjectPopup: false,
+      showSpecificUserInfo: false,
+      specificUserUsername: "",
+      columnsEvent: "",
     };
   },
   components: {
     RemoveProjectWarning,
     EditProjectPopup,
+    SpecificUserInfo,
   },
   created() {
     this.loadingTable = true;
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("projects", 3);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "projects",
+        3
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
     goToRemoveProjectWarning(projectToRemove) {
@@ -190,12 +209,19 @@ export default {
           }
         });
     },
+    showUserDetails(username) {
+      this.specificUserUsername = username;
+      this.showSpecificUserInfo = true;
+    },
+    hideUserDetails() {
+      this.showSpecificUserInfo = false;
+    },
     openEditPopup(project) {
       this.projectToEdit = project;
       this.projectToEditName = project.Name;
       this.showEditProjectPopup = true;
       this.$nextTick(function () {
-          this.$bvModal.show('bv-modal-editproject');
+        this.$bvModal.show("bv-modal-editproject");
       });
     },
     updateProject(project) {
@@ -247,6 +273,13 @@ export default {
 </script>
 
 <style scoped>
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 a:not([href]):not([tabindex]) {
   color: #4e73df;
   text-decoration: none;

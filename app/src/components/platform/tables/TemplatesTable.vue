@@ -14,21 +14,34 @@
   </div>
 
   <div v-else class="mt-2">
-    <div class="table-responsive">
+    <div>
+      <SpecificUserInfo
+        v-if="showSpecificUserInfo"
+        :username="specificUserUsername"
+        @hideUserDetails="hideUserDetails"
+      />
+      <EditTemplatePopup
+        v-if="showEditTemplatePopup"
+        :currentTemplate="templateToEdit"
+        :oldName="templateToEditName"
+        @updateTemplate="updateTemplate"
+      />
+
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="templatesDataTable"
         width="100%"
         cellspacing="0"
       >
         <thead>
           <tr>
             <th>Name</th>
-            <th>Description</th>
-            <th>Providers</th>
-            <th>Type</th>
-            <th>Created at</th>
-            <th>Created by</th>
+            <th name="templatesHidePriority2">Description</th>
+            <th name="templatesHidePriority5">Provider</th>
+            <th name="templatesHidePriority4">Type</th>
+            <th name="templatesHidePriority0">Created at</th>
+            <th name="templatesHidePriority1">Created by</th>
+            <th name="templatesHidePriority3">Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -42,11 +55,14 @@
                   params: { templateID: template.id },
                 })
               "
+              :title="template.name"
             >
               <strong> {{ template.name }} </strong>
             </td>
-            <td>{{ template.description }}</td>
-            <td>
+            <td name="templatesHidePriority2" :title="template.description">
+              {{ template.description }}
+            </td>
+            <td name="templatesHidePriority5">
               <img
                 v-if="template.providers.includes('Azure')"
                 title="Azure"
@@ -78,27 +94,46 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
               <img
-                v-if="template.providers.includes('Openstack') && computed_theme == 'daiteap'"
+                v-if="
+                  template.providers.includes('Openstack') &&
+                  computed_theme == 'daiteap'
+                "
                 title="OpenStack"
                 style="height: 20px; margin-right: 5px"
                 src="../../../assets/img/openstack_logo_small.png"
               />
             </td>
-            <td>
+            <td name="templatesHidePriority4">
               <div v-if="template.type == 1">DLCM</div>
               <div v-else-if="template.type == 3">DK3S</div>
               <div v-else-if="template.type == 5">CAPI</div>
               <div v-else-if="template.type == 7">DLCMv2</div>
               <div v-else>Compute (VM)</div>
             </td>
-            <td>
-              {{ template.created_at }}
+            <td name="templatesHidePriority0">
+              {{ template.created_at | formatDate }}
             </td>
-            <td>{{ template.contact }}</td>
+            <td
+              name="templatesHidePriority1"
+              class="clickForDetails"
+              v-on:click="showUserDetails(template.contact)"
+              :title="template.contact"
+            >
+              {{ template.contact }}
+            </td>
+            <td name="templatesHidePriority3">
+              <div class="pl-2">
+                <div
+                  title="Edit"
+                  @click="openEditPopup(template)"
+                  class="fas fa-edit editIcon"
+                ></div>
+              </div>
+            </td>
             <td>
               <div class="pl-2">
                 <div
-                  title="Delete template"
+                  title="Delete"
                   class="far fa-trash-alt removeAccountIcon"
                   @click="removeTemplate(template)"
                 ></div>
@@ -118,10 +153,22 @@
 <script>
 import axios from "axios";
 import GenericPopupWarning from "@/components/platform/popup_modals/GenericPopupWarning";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
+import EditTemplatePopup from "@/components/platform/popup_modals/EditTemplatePopup";
 
 export default {
   name: "TemplatesTable",
   mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("templates", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "templates",
+        5
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 300);
+
     let self = this;
     this.getTemplatesList();
 
@@ -136,9 +183,17 @@ export default {
       interval: "",
       allTemplates: [],
       templateToRemove: "",
+      showSpecificUserInfo: false,
+      specificUserUsername: "",
+      templateToEdit: {},
+      templateToEditName: "",
+      showEditTemplatePopup: false,
+      columnsEvent: "",
     };
   },
-  created() {},
+  created() {
+    this.getTemplatesList();
+  },
   methods: {
     onTemplatesChanged() {
       setTimeout(() => this.getTemplatesList(), 500);
@@ -194,25 +249,75 @@ export default {
 
       self.allTemplates = templates;
 
-      let options = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      };
-      for (let i = 0; i < self.allTemplates.length; i++) {
-        self.allTemplates[i].created_at = new Date(
-          self.allTemplates[i].created_at
-        ).toLocaleString("en-US", options);
-      }
-
       self.loadingTable = false;
     },
     goToRemoveAccountWarning(accountToRemove) {
       this.$emit("removeAccount", accountToRemove);
     },
+    showUserDetails(username) {
+      this.specificUserUsername = username;
+      this.showSpecificUserInfo = true;
+    },
+    hideUserDetails() {
+      this.showSpecificUserInfo = false;
+    },
+    openEditPopup(template) {
+      this.templateToEdit = template;
+      this.templateToEditName = template.name;
+      this.showEditTemplatePopup = true;
+      this.$nextTick(function () {
+        this.$bvModal.show("bv-modal-edittemplate");
+      });
+    },
+    updateTemplate(template) {
+      let self = this;
+      this.axios
+        .put(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environment-templates/" +
+            template.id,
+          {
+            name: template.name,
+            description: template.description,
+          },
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          self.$notify({
+            group: "msg",
+            type: "success",
+            title: "Notification:",
+            text: "Successfuly updated template!",
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating template.",
+            });
+          }
+        });
+    },
   },
   components: {
     GenericPopupWarning,
+    SpecificUserInfo,
+    EditTemplatePopup,
   },
   destroyed() {
     if (window.intervals) {
@@ -221,6 +326,8 @@ export default {
       }
     }
     clearInterval(this.interval);
+
+    window.removeEventListener("resize", this.columnsEvent);
   },
 };
 </script>
@@ -263,5 +370,4 @@ td {
   padding-top: 0.2rem;
   color: #ea002f;
 }
-
 </style>

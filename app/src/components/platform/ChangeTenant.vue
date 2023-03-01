@@ -11,8 +11,12 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div v-else class="table-responsive">
-          <MyTenantsTable class="mt-4" :tenantsList="activeTenants" :selectedTenant="selectedTenant" />
+        <div v-else>
+          <MyTenantsTable
+            class="mt-4"
+            :tenantsList="activeTenants"
+            :selectedTenant="selectedTenant"
+          />
         </div>
       </div>
       <div v-if="!loading" class="d-flex justify-content-center"></div>
