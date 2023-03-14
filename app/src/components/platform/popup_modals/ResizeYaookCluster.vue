@@ -116,7 +116,7 @@ export default {
         clusterID: self.clusterID,
       };
 
-      let endpoint = "/server/resizeYaookCluster";
+      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/yaook-resize";
 
       axios
         .post(endpoint, resizeYaookClusterRequestBody, this.get_axiosConfig())

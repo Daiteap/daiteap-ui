@@ -2,6 +2,10 @@
   <div class="container">
     <br>
     <br>
+    <ConfirmAndRedirectDialog
+      v-show="showConfirmDialog"
+      :confirmAndRedirectDialogParams="confirmDialogParams"
+    ></ConfirmAndRedirectDialog>
     <DeleteDialog
       v-show="showDeleteDialog"
       :deleteDialogParams="deleteDialogParams"
@@ -127,6 +131,7 @@
 
 <script>
 import axios from "axios";
+import ConfirmAndRedirectDialog from "./popup_modals/ConfirmAndRedirectDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import RetryDialog from "./popup_modals/RetryDialog";
 
@@ -134,6 +139,7 @@ export default {
   name: 'SubmitVMs',
   data() {
     return {
+      showConfirmDialog: false,
       showDeleteDialog: false,
       showRetryDialog: false,
       clusterName: "",
@@ -152,6 +158,16 @@ export default {
         failureMessage: "",
         envName: "",
       },
+      confirmDialogParams: {
+        requestBody: {},
+        text: "",
+        endpoint: "",
+        successMessage: "",
+        failureMessage: "",
+        envName: "",
+        envId: "",
+        action: ""
+      },
       errorMsg: undefined,
       loading: true,
       details: "",
@@ -165,6 +181,7 @@ export default {
     };
   },
   components: {
+    ConfirmAndRedirectDialog,
     DeleteDialog,
     RetryDialog
   },
@@ -182,7 +199,7 @@ export default {
     let self = this;
     let interval = setInterval(() => {
       self.getInstallationStatus(self);
-    }, 3000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(interval);
@@ -198,7 +215,7 @@ export default {
       let self = this;
       self.interval = setInterval(() => {
         self.getInstallationStatus(self);
-      }, 3000);
+      }, 5000);
 
       window.intervals = [];
       window.intervals.push(self.interval);
@@ -207,12 +224,12 @@ export default {
       let self = currentObject;
 
       axios
-        .post(
-          "/server/getInstallationStatus",
-          {
-            ID: self.ID,
-            details: self.timestamp
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.ID +
+            "/installation-status",
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -237,6 +254,14 @@ export default {
         })
         .catch(function(error) {
           console.error(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     changeInstallationStatus() {
@@ -289,11 +314,15 @@ export default {
       return (count / 25) * 50;
     },
     deleteCluster(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
       this.deleteDialogParams.text =
         'Are you sure you want to delete:';
       this.deleteDialogParams.envName = name
-      this.deleteDialogParams.endpoint = "/server/deleteCluster";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/delete";
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =
@@ -302,22 +331,33 @@ export default {
       this.$bvModal.show("bv-modal-deletedialog");
     },
     cancelInstallation(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
-      this.deleteDialogParams.text =
+      this.confirmDialogParams.text =
         'Are you sure you want to cancel the installation:';
-      this.deleteDialogParams.envName = name
-      this.deleteDialogParams.endpoint = "/server/cancelClusterCreation";
-      this.deleteDialogParams.successMessage =
+      this.confirmDialogParams.envName = name;
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/cancel-creation";
+      this.confirmDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
-      this.deleteDialogParams.failureMessage =
+      this.confirmDialogParams.failureMessage =
         'Error occured while you tried to submit deletion of "' + name + '".';
-      this.showDeleteDialog = true;
+      this.confirmDialogParams.action = 'Delete';
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialog");
     },
     retryCluster(id, name) {
       this.retryDialogParams.requestBody = { clusterID: id };
       this.retryDialogParams.text =
         'Are you sure you want to retry "' + name + '"?';
-      this.retryDialogParams.endpoint = "/server/retryCreateComputeVMs";
+      this.retryDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/compute-retry-create";
       this.retryDialogParams.successMessage =
         'You have successfully submitted retry for "' + name + '".';
       this.retryDialogParams.failureMessage =

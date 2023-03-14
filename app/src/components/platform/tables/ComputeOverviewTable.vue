@@ -25,7 +25,6 @@
       :currentCluster="clusterToEdit"
       :oldName="clusterToEditName"
       @updateCluster="updateCluster"
-      :isCompute="true"
     />
     <div v-if="loading" class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
@@ -36,19 +35,21 @@
     <div v-else>
       <table
         class="table table-bordered"
-        id="dataTable"
+        id="computeDataTable"
         width="100%"
         cellspacing="0"
       >
         <thead>
           <tr>
             <th>Name</th>
-            <th v-if="!projectName && !showTenant">Project</th>
-            <th v-if="showTenant">Workspace</th>
-            <th>Provider</th>
-            <th>Created at</th>
-            <th>Created by</th>
-            <th>Status</th>
+            <th name="computeHidePriority2">Description</th>
+            <th name="computeHidePriority3" v-if="!projectName && !showTenant">
+              Project
+            </th>
+            <th name="computeHidePriority4">Provider</th>
+            <th name="computeHidePriority0">Created at</th>
+            <th name="computeHidePriority1">Created by</th>
+            <th name="computeHidePriority5">Status</th>
             <th>Operations</th>
           </tr>
         </thead>
@@ -56,34 +57,25 @@
           <tr v-for="item in clustersList" :key="item.ID">
             <td
               :title="item.ID"
-              v-if="item.InstallStep == 0"
-              class="clickForDetails"
-              v-on:click="goToClusterDetails(item)"
-            >
-              {{ item.Name }}
-            </td>
-            <td
-              :title="item.ID"
-              v-else-if="item.InstallStep == undefined"
-              class="clickForDetails"
-              v-on:click="goToClusterDetails(item)"
-            >
-              {{ item.Name }}
-            </td>
-            <td v-else>
-              {{ item.Name }}
-            </td>
-            <td
               v-if="
-                !projectName && computed_isBusinessAccountOwner && !showTenant
+                item.InstallStep == 0 ||
+                item.InstallStep == undefined ||
+                item.InstallStep == -100
               "
-              v-show="projectsList != 'loading'"
-              :title="item.ProjectName"
+              class="clickForDetails"
+              v-on:click="goToClusterDetails(item)"
             >
-              {{ item.ProjectName }}
+              {{ item.Name }}
+            </td>
+            <td :title="item.ID" v-else>
+              {{ item.Name }}
+            </td>
+            <td name="computeHidePriority2" :title="item.Description">
+              {{ item.Description }}
             </td>
             <td
-              v-else-if="!projectName && !showTenant"
+              name="computeHidePriority3"
+              v-if="!projectName && !showTenant"
               v-show="projectsList != 'loading'"
               class="clickForDetails"
               v-on:click="
@@ -100,24 +92,10 @@
             >
               {{ item.ProjectName }}
             </td>
-            <td
-              v-if="showTenant"
-              class="clickForDetails"
-              @click="
-                $router.push({
-                  name: 'WorkspaceDetails',
-                  params: {
-                    tenant: item.Tenant,
-                  },
-                })
-              "
-            >
-              {{ item.Tenant.name }}
-            </td>
-            <td>
+            <td name="computeHidePriority4">
               <img
                 v-if="item.Providers.includes('Azure')"
-                title="Azure"
+                :title="item.Credentials.azure"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -127,7 +105,7 @@
               />
               <img
                 v-if="item.Providers.includes('Amazon')"
-                title="AWS"
+                :title="item.Credentials.aws"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -140,7 +118,7 @@
                   item.Providers.includes('Openstack') &&
                   computed_theme == 'daiteap'
                 "
-                title="OpenStack"
+                :title="item.Credentials.openstack"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -150,7 +128,7 @@
               />
               <img
                 v-if="item.Providers.includes('Google')"
-                title="Google Cloud"
+                :title="item.Credentials.google"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -160,7 +138,7 @@
               />
               <img
                 v-if="item.Providers.includes('Onpremise')"
-                title="Onpremise"
+                :title="item.Credentials.onpremise"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -170,7 +148,7 @@
               />
               <img
                 v-if="item.Providers.includes('IotArm')"
-                title="IoT-ARM"
+                :title="item.Credentials.iotarm"
                 margin-top="auto"
                 margin-bottom="auto"
                 class="pr-2"
@@ -179,19 +157,18 @@
                 src="../../../assets/img/IoTArm_logo_small.svg"
               />
             </td>
-            <td>{{ item.CreatedAt | formatDate }}</td>
-            <td v-if="computed_isBusinessAccountOwner" :title="item.Contact">
-              {{ item.Contact }}
+            <td name="computeHidePriority0">
+              {{ item.CreatedAt | formatDate }}
             </td>
             <td
-              v-else
-              :title="item.Contact"
+              name="computeHidePriority1"
               class="clickForDetails"
               v-on:click="showUserDetails(item.Contact)"
+              :title="item.Contact"
             >
               {{ item.Contact }}
             </td>
-            <td style="max-width: none">
+            <td name="computeHidePriority5" style="max-width: none">
               <b-spinner
                 v-if="item.Status == 'starting'"
                 style="width: 1rem; height: 1rem"
@@ -323,7 +300,7 @@ export default {
       showConfirmDialog: false,
       textPopupParams: {
         heading: "Error",
-        text: ""
+        text: "",
       },
       confirmDialogParams: {
         requestBody: {},
@@ -360,26 +337,34 @@ export default {
       clusterToEdit: {},
       clusterToEditName: "",
       showEditClusterPopup: false,
+      columnsEvent: "",
     };
   },
-  mounted() {
+  created() {
     this.getClustersList();
+    this.getProjectsList();
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("compute", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "compute", 5);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 700);
 
-    self.interval = setInterval(() => {
+    this.getClustersList();
+    this.getProjectsList();
+
+    this.interval = setInterval(() => {
       this.getClustersList();
       this.getProjectsList();
-    }, 1000);
+    }, 5000);
+
+    window.intervals = [];
+    window.intervals.push(this.interval);
   },
   methods: {
     async getProjectsList() {
-      let projects;
-      if (this.computed_isBusinessAccountOwner && this.tenantID) {
-        projects = await this.getTenantProjects(this.tenantID);
-      } else if (this.computed_isBusinessAccountOwner) {
-        projects = await this.getAllPlatformProjects();
-      } else {
-        projects = await this.getProjects();
-      }
+      let projects = await this.getProjects();
       this.projectsList = projects;
     },
     showUserDetails(username) {
@@ -410,19 +395,16 @@ export default {
       });
     },
     updateCluster(cluster) {
-      let endpoint = "/server/updateCluster/" + cluster.id;
-      let isCapi = false;
-      let isYaookCapi = false;
-
       let self = this;
       this.axios
-        .post(
-          endpoint,
+        .put(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.id,
           {
             name: cluster.Name,
             description: cluster.Description,
-            isCapi: isCapi,
-            isYaookCapi: isYaookCapi,
           },
           this.get_axiosConfig()
         )
@@ -439,16 +421,26 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cluster.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cluster.",
+            });
+          }
         });
     },
-    showModal(node){
-      this.textPopupParams.heading = node.statusText.charAt(0).toUpperCase() + node.statusText.slice(1);
+    showModal(node) {
+      this.textPopupParams.heading =
+        node.statusText.charAt(0).toUpperCase() + node.statusText.slice(1);
       this.textPopupParams.text = node.error_msg.replace(/(^[ \t]*\n)/gm, "");
       this.$bvModal.show("bv-modal-textpopup");
     },
@@ -467,73 +459,18 @@ export default {
     async deleteCluster() {
       this.$bvModal.hide("bv-modal-deletecomputecluster");
 
-      await this.deleteClusterMain(this.clusterToRemove)
+      await this.deleteClusterMain(this.clusterToRemove);
     },
     async onNodeDeleteConfirmed() {
       this.$bvModal.hide("bv-modal-deletenodewarning");
 
       let nodeID = this.nodeForDeletion.id;
 
-      await this.removeComputeNode(nodeID)
+      await this.removeComputeNode(nodeID);
     },
     deleteNodePopup(nodeForDeletion) {
       this.nodeForDeletion = nodeForDeletion;
       this.$bvModal.show("bv-modal-deletenodewarning");
-    },
-    stopMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to stop machine:";
-      this.confirmDialogParams.endpoint = "/server/stopMachine";
-      this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
-    },
-    startMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to start machine:";
-      this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/startMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted start for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit start of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
-    },
-    restartMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text =
-        "Are you sure you want to restart machine:";
-      this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/restartMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
     },
     async getClusterDetails(clusterID) {
       let cluster = await this.getClusterDetailsMain(clusterID);
@@ -599,7 +536,7 @@ export default {
       let self = this;
 
       let clusters;
-        clusters = await this.getAllClusters();
+      clusters = await this.getAllClusters();
 
       let allMachines = [];
       self.clustersList = [];
@@ -621,10 +558,12 @@ export default {
           ID: "",
         };
         self.clustersList[i].Name = clusters[i].name;
+        self.clustersList[i].Description = clusters[i].description;
         self.clustersList[i].ID = clusters[i].id;
         self.clustersList[i].InstallStep = clusters[i].installstep;
         self.clustersList[i].Type = clusters[i].type;
         self.clustersList[i].Status = clusters[i].status;
+        self.clustersList[i].Credentials = clusters[i].credentials;
         self.clustersList[i].CreatedAt = new Date(clusters[i].created_at);
         self.clustersList[i].Contact = clusters[i].contact;
         self.clustersList[i].ErrorMsgDelete = clusters[i].error_msg_delete;
@@ -760,7 +699,15 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/environmenttemplates/save", templateForm, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            templateForm.environmentId +
+            "/template",
+          templateForm,
+          this.get_axiosConfig()
+        )
         .then(
           self.$notify({
             group: "msg",
@@ -771,12 +718,21 @@ export default {
         )
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving Template. " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving Template. " + error,
+            });
+          }
         });
     },
   },
@@ -785,13 +741,23 @@ export default {
       clearInterval(window.intervals[i]);
     }
     clearInterval(this.interval);
+
+    window.removeEventListener("resize", this.columnsEvent);
   },
 };
 </script>
 
 
 <style scoped>
-.fa-trash-alt, .fa-minus {
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fa-trash-alt,
+.fa-minus {
   color: red;
 }
 </style>

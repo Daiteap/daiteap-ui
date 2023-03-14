@@ -1,8 +1,13 @@
 <template>
   <div class="col">
-    <WarningAlert v-if="alert.show" color="warning" :closeOption="true">
-      <div v-html="alert.msg"></div>
-    </WarningAlert>
+    <WarningAlert
+      v-if="alert.show"
+      :msg="alert.msg"
+      :link="alert.link"
+      color="warning"
+      :closeOption="true"
+      :key="alert.key"
+    />
     <QuotaExceededModal
       v-show="showQuotaExceeded"
       :exceededResources="exceededResources"
@@ -328,7 +333,7 @@ import SimpleConfig from "./servicesSteps/SimpleConfig.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 export default {
-  name: 'AddService',
+  name: "AddService",
   components: {
     QuotaExceededModal,
     AdvancedConfig,
@@ -340,6 +345,8 @@ export default {
       alert: {
         show: false,
         msg: "",
+        link: "",
+        key: 0,
       },
       activeStep: 0,
       currentServiceDetails: {},
@@ -377,10 +384,10 @@ export default {
       let self = this;
       this.getUserQuota().then((quota) => {
         if (quota["available_services"] < 1) {
-          self.alert = {
-            show: true,
-            msg: 'User quota exceeded. For more information, <a href="/documentation/users/#user-resource-quotas">check the documentation</a>.',
-          };
+          self.alert.show = true;
+          self.alert.msg = "User quota exceeded.";
+          self.alert.link = "/documentation/users/#user-resource-quotas";
+          self.alert.key += 1;
         } else {
           this.chooseService(this.currentServiceDetails.name);
           this.currentAccordion = "simpleConfiguration";
@@ -426,7 +433,15 @@ export default {
       self.currentAccordion = "submitted";
 
       this.axios
-        .post("/server/addService", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            this.clusterID +
+            "/services",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           Vue.prototype.$finalModel = {};
           self.$router.push({
@@ -459,12 +474,32 @@ export default {
                 text: "Error while adding service!",
               });
             } else {
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Notification:",
-                text: error,
-              });
+              if (error.response && error.response.status == "403") {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Access Denied",
+                });
+              } else {
+                if (
+                  error.response.data.error.message ==
+                  "Service can't be installed more than once in a cluster."
+                ) {
+                  self.alert.msg =
+                    "Service can't be installed more than once in a cluster.";
+                  self.alert.link = "";
+                  self.alert.show = true;
+                  self.alert.key += 1;
+                } else {
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: error,
+                  });
+                }
+              }
             }
           }
           // eslint-disable-next-line no-console
@@ -482,14 +517,14 @@ export default {
       let self = currentObject;
 
       axios
-        .post("/server/getServiceList", {}, this.get_axiosConfig())
+        .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           let servicesList = [];
-          for (let i = 0; i < response.data.serviceList.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             let categories = ["other"];
-            if (response.data.serviceList[i].categories) {
-              if (response.data.serviceList[i].categories.length > 0) {
-                categories = response.data.serviceList[i].categories;
+            if (response.data[i].categories) {
+              if (response.data[i].categories.length > 0) {
+                categories = response.data[i].categories;
               }
             }
             for (let cat in categories) {
@@ -498,13 +533,13 @@ export default {
                 self.categoriesListSelected.push(categories[cat]);
               }
             }
-            
+
             servicesList.push({
-              name: response.data.serviceList[i].name,
-              description: response.data.serviceList[i].description,
-              logo_url: response.data.serviceList[i].logo_url,
+              name: response.data[i].name,
+              description: response.data[i].description,
+              logo_url: response.data[i].logo_url,
               categories: categories,
-              implemented: response.data.serviceList[i].implemented,
+              implemented: response.data[i].implemented,
             });
           }
 

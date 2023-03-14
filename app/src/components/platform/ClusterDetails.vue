@@ -44,11 +44,6 @@
           :clusterID="clusterID"
           @exceededResources="setExceededResources"
         ></AddClusterMachines>
-        <RenameCluster
-          ref="renameClusterComponent"
-          v-show="showRenameCluster"
-          :clusterID="clusterID"
-        ></RenameCluster>
         <ConfirmDialog
           v-show="showConfirmDialog"
           :confirmDialogParams="confirmDialogParams"
@@ -295,6 +290,8 @@
             $route.path ===
             '/app/platform/clusterdetails/' + clusterID + '/overview'
           "
+          :longhornPWCopied="longhornPWCopied"
+          @copyLonghornPassword="copyLonghornPassword"
         ></ClusterStorage>
 
         <div
@@ -439,7 +436,6 @@ import AddClusterAccount from "./popup_modals/AddClusterAccount";
 import UpgradeKubernetesCluster from "./popup_modals/UpgradeKubernetesCluster";
 import UpgradeK3sCluster from "./popup_modals/UpgradeK3sCluster";
 import AddClusterMachines from "./popup_modals/AddMachinesToVMs";
-import RenameCluster from "./popup_modals/RenameCluster";
 import ConfirmDialog from "./popup_modals/ConfirmDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import ClusterGrafana from "./clusterDetailsComponents/ClusterGrafana";
@@ -471,6 +467,7 @@ export default {
       },
       kibanaPWCopied: false,
       grafanaPWCopied: false,
+      longhornPWCopied: false,
       loading: true,
       cluster: {},
       clusterType: 0,
@@ -491,7 +488,6 @@ export default {
       showClusterUserInfoModal: false,
       showAddClusterUser: false,
       showAddClusterMachines: false,
-      showRenameCluster: false,
       showAddClusterAccount: false,
       showUpgradeKubernetesCluster: false,
       showUpgradeK3sCluster: false,
@@ -545,7 +541,6 @@ export default {
     UpgradeKubernetesCluster,
     UpgradeK3sCluster,
     AddClusterMachines,
-    RenameCluster,
     ClusterStorage,
     ConfirmDialog,
     DeleteDialog,
@@ -573,7 +568,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getClusterDetails(self);
-    }, 3000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -621,6 +616,18 @@ export default {
         this.grafanaPWCopied = false;
       }, 2000);
     },
+    copyLonghornPassword() {
+      var dummyLonghorn = document.createElement("textarea");
+      document.body.appendChild(dummyLonghorn);
+      dummyLonghorn.value = this.cluster.longhorn_password;
+      dummyLonghorn.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummyLonghorn);
+      this.longhornPWCopied = true;
+      setTimeout(() => {
+        this.longhornPWCopied = false;
+      }, 2000);
+    },
     copyESPassword() {
       var dummy = document.createElement("textarea");
       document.body.appendChild(dummy);
@@ -658,10 +665,6 @@ export default {
       this.showAddClusterMachines = true;
       this.$bvModal.show("bv-modal-addclustermachines");
     },
-    renameCluster() {
-      this.showRenameCluster = true;
-      this.$bvModal.show("bv-modal-renamecluster");
-    },
     deleteUserFromCluster(user) {
       this.confirmDialogParams.requestBody = {
         username: user.username,
@@ -671,7 +674,13 @@ export default {
       this.confirmDialogParams.text = "Are you sure you want to delete user:";
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.action = "Delete";
-      this.confirmDialogParams.endpoint = "/server/deleteUserFromCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/users/" +
+        user.username;
       this.confirmDialogParams.successMessage =
         'You have successfully submitted deletion for user "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -684,11 +693,12 @@ export default {
     downloadKubeconfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterKubeconfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -703,23 +713,34 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Kubeconfig file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Kubeconfig file! " + error,
+            });
+          }
         });
     },
     downloadClusterUserKubeconfig(id, username) {
       let self = this;
       this.axios
-        .post(
-          "/server/getUserKubeconfig",
-          {
-            clusterID: id,
-            username: username,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/user/" +
+            username +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -734,25 +755,48 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Kubeconfig file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Kubeconfig file! " + error,
+            });
+          }
         });
     },
     deleteCluster(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = name;
       this.deleteDialogParams.envId = id;
       if (this.clusterType != 5 && this.clusterType != 8) {
-        this.deleteDialogParams.endpoint = "/server/deleteCluster";
+        this.deleteDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/delete";
       } else if (this.clusterType == 5) {
-        this.deleteDialogParams.endpoint = "/server/deleteCapiCluster";
+        this.deleteDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/capi-delete";
       } else if (this.clusterType == 8) {
-        this.deleteDialogParams.endpoint = "/server/deleteYaookCluster";
+        this.deleteDialogParams.endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          id +
+          "/yaook-delete";
       }
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
@@ -767,7 +811,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.endpoint = "/server/stopCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/stop";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -781,7 +830,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.endpoint = "/server/startCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/start";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted start for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -795,62 +849,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.endpoint = "/server/restartCluster";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    stopMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to stop machine:";
-      this.confirmDialogParams.endpoint = "/server/stopMachine";
-      this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    startMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text = "Are you sure you want to start machine:";
-      this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/startMachine";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted start for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit start of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
-    },
-    restartMachine(id, name, provider) {
-      this.confirmDialogParams.requestBody = {
-        clusterID: id,
-        machineName: name,
-        machineProvider: provider,
-      };
-      this.confirmDialogParams.text =
-        "Are you sure you want to restart machine:";
-      this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.envId = id;
-      this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint = "/server/restartMachine";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/restart";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -859,18 +863,21 @@ export default {
       this.$bvModal.show("bv-modal-confirmdialog");
     },
     deleteAllServices() {
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.servicesListTable.length; i++) {
-        this.deleteManyDialogParams.requestBody.push({
-          clusterID: this.servicesListTable[i].clusterId,
-          name: this.servicesListTable[i].name,
-          namespace: this.servicesListTable[i].namespace,
-          connectionInfo: this.servicesListTable[i].connection_info,
-        });
+        this.deleteManyDialogParams.endpoint.push(
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          this.servicesListTable[i].clusterId +
+          "/services/" +
+          this.servicesListTable[i].name +
+          "/" +
+          this.servicesListTable[i].namespace
+        );
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Services";
-      this.deleteManyDialogParams.endpoint = "/server/deleteService";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
@@ -898,7 +905,15 @@ export default {
       };
       this.deleteDialogParams.text =
         'Are you sure you want to delete "' + name + '"?';
-      this.deleteDialogParams.endpoint = "/server/deleteService";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        this.clusterID +
+        "/services/" +
+        name +
+        "/" +
+        namespace;
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =
@@ -1191,20 +1206,28 @@ export default {
     getServicesList(currentObject) {
       let self = currentObject;
       axios
-        .post("/server/getServiceList", {}, this.get_axiosConfig())
+        .get("/server/services", this.get_axiosConfig())
         .then(function (response) {
           self.serviceStoreList = [];
-          for (let i = 0; i < response.data.serviceList.length; i++) {
+          for (let i = 0; i < response.data.length; i++) {
             self.serviceStoreList.push({
-              name: response.data.serviceList[i].name,
-              description: response.data.serviceList[i].description,
-              logo_url: response.data.serviceList[i].logo_url,
+              name: response.data[i].name,
+              description: response.data[i].description,
+              logo_url: response.data[i].logo_url,
             });
           }
           self.loadingSrvices = false;
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     setExceededResources(resources) {

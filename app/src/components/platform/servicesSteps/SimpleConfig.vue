@@ -1,14 +1,5 @@
 <template>
   <div style="text-align: left">
-    <WarningAlert
-        v-if="showAlert"
-        :key="showAlert"
-        color="warning"
-        :closeOption="false"
-      >
-        <div v-html="alertMessage"></div>
-    </WarningAlert>
-
     <div class="field">
       <div class="columns">
         <div>
@@ -744,7 +735,6 @@ export default {
       })()
     );
     this.getUsersProjectsList();
-    this.checkForCredentials();
   },
   destroyed() {
     this.$finalModel = {};
@@ -875,11 +865,8 @@ export default {
     setServiceOptions() {
       let self = this;
       axios
-        .post(
-          "/server/getServiceOptions",
-          {
-            service: self.$finalModel.serviceName,
-          },
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/options",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1021,17 +1008,27 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     setDefaultName() {
       let self = this;
       axios
-        .post(
-          "/server/generateClusterServiceDefaultName",
-          {
-            service: self.$finalModel.serviceName,
-            clusterID: self.$finalModel.selectedCluster,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.$finalModel.selectedCluster +
+            "/services/" +
+            self.$finalModel.serviceName +
+            "/default-name",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1040,6 +1037,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     parseReplicaCount() {
@@ -1118,6 +1123,7 @@ export default {
           }
         }
       }
+
       if (self.selectedProviders.length == 1) {
         self.form.cloud_providers[self.selectedProviders[0]] = true;
         self.formExtraFieldsCheck();
@@ -1379,15 +1385,6 @@ export default {
         }
       }
     },
-    async checkForCredentials() {
-      let credentials = await this.getCredentials();
-      
-      if (credentials.length > 0) {
-        this.showAlert = false;
-      } else {
-        this.showAlert = true;
-      }
-    },
   },
   data() {
     return {
@@ -1433,8 +1430,6 @@ export default {
       formExtraFields: {},
       listNamespaces: [],
       YAMLUploadKey: 0,
-      showAlert: false,
-      alertMessage: 'No valid cloud credentials provided. To create a Kubernetes Cluster you need to provide valid cloud credentials from <a href="/#/app/platform/CloudProfile">here</a>.',
     };
   },
   components: {

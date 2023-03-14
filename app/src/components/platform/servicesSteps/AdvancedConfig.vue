@@ -85,31 +85,52 @@ export default {
     setDefaultName(currentObject) {
       let self = currentObject;
       axios
-        .post("/server/generateClusterServiceDefaultName", 
-        {
-          "service": self.$finalModel.serviceName,
-          "clusterID": self.$parent.$parent.clusterID
-        }, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.$parent.$parent.clusterID +
+            "/services/" +
+            self.$finalModel.serviceName +
+            "/default-name",
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.defaultName = response.data.defaultName;
           self.form.name = response.data.defaultName;
         })
         .catch(function(error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     getValues() {
       let self = this;
       axios
-        .post("/server/getServiceValues", 
-        {
-          service: self.$finalModel.serviceName, 
-        }, this.get_axiosConfig())
+        .get(
+          "/server/services/" + self.$finalModel.serviceName + "/values",
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.textPopupParams.text = response.data.values;
         })
         .catch(function(error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     }
   },

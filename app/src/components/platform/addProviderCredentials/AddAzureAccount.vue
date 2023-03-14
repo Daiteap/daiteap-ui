@@ -4,13 +4,13 @@
     <div v-else @click="showHelp = false"></div>
     <div>
       <div v-if="showHelp === true">
-        <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
+        <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
           Use OAuth:
-          <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
         </div>
         <br />
         <hr />
-        <br />
+        <br /> -->
         <div class="h4">Manual Configuration</div>
         <div class="text-right">
           <small class="showHelpLink" @click="showHelp = false">
@@ -73,6 +73,17 @@
               name. The
               select it and click Select and finish the creation of the role assignment.
             </p>
+            <p>
+              There's one API permission that you need to give your application.
+              Go to App registrations -> Select your client application ->
+              API permissions -> Add a permission -> Microsoft Graph ->
+              Application permissions -> Directory.Read.All, after that the
+              permission needs to be granted by an admin.
+            </p>
+            <p>
+              After granting the permission, press the checkbox `Grant admin consent for Default Directory` 
+              and then make sure the Status fields shows that the access is granted.
+            </p>
             <a
               href="/documentation/cloud_credentials/#microsoft-azure"
               target="_blank"
@@ -86,13 +97,13 @@
 
       <div v-else class="box">
         <form class="form-horizontal" role="form">
-          <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
+          <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
             Use OAuth:
-            <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
           </div>
           <br />
           <hr />
-          <br />
+          <br /> -->
           <h4>Manual Configuration</h4>
           <div class="text-right">
             <small class="showHelpLink" @click="showHelp = true">Credentials configuration instructions
@@ -125,8 +136,15 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input autocomplete="off" v-model="azure.description" class="form-control" :class="['input']" type="text"
-                id="azuredescription" data-test-id="input-description" />
+              <b-form-textarea
+                autocomplete="off"
+                v-model="azure.description"
+                class="form-control"
+                :class="['input']"
+                type="text"
+                id="azuredescription"
+                data-test-id="input-description"
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.azure.description.$invalid" class="help text-danger">

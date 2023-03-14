@@ -306,7 +306,12 @@ export default {
       })()
     );
     this.axios
-      .get("/server/checkProvidedCredentials", this.get_axiosConfig())
+      .get(
+        "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/cloud-credentials/check-provided-credentials",
+        this.get_axiosConfig()
+      )
       .then(function (response) {
         self.awsProvided = response.data.aws_key_provided;
         self.azureProvided = response.data.azure_key_provided;
@@ -314,19 +319,27 @@ export default {
       })
       .catch(function (error) {
         console.log(error);
-        self.$notify({
-          group: "msg",
-          type: "error",
-          title: "Notification:",
-          text: "Error while getting user information!",
-        });
+        if (error.response && error.response.status == "403") {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting user information!",
+          });
+        }
       });
 
     this.getCloudCredentials();
 
     setInterval(() => {
       this.checkCanContinue();
-      this.selectLoadBalancer();
     }, 1000);
   },
   methods: {
@@ -438,14 +451,13 @@ export default {
       let self = this;
 
       self.interval = setInterval(function () {
-        let request = {
-          provider: provider,
-          accountId: credentialId,
-        };
         self.axios
-          .post(
-            "/server/checkAccountRegionsUpdateStatus",
-            request,
+          .get(
+            "/server/tenants/" +
+              self.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/update-status",
             self.get_axiosConfig()
           )
           .then(function (response) {
@@ -501,12 +513,21 @@ export default {
             clearInterval(self.interval);
             console.log(error);
             regions.updating = false;
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while getting regions information.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while getting regions information.",
+              });
+            }
           });
       }, 1000);
       window.intervals.push(self.interval);
@@ -514,12 +535,12 @@ export default {
     getProviderRegionsList(provider, credentialId, regions) {
       let self = this;
       this.axios
-        .post(
-          "/server/getValidRegions",
-          {
-            provider: provider,
-            accountId: credentialId,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            credentialId +
+            "/regions",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -535,12 +556,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting regions information. " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting regions information. " + error,
+            });
+          }
         });
     },
     selectSize(size) {
@@ -644,7 +674,7 @@ export default {
           this.sizes.googleInstance = this.regions.google.instances[0];
         }
 
-        // add cp count to sizes
+        // add cp nodes to sizes
         let cpCount = 1;
         if (this.highAvailability) {
           cpCount = 3;
@@ -654,6 +684,13 @@ export default {
         this.sizes.large.controls = cpCount;
         this.sizes.xl.controls = cpCount;
 
+        for (let i = 0; i < cpCount; i++) {
+          this.addNode(this.loadBalancer[0], "small", true);
+          this.addNode(this.loadBalancer[0], "medium", true);
+          this.addNode(this.loadBalancer[0], "large", true);
+          this.addNode(this.loadBalancer[0], "xl", true);
+        }
+
         // calculate sizes - 1 provider
         if (selectedProviders.length == 1) {
           // add wn count to sizes
@@ -662,19 +699,7 @@ export default {
           this.sizes.large.workers = 3;
           this.sizes.xl.workers = 4;
 
-          // add cp nodes to sizes and worker nodes for size S
-          for (let i = 0; i < this.sizes.small.controls; i++) {
-            this.addNode(selectedProviders[0], "small", true);
-          }
-          for (let i = 0; i < this.sizes.medium.controls; i++) {
-            this.addNode(selectedProviders[0], "medium", true);
-          }
-          for (let i = 0; i < this.sizes.large.controls; i++) {
-            this.addNode(selectedProviders[0], "large", true);
-          }
-          for (let i = 0; i < this.sizes.xl.controls; i++) {
-            this.addNode(selectedProviders[0], "xl", true);
-          }
+          // add worker nodes for size S
           for (let i = 0; i < this.sizes.small.workers; i++) {
             this.addNode(selectedProviders[0], "small", false);
           }
@@ -688,38 +713,7 @@ export default {
           this.sizes.large.workers = 6;
           this.sizes.xl.workers = 8;
 
-          // add cp nodes to sizes and worker nodes for size S
-          if (cpCount == 1) {
-            let provider = this.getRandomProvider();
-            this.addNode(provider, "small", true);
-            this.addNode(provider, "medium", true);
-            this.addNode(provider, "large", true);
-            this.addNode(provider, "xl", true);
-
-          } else {
-            let provider = this.getRandomProvider();
-            this.addNode(provider, "small", true);
-            this.addNode(provider, "small", true);
-            this.addNode(provider, "medium", true);
-            this.addNode(provider, "medium", true);
-            this.addNode(provider, "large", true);
-            this.addNode(provider, "large", true);
-            this.addNode(provider, "xl", true);
-            this.addNode(provider, "xl", true);
-
-            if (provider == selectedProviders[0]) {
-              this.addNode(selectedProviders[1], "small", true);
-              this.addNode(selectedProviders[1], "medium", true);
-              this.addNode(selectedProviders[1], "large", true);
-              this.addNode(selectedProviders[1], "xl", true);
-            } else {
-              this.addNode(selectedProviders[0], "small", true);
-              this.addNode(selectedProviders[0], "medium", true);
-              this.addNode(selectedProviders[0], "large", true);
-              this.addNode(selectedProviders[0], "xl", true);
-            }
-          }
-
+          // add worker nodes for size S
           this.addNode(selectedProviders[0], "small", false);
           this.addNode(selectedProviders[1], "small", false);
         }
@@ -732,28 +726,7 @@ export default {
           this.sizes.large.workers = 9;
           this.sizes.xl.workers = 12;
 
-          // add cp nodes to sizes and worker nodes for size S
-          if (cpCount == 1) {
-            let provider = this.getRandomProvider();
-            this.addNode(provider, "small", true);
-            this.addNode(provider, "medium", true);
-            this.addNode(provider, "large", true);
-            this.addNode(provider, "xl", true);
-          } else {
-            this.addNode(selectedProviders[0], "small", true);
-            this.addNode(selectedProviders[1], "small", true);
-            this.addNode(selectedProviders[2], "small", true);
-            this.addNode(selectedProviders[0], "medium", true);
-            this.addNode(selectedProviders[1], "medium", true);
-            this.addNode(selectedProviders[2], "medium", true);
-            this.addNode(selectedProviders[0], "large", true);
-            this.addNode(selectedProviders[1], "large", true);
-            this.addNode(selectedProviders[2], "large", true);
-            this.addNode(selectedProviders[0], "xl", true);
-            this.addNode(selectedProviders[1], "xl", true);
-            this.addNode(selectedProviders[2], "xl", true);
-          }
-
+          // add worker nodes for size S
           this.addNode(selectedProviders[0], "small", false);
           this.addNode(selectedProviders[1], "small", false);
           this.addNode(selectedProviders[2], "small", false);
@@ -942,29 +915,6 @@ export default {
 
       this.checkQuota();
     },
-    selectLoadBalancer() {
-      if (
-        Vue.prototype.$finalModel.aws &&
-        !Vue.prototype.$finalModel.azure &&
-        !Vue.prototype.$finalModel.google
-      ) {
-        Vue.prototype.$finalModel.load_balancer_integration = "aws";
-      }
-      if (
-        Vue.prototype.$finalModel.azure &&
-        !Vue.prototype.$finalModel.aws &&
-        !Vue.prototype.$finalModel.google
-      ) {
-        Vue.prototype.$finalModel.load_balancer_integration = "azure";
-      }
-      if (
-        Vue.prototype.$finalModel.google &&
-        !Vue.prototype.$finalModel.azure &&
-        !Vue.prototype.$finalModel.aws
-      ) {
-        Vue.prototype.$finalModel.load_balancer_integration = "google";
-      }
-    },
     async checkQuota() {
       this.quotas = await this.getUserQuota();
       let nodesCount = 0;
@@ -1011,7 +961,7 @@ export default {
       return new Promise((resolve) => {
         this.axios
           .post(
-            "/server/checkforipconflicts",
+            "/server/check-ip-conflicts",
             {
               networks: networks,
             },
@@ -1045,13 +995,14 @@ export default {
       let self = this;
       return new Promise((resolve) => {
         this.axios
-          .post(
-            "/server/getValidZones",
-            {
-              provider: provider,
-              accountId: credentialId,
-              region: region,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/zones",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -1059,12 +1010,21 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while getting zones.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while getting zones.",
+              });
+            }
           });
       });
     },
@@ -1072,14 +1032,16 @@ export default {
       let self = this;
       return new Promise((resolve) => {
         this.axios
-          .post(
-            "/server/getValidInstances",
-            {
-              provider: provider,
-              accountId: credentialId,
-              region: region,
-              zone: zone,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/zones/" +
+              zone +
+              "/instances",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -1095,12 +1057,21 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while getting instances.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while getting instances.",
+              });
+            }
           });
       });
     },
@@ -1109,16 +1080,15 @@ export default {
       return new Promise((resolve) => {
         this.axios
           .get(
-            "/server/getValidOperatingSystems/" +
-            this.computed_userInfo.username +
-            "/" +
-            provider +
-            "/" +
-            credentialId +
-            "/" +
-            this.$selectedType +
-            "/" +
-            region,
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/cloud-credentials/" +
+              credentialId +
+              "/regions/" +
+              region +
+              "/environment-type/" +
+              this.$selectedType +
+              "/operating-systems",
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -1130,12 +1100,21 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while getting operating systems.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while getting operating systems.",
+              });
+            }
           });
       });
     },
@@ -1293,6 +1272,7 @@ export default {
       showAlert: false,
       alertKey: 0,
       highAvailability: false,
+      loadBalancer: [],
     };
   },
   validations: {
@@ -1311,6 +1291,7 @@ export default {
           this.form.googleSelected == false
         ) {
           delete Vue.prototype.$finalModel.load_balancer_integration;
+          this.loadBalancer = [];
           this.clearSizes();
 
           this.$emit("can-continue", { value: false });
@@ -1333,6 +1314,9 @@ export default {
             delete Vue.prototype.$finalModel.load_balancer_integration;
           }
 
+          let index = this.loadBalancer.indexOf("aws");
+          this.loadBalancer.splice(index, 1);
+
           this.selectedCredentials.aws = "";
           this.selectedCredentials.awsRegion = "";
         }
@@ -1344,6 +1328,9 @@ export default {
           if (Vue.prototype.$finalModel.load_balancer_integration == "azure") {
             delete Vue.prototype.$finalModel.load_balancer_integration;
           }
+
+          let index = this.loadBalancer.indexOf("azure");
+          this.loadBalancer.splice(index, 1);
 
           this.selectedCredentials.azure = "";
           this.selectedCredentials.azureRegion = "";
@@ -1357,9 +1344,25 @@ export default {
             delete Vue.prototype.$finalModel.load_balancer_integration;
           }
 
+          let index = this.loadBalancer.indexOf("google");
+          this.loadBalancer.splice(index, 1);
+
           this.selectedCredentials.google = "";
           this.selectedCredentials.googleRegion = "";
         }
+
+        if (this.form.awsSelected && !this.loadBalancer.includes("aws")) {
+          this.loadBalancer.push("aws");
+        }
+        if (this.form.azureSelected && !this.loadBalancer.includes("azure")) {
+          this.loadBalancer.push("azure");
+        }
+        if (this.form.googleSelected && !this.loadBalancer.includes("google")) {
+          this.loadBalancer.push("google");
+        }
+
+        Vue.prototype.$finalModel.load_balancer_integration =
+          this.loadBalancer[0];
 
         if (
           Vue.prototype.$finalModel.aws ||

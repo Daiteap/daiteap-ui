@@ -154,11 +154,12 @@ export default {
     getClusterConfig() {
       let self = this;
       return this.axios
-        .post(
-          "/server/getClusterConfig",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/config",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -166,6 +167,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
           return "";
         });
     },
@@ -191,7 +200,7 @@ export default {
 
       let resizeYaookClusterRequestBody = this.$finalModel;
 
-      let endpoint = "/server/resizeYaookCluster";
+      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/yaook-resize";
 
       this.axios
         .post(endpoint, resizeYaookClusterRequestBody, this.get_axiosConfig())
@@ -216,12 +225,21 @@ export default {
             if (error.response) {
               console.log(error.response.data);
             }
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while submitting cluster resize.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while submitting cluster resize.",
+              });
+            }
           }
         });
     },

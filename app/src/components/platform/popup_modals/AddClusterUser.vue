@@ -411,7 +411,11 @@ export default {
       }
       this.axios
         .post(
-          "/server/addUserToCluster",
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/users",
           {
             kubernetesUser: is_kubernetes_user,
             username: self.user.username,
@@ -492,23 +496,20 @@ export default {
         return new Promise((resolve) => {
           setTimeout(() => {
             self.axios
-              .post(
-                "/server/isclusterusernamevalid",
-                {
-                  username: value,
-                  clusterId: self.clusterID,
-                },
+              .get(
+                "/server/clusters/username-valid/" + value,
                 self.get_axiosConfig()
               )
               .then(function (response) {
                 if (response.data.valid === true) {
                   self.axios
-                    .post(
-                      "/server/isclusterusernamefree",
-                      {
-                        username: value,
-                        clusterId: self.clusterID,
-                      },
+                    .get(
+                      "/server/tenants/" +
+                        self.computed_active_tenant_id +
+                        "/clusters/" +
+                        self.clusterID +
+                        "/username-available/" +
+                        value,
                       self.get_axiosConfig()
                     )
                     .then(function (response) {

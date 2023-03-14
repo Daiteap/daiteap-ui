@@ -6,7 +6,7 @@
       <div v-if="showHelp === true">
         <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
           Use OAuth:
-          <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/googleCloud_logo_small.png" />
         </div>
         <br />
         <hr />
@@ -87,7 +87,7 @@
           <d-row>
             <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
               Use OAuth:
-              <i class="far fa-address-book" id="googleOAuthIcon"></i>
+              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/googleCloud_logo_small.png" />
             </div>
           </d-row>
           <br />
@@ -124,8 +124,15 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input autocomplete="off" v-model="google.description" class="form-control" :class="['input']" type="text"
-                id="googledescription" data-test-id="input-description" />
+              <b-form-textarea
+                autocomplete="off"
+                v-model="google.description"
+                class="form-control"
+                :class="['input']"
+                type="text"
+                id="googledescription"
+                data-test-id="input-description"
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.google.description.$invalid" class="help text-danger">

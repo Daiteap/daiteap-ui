@@ -96,15 +96,26 @@ export default {
       let self = this;
       let tenantID = this.tenant.id;
       axios
-        .get("/server/tenant/" + tenantID + "/getUnregisteredUsers", this.get_axiosConfig())
+        .get(
+          "/server/tenants/" + tenantID + "/unregistered-users",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
-          self.allUsers = response.data.unregisteredUsers;
-					self.filteredUsers = response.data.unregisteredUsers;
+          self.allUsers = response.data;
+					self.filteredUsers = response.data;
           self.loading = false;
         })
         .catch(function (error) {
           console.error("Error on getting unregistered users occurred.");
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
 		},
 		onSearchChange() {
@@ -112,9 +123,9 @@ export default {
 			for(let i=0; i < this.allUsers.length; i++){
 				if(this.allUsers[i].username.includes(this.search)){
 					this.filteredUsers.push(this.allUsers[i]);
-				} else if(this.allUsers[i].firstName.includes(this.search)){
+				} else if(this.allUsers[i].first_name.includes(this.search)){
 					this.filteredUsers.push(this.allUsers[i]);
-				} else if(this.allUsers[i].lastName.includes(this.search)){
+				} else if(this.allUsers[i].last_name.includes(this.search)){
 					this.filteredUsers.push(this.allUsers[i]);
 				} else if(this.allUsers[i].email.includes(this.search)){
 					this.filteredUsers.push(this.allUsers[i]);
@@ -138,8 +149,8 @@ export default {
 			for(let i=0; i < this.allUsers.length; i++){
 				if(this.allUsers[i].username == this.selectedUser){
 					email = this.allUsers[i].email;
-					firstName = this.allUsers[i].firstName;
-					lastName = this.allUsers[i].lastName;
+					firstName = this.allUsers[i].first_name;
+					lastName = this.allUsers[i].last_name;
 					break;
 				}
 			}

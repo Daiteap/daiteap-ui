@@ -40,6 +40,36 @@
           {{ clusterNameTakenMsg }}
         </p>
         <div v-else style="height: 1.2rem"></div>
+
+        <div>
+          <label>Description:</label>
+        </div>
+        <b-form-textarea
+          class="form-control"
+          :class="[
+            'input',
+            $v.form.clusterDescription.$invalid &&
+            $v.form.clusterDescription.$dirty
+              ? 'is-danger'
+              : '',
+          ]"
+          type="text"
+          placeholder="Description"
+          v-model="form.clusterDescription"
+          @input="$v.form.clusterDescription.$touch"
+          @change="changeClusterDescription()"
+        ></b-form-textarea>
+        <p
+          v-if="
+            $v.form.clusterDescription.$invalid &&
+            $v.form.clusterDescription.$dirty
+          "
+          class="help text-danger"
+        >
+          Invalid cluster description
+        </p>
+
+        <br />
       </div>
 
       <div v-if="computed_account_settings.enable_templates" class="control">
@@ -107,6 +137,7 @@ export default {
     return {
       form: {
         clusterName: "",
+        clusterDescription: "",
       },
       nameFocus: false,
       templateNamesList: [],
@@ -131,11 +162,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isComputeNameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/compute-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -151,6 +182,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 0);
@@ -159,6 +198,9 @@ export default {
             return false;
           }
         },
+      },
+      clusterDescription: {
+        maxLength: maxLength(1024),
       },
     },
   },
@@ -200,6 +242,12 @@ export default {
       this.$store.commit(
         "updateCreateClusterSettingsClusterName",
         this.form.clusterName
+      );
+    },
+    changeClusterDescription() {
+      this.$store.commit(
+        "updateCreateClusterSettingsClusterDescription",
+        this.form.clusterDescription
       );
     },
     async getTemplatesList(openModal) {

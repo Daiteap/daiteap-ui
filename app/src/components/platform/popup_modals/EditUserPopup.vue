@@ -250,6 +250,7 @@ export default {
       this.user.phone = document.getElementById("phone").value;
       this.user.password = document.getElementById("password").value;
       this.user.id = this.currentUser.id;
+      this.user.username = this.currentUser.username;
 
       this.$emit("updateUser", this.user);
 

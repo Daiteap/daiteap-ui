@@ -29,10 +29,10 @@
           {{ user.username }}
         </td>
         <td>
-          {{ user.firstName }}
+          {{ user.first_name }}
         </td>
         <td>
-          {{ user.lastName }}
+          {{ user.last_name }}
         </td>
         </tr>
     </tbody>

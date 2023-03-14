@@ -201,7 +201,12 @@ export default {
     this.getTemplatesList(false);
 
     this.axios
-      .get("/server/checkProvidedCredentials", this.get_axiosConfig())
+      .get(
+        "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/cloud-credentials/check-provided-credentials",
+        this.get_axiosConfig()
+      )
       .then(function (response) {
         if (
           response.data.alicloud_key_provided == false &&
@@ -221,12 +226,21 @@ export default {
       })
       .catch(function (error) {
         console.log(error);
-        self.$notify({
-          group: "msg",
-          type: "error",
-          title: "Notification:",
-          text: "Error while getting user information!",
-        });
+        if (error.response && error.response.status == "403") {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting user information!",
+          });
+        }
       });
   },
   computed: {},
@@ -245,11 +259,11 @@ export default {
             return new Promise((resolve) => {
               setTimeout(() => {
                 this.axios
-                  .post(
-                    "/server/isClusterNameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/cluster-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -261,6 +275,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);

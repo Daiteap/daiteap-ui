@@ -103,7 +103,7 @@
         <div>
           <label>Description:</label>
         </div>
-        <input
+        <b-form-textarea
           class="form-control"
           :class="[
             'input',
@@ -117,7 +117,7 @@
           v-model="form.clusterDescription"
           @input="$v.form.clusterDescription.$touch"
           @change="changeClusterDescription()"
-        />
+        ></b-form-textarea>
         <p
           v-if="
             $v.form.clusterDescription.$invalid &&
@@ -368,11 +368,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/isClusterNameFree",
-                    {
-                      clusterName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/cluster-name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -388,6 +388,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 0);
@@ -440,7 +448,7 @@ export default {
       return new Promise((resolve) => {
         axios
           .post(
-            "/server/checkforipconflicts",
+            "/server/check-ip-conflicts",
             {
               networks: networks,
             },
@@ -482,7 +490,7 @@ export default {
       return new Promise((resolve) => {
         axios
           .post(
-            "/server/checkforipconflicts",
+            "/server/check-ip-conflicts",
             {
               networks: networks,
             },
@@ -521,7 +529,7 @@ export default {
       return new Promise((resolve) => {
         axios
           .post(
-            "/server/checkforipconflicts",
+            "/server/check-ip-conflicts",
             {
               networks: networks,
             },
@@ -548,7 +556,7 @@ export default {
       self.loadingKubernetesConfigurations = true;
       axios
         .get(
-          "/server/getsupportedkubernetesconfigurations",
+          "/server/clusters/k8s-supported-configurations",
           this.get_axiosConfig()
         )
         .then(function (response) {

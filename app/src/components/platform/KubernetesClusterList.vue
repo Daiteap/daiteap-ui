@@ -111,7 +111,7 @@ export default {
 
     self.interval = setInterval(() => {
       self.getUsersClustersList(self);
-    }, 1000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -243,6 +243,7 @@ export default {
         self.clustersList[i].ResizeStep = kubernetesClusters[i].resizestep;
         self.clustersList[i].Type = kubernetesClusters[i].type;
         self.clustersList[i].Status = kubernetesClusters[i].status;
+        self.clustersList[i].Credentials = kubernetesClusters[i].credentials;
         self.clustersList[i].CreatedAt = new Date(
           kubernetesClusters[i].created_at
         );
@@ -262,6 +263,14 @@ export default {
             ].Providers.substring(0, self.clustersList[i].Providers.length - 2);
           } catch (error) {
             console.log(error);
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            }
           }
         }
 

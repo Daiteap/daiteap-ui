@@ -94,11 +94,12 @@ export default {
     getKubernetesAvailableUpgradeVersions() {
       let self = this;
       axios
-        .post(
-          "/server/getKubernetesAvailableUpgradeVersions",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/upgrade-versions",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -115,15 +116,26 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     upgradeKubernetesCluster() {
       let self = this;
       axios
         .post(
-          "/server/upgradeKubernetesCluster",
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/k8s-upgrade",
           {
-            clusterID: self.clusterID,
             version: self.upgradeVersion,
           },
           this.get_axiosConfig()
@@ -134,6 +146,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     closeModal() {
@@ -151,7 +171,6 @@ export default {
 
 
 <style scoped>
-
 .form-group {
   margin: auto;
 }

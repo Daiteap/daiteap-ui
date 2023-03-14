@@ -1,8 +1,12 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <WarningAlert v-if="showAlert" color="warning" :key="alertKey">
-      <i class="fas fa-exclamation-circle" style="font-size: 1.5rem; color: red;"></i>
-      Deleting resources can take some time according to the underlying infrastructure provider.
+      <i
+        class="fas fa-exclamation-circle"
+        style="font-size: 1.5rem; color: red"
+      ></i>
+      Deleting resources can take some time according to the underlying
+      infrastructure provider.
     </WarningAlert>
 
     <QuotaExceededModal
@@ -12,7 +16,7 @@
 
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="clustersDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -69,14 +73,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th v-if="showProject && !showTenant">Project</th>
-          <th v-if="showTenant">Workspace</th>
-          <th>Description</th>
-          <th>Type</th>
-          <th>Provider</th>
-          <th>Created at</th>
-          <th>Created by</th>
-          <th>Status</th>
+          <th name="clustersHidePriority3">Description</th>
+          <th name="clustersHidePriority4" v-if="showProject && !showTenant">
+            Project
+          </th>
+          <th name="clustersHidePriority5">Provider</th>
+          <th name="clustersHidePriority2">Type</th>
+          <th name="clustersHidePriority0">Created at</th>
+          <th name="clustersHidePriority1">Created by</th>
+          <th name="clustersHidePriority6">Status</th>
           <th>Operations</th>
         </tr>
       </thead>
@@ -84,21 +89,17 @@
         <tr v-for="item in clustersList" :key="item.ID">
           <td
             :title="item.ID"
-            v-if="item.InstallStep == 0"
+            v-if="
+              item.InstallStep == 0 ||
+              item.InstallStep == undefined ||
+              item.InstallStep == -100
+            "
             class="clickForDetails"
             v-on:click="goToClusterDetails(item)"
           >
             {{ item.Name }}
           </td>
-          <td
-            :title="item.ID"
-            v-else-if="item.InstallStep == undefined"
-            class="clickForDetails"
-            v-on:click="goToClusterDetails(item)"
-          >
-            {{ item.Name }}
-          </td>
-          <td v-else-if="item.InstallStep == 100 || item.InstallStep == -100">
+          <td :title="item.ID" v-else-if="item.InstallStep == 100">
             {{ item.Name }}
           </td>
           <td
@@ -109,7 +110,11 @@
           >
             {{ item.Name }}
           </td>
+          <td name="clustersHidePriority3" :title="item.Description">
+            {{ item.Description }}
+          </td>
           <td
+            name="clustersHidePriority4"
             v-if="showProject && !showTenant"
             v-show="projectsList != 'loading'"
             class="clickForDetails"
@@ -117,7 +122,9 @@
               $router.push({
                 name: 'ProjectDetails',
                 params: {
-                  projectID: projectsList.filter(project => project.name == item.ProjectName)[0].id,
+                  projectID: projectsList.filter(
+                    (project) => project.name == item.ProjectName
+                  )[0].id,
                 },
               })
             "
@@ -125,32 +132,10 @@
           >
             {{ item.ProjectName }}
           </td>
-          <td 
-            v-if="showTenant"
-            class="clickForDetails"
-              @click="
-                $router.push({
-                  name: 'WorkspaceDetails',
-                  params: {
-                    tenant: item.Tenant,
-                  },
-                })
-              "
-          >{{ item.Tenant.name }}</td>
-          <td :title="item.Description">{{ item.Description }}</td>
-          <td>
-            <div v-if="item.Type == 1">DLCM</div>
-            <div v-else-if="item.Type == 2">DMCV</div>
-            <div v-else-if="item.Type == 3">DK3S</div>
-            <div v-else-if="item.Type == 5">CAPI</div>
-            <div v-else-if="item.Type == 7">DLCMv2</div>
-            <div v-else-if="item.Type == 8">YaookCAPI</div>
-            <div v-else>---</div>
-          </td>
-          <td>
+          <td name="clustersHidePriority5">
             <img
               v-if="item.Providers.includes('Azure')"
-              title="Azure"
+              :title="item.Credentials.azure"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -160,7 +145,7 @@
             />
             <img
               v-if="item.Providers.includes('Amazon')"
-              title="AWS"
+              :title="item.Credentials.aws"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -169,8 +154,11 @@
               src="../../../assets/img/aws_logo_small.png"
             />
             <img
-              v-if="item.Providers.includes('Openstack') && computed_theme == 'daiteap'"
-              title="OpenStack"
+              v-if="
+                item.Providers.includes('Openstack') &&
+                computed_theme == 'daiteap'
+              "
+              :title="item.Credentials.openstack"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -180,7 +168,7 @@
             />
             <img
               v-if="item.Providers.includes('Google')"
-              title="Google Cloud"
+              :title="item.Credentials.google"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -190,7 +178,7 @@
             />
             <img
               v-if="item.Providers.includes('Onpremise')"
-              title="Onpremise"
+              :title="item.Credentials.onpremise"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -200,7 +188,7 @@
             />
             <img
               v-if="item.Providers.includes('IotArm')"
-              title="IoT-ARM"
+              :title="item.Credentials.iotarm"
               margin-top="auto"
               margin-bottom="auto"
               class="pr-2"
@@ -209,15 +197,27 @@
               src="../../../assets/img/IoTArm_logo_small.svg"
             />
           </td>
-          <td>{{ item.CreatedAt }}</td>
+          <td name="clustersHidePriority2">
+            <div v-if="item.Type == 1">DLCM</div>
+            <div v-else-if="item.Type == 2">DMCV</div>
+            <div v-else-if="item.Type == 3">DK3S</div>
+            <div v-else-if="item.Type == 5">CAPI</div>
+            <div v-else-if="item.Type == 7">DLCMv2</div>
+            <div v-else-if="item.Type == 8">YaookCAPI</div>
+            <div v-else>---</div>
+          </td>
+          <td name="clustersHidePriority0">
+            {{ item.CreatedAt | formatDate }}
+          </td>
           <td
-            :title="item.Contact"
+            name="clustersHidePriority1"
             class="clickForDetails"
             v-on:click="showUserDetails(item.Contact)"
+            :title="item.Contact"
           >
             {{ item.Contact }}
           </td>
-          <td style="max-width: none;">
+          <td name="clustersHidePriority6" style="max-width: none">
             <span v-if="item.ResizeStep > 0"
               ><b-spinner
                 style="width: 1rem; height: 1rem"
@@ -283,9 +283,9 @@
             >
             <i
               class="fas fa-exclamation-triangle waring-modal-icon"
-              v-if="item.InstallStep == -100" 
+              v-if="item.InstallStep == -100"
               @click="deleteError(item)"
-              style="cursor: pointer;"
+              style="cursor: pointer"
             ></i>
             <span
               v-if="item.ResizeStep < 0 && item.InstallStep != 100"
@@ -298,7 +298,13 @@
           </td>
           <td>
             <div>
-              <b-dropdown right size="sm" class="dropDownMenuButton" boundary="window" no-caret>
+              <b-dropdown
+                right
+                size="sm"
+                class="dropDownMenuButton"
+                boundary="window"
+                no-caret
+              >
                 <template #button-content>
                   <i
                     class="fa fa-ellipsis-v machineoperationsbutton"
@@ -306,9 +312,7 @@
                   ></i>
                 </template>
 
-                <b-dropdown-item
-                  @click="openEditPopup(item)"
-                >
+                <b-dropdown-item @click="openEditPopup(item)">
                   <span>
                     <i class="fas fa-edit"></i>
                     Edit
@@ -359,8 +363,16 @@
                 </b-dropdown-item>
 
                 <b-dropdown-item
-                  :disabled="item.Status != 'running' || item.InstallStep != 0  || item.ResizeStep > 0"
-                  v-if="item.Type != 5 && item.Type != 8 && computed_account_settings.enable_cluster_resize"
+                  :disabled="
+                    item.Status != 'running' ||
+                    item.InstallStep != 0 ||
+                    item.ResizeStep > 0
+                  "
+                  v-if="
+                    item.Type != 5 &&
+                    item.Type != 8 &&
+                    computed_account_settings.enable_cluster_resize
+                  "
                   v-on:click="resizeDLCMCluster(item.ID)"
                 >
                   <span>
@@ -370,8 +382,15 @@
                 </b-dropdown-item>
 
                 <b-dropdown-item
-                  :disabled="item.Status != 'running' || item.InstallStep != 0 || item.ResizeStep > 0"
-                  v-if="item.Type == 5 && computed_account_settings.enable_cluster_resize"
+                  :disabled="
+                    item.Status != 'running' ||
+                    item.InstallStep != 0 ||
+                    item.ResizeStep > 0
+                  "
+                  v-if="
+                    item.Type == 5 &&
+                    computed_account_settings.enable_cluster_resize
+                  "
                   v-on:click="resizeCapiCluster(item.ID)"
                 >
                   <span>
@@ -381,8 +400,15 @@
                 </b-dropdown-item>
 
                 <b-dropdown-item
-                  :disabled="item.Status != 'running' || item.InstallStep != 0 || item.ResizeStep > 0"
-                  v-if="item.Type == 8 && computed_account_settings.enable_cluster_resize"
+                  :disabled="
+                    item.Status != 'running' ||
+                    item.InstallStep != 0 ||
+                    item.ResizeStep > 0
+                  "
+                  v-if="
+                    item.Type == 8 &&
+                    computed_account_settings.enable_cluster_resize
+                  "
                   v-on:click="resizeYaookCluster(item.ID)"
                 >
                   <span>
@@ -391,7 +417,11 @@
                   </span>
                 </b-dropdown-item>
 
-                <b-dropdown-item v-if="computed_account_settings.enable_templates" :disabled="item.InstallStep == 1 || item.ResizeStep > 0" v-on:click="templateCluster(item.ID)">
+                <b-dropdown-item
+                  v-if="computed_account_settings.enable_templates"
+                  :disabled="item.InstallStep == 1 || item.ResizeStep > 0"
+                  v-on:click="templateCluster(item.ID)"
+                >
                   <span>
                     <i class="fas fa-save"></i>
                     Template
@@ -399,21 +429,18 @@
                 </b-dropdown-item>
 
                 <b-dropdown-item
-                  v-if="item.InstallStep == 0" v-on:click="downloadKubeconfig(item.ID)"
+                  v-if="item.InstallStep == 0"
+                  v-on:click="downloadKubeconfig(item.ID)"
                 >
-                  <span>
-                    Kubeconfig
-                  </span>
+                  <span> Kubeconfig </span>
                 </b-dropdown-item>
 
                 <b-dropdown-item
-                  v-if="item.InstallStep == 0 && item.Type == 8" v-on:click="downloadWireguardConfig(item.ID)"
+                  v-if="item.InstallStep == 0 && item.Type == 8"
+                  v-on:click="downloadWireguardConfig(item.ID)"
                 >
-                  <span>
-                    Wireguard
-                  </span>
+                  <span> Wireguard </span>
                 </b-dropdown-item>
-
               </b-dropdown>
             </div>
           </td>
@@ -443,11 +470,11 @@ export default {
     projectsList: [Array, String],
     showProject: {
       type: Boolean,
-      default: true
+      default: true,
     },
     showTenant: {
       type: Boolean,
-      default: false
+      default: false,
     },
   },
   data() {
@@ -511,11 +538,25 @@ export default {
       showEditClusterPopup: false,
       templateClusterId: "",
       popupId: "clusterdeletewarning",
+      columnsEvent: "",
     };
   },
   created() {
     this.loadingTable = true;
-
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("clusters", 6);
+      this.columnsEvent = this.changeColumnsVisibility.bind(
+        null,
+        "clusters",
+        6
+      );
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.columnsEvent);
   },
   components: {
     SaveEnvironmentTemplate,
@@ -707,7 +748,7 @@ export default {
           currentStatus = "Installing CNI plugin";
         }
         if (installStep == 4) {
-          if(this.computed_theme == "daiteap") {
+          if (this.computed_theme == "daiteap") {
             currentStatus = "Installing OpenStack CCM";
           }
         }
@@ -800,11 +841,12 @@ export default {
     getResizeStatus(environment) {
       let self = this;
       this.axios
-        .post(
-          "/server/getResizeStatus",
-          {
-            ID: environment.ID,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            environment.ID +
+            "/resize-status",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -819,12 +861,21 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting resize status!",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting resize status!",
+            });
+          }
         });
     },
     resizeStatus(resizeStep, type) {
@@ -963,10 +1014,9 @@ export default {
       }
       if (cluster["errorMsg"]) {
         // eslint-disable-next-line no-undef
-        self.errorMsg = Buffer.from(
-          cluster["errorMsg"],
-          "base64"
-        ).toString("utf-8");
+        self.errorMsg = Buffer.from(cluster["errorMsg"], "base64").toString(
+          "utf-8"
+        );
       }
       if (self.accountsList.length == 0) {
         if (self.cluster.providers.alicloudSelected) {
@@ -1098,7 +1148,15 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/environmenttemplates/save", templateForm, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            templateForm.environmentId +
+            "/template",
+          templateForm,
+          this.get_axiosConfig()
+        )
         .then(
           self.$notify({
             group: "msg",
@@ -1109,20 +1167,29 @@ export default {
         )
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving Template! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving Template! " + error,
+            });
+          }
         });
     },
     deleteError(deleteItem) {
       this.deleteItem = {
         name: deleteItem.Name,
         id: deleteItem.ID,
-        type: deleteItem.Type
-      }
+        type: deleteItem.Type,
+      };
       try {
         // eslint-disable-next-line no-undef
         this.errorMsgDelete = Buffer.from(
@@ -1146,29 +1213,42 @@ export default {
     deleteCluster(clusterToRemove) {
       this.$bvModal.hide(this.popupId);
 
-      let requestBody = { clusterID: clusterToRemove.id };
       let endpoint;
       if (clusterToRemove.type == 5) {
-        endpoint = "/server/deleteCapiCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/capi-delete";
       } else if (clusterToRemove.type == 8) {
-        endpoint = "/server/deleteYaookCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/yaook-delete";
       } else {
-        endpoint = "/server/deleteCluster";
+        endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          clusterToRemove.id +
+          "/delete";
       }
 
       let self = this;
       this.axios
-        .post(
-          endpoint,
-          requestBody,
-          this.get_axiosConfig()
-        )
+        .delete(endpoint, this.get_axiosConfig())
         .then(function () {
           self.$notify({
             group: "msg",
             type: "success",
             title: "Notification:",
-            text: 'You have successfully submitted deletion for "' + clusterToRemove.name + '".',
+            text:
+              'You have successfully submitted deletion for "' +
+              clusterToRemove.name +
+              '".',
           });
 
           self.showAlert = true;
@@ -1177,14 +1257,26 @@ export default {
         .catch(function (error) {
           console.log(error);
           if (error.response) {
-            error= error.response.data.error.message;
+            error = error.response.data.error.message;
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: 'Error occured while you tried to submit deletion of "' + clusterToRemove.name + '".',
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text:
+                'Error occured while you tried to submit deletion of "' +
+                clusterToRemove.name +
+                '".',
+            });
+          }
         });
     },
     deleteClusterPopup(id, name, type) {
@@ -1199,7 +1291,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.endpoint = "/server/stopCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/stop";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1213,7 +1310,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.endpoint = "/server/startCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/start";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted start for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1227,7 +1329,12 @@ export default {
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.endpoint = "/server/restartCluster";
+      this.confirmDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/restart";
       this.confirmDialogParams.successMessage =
         'You have successfully submitted stop for "' + name + '".';
       this.confirmDialogParams.failureMessage =
@@ -1238,11 +1345,12 @@ export default {
     downloadKubeconfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getClusterKubeconfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/kubeconfig",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1257,22 +1365,32 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Kubeconfig file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Kubeconfig file! " + error,
+            });
+          }
         });
     },
     downloadWireguardConfig(id) {
       let self = this;
       this.axios
-        .post(
-          "/server/getWireguardConfig",
-          {
-            clusterID: id,
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            id +
+            "/wireguard-config",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -1287,12 +1405,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while downloading Wireguard file! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while downloading Wireguard file! " + error,
+            });
+          }
         });
     },
     openEditPopup(cluster) {
@@ -1300,28 +1427,20 @@ export default {
       this.clusterToEditName = cluster.Name;
       this.showEditClusterPopup = true;
       this.$nextTick(function () {
-          this.$bvModal.show('bv-modal-editcluster');
+        this.$bvModal.show("bv-modal-editcluster");
       });
     },
     updateCluster(cluster) {
-      let endpoint = "/server/updateCluster/" + cluster.id;
-      let isCapi = false;
-      let isYaookCapi = false;
-      if(cluster.type == 5) {
-        isCapi = true;
-      }
-      if(cluster.type == 8) {
-        isYaookCapi = true;
-      }
       let self = this;
       this.axios
-        .post(
-          endpoint,
+        .put(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.id,
           {
             name: cluster.Name,
             description: cluster.Description,
-            isCapi: isCapi,
-            isYaookCapi: isYaookCapi
           },
           this.get_axiosConfig()
         )
@@ -1338,12 +1457,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cluster.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cluster.",
+            });
+          }
         });
     },
     setExceededResources(resources) {
@@ -1356,6 +1484,13 @@ export default {
 </script>
 
 <style scoped>
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 a:not([href]):not([tabindex]) {
   color: #4e73df;
   text-decoration: none;
@@ -1462,11 +1597,5 @@ kbd:hover {
   background-color: #fff !important;
   color: #fff;
   border: 1px solid #bcbcbc !important;
-}
-td {
-  max-width: 17rem;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 </style>

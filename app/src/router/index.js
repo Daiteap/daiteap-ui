@@ -18,6 +18,7 @@ import CreateCAPI from '@/components/platform/CreateCAPI'
 import CreateK3s from '@/components/platform/CreateK3s'
 import CreateVMs from '@/components/platform/CreateVMs'
 import AzureAdminConsent from '@/components/platform/oauth/AzureAdminConsent'
+import AzureGrantAdminConsent from '@/components/platform/oauth/AzureGrantAdminConsent'
 import AzureAuthorize from '@/components/platform/oauth/AzureAuthorize'
 import AzureCreateApp from '@/components/platform/oauth/AzureCreateApp'
 import GoogleProjects from '@/components/platform/oauth/GoogleProjects'
@@ -260,6 +261,11 @@ const router = new Router({
           path: 'cloudprofile/oauth/azure/adminconsent',
           name: 'AdminConsent',
           component: AzureAdminConsent,
+        },
+        {
+          path: 'cloudprofile/oauth/azure/grantadminconsent',
+          name: 'GrantAdminConsent',
+          component: AzureGrantAdminConsent,
         },
         {
           path: 'cloudprofile/oauth/azure/createapp',

@@ -184,7 +184,15 @@ export default {
       };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = service.name;
-      this.deleteDialogParams.endpoint = "/server/deleteService";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        service.clusterId +
+        "/services/" +
+        service.name +
+        "/" +
+        service.namespace;
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + service.name + '".';
       this.deleteDialogParams.failureMessage =

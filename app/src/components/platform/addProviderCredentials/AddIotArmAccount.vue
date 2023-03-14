@@ -164,7 +164,7 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input
+              <b-form-textarea
                 autocomplete="off"
                 v-model="iotarm.description"
                 class="form-control"
@@ -172,7 +172,7 @@
                 type="text"
                 id="iotarmdescription"
                 data-test-id="input-description"
-              />
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.iotarm.description.$invalid" class="help text-danger">
@@ -584,13 +584,9 @@ export default {
       ) {
         return new Promise((resolve) => {
           self.axios
-            .post(
-              "/server/checkipaddress",
-              {
-                network: network,
-                ip: value,
-              },
-              this.get_axiosConfig()
+            .get(
+              "/server/check-ip-address/" + network + "/" + value,
+              self.get_axiosConfig()
             )
             .then(function (response) {
               if (response.data.error == true) {
@@ -601,12 +597,21 @@ export default {
             })
             .catch(function (error) {
               console.log(error);
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Notification:",
-                text: "Error while checking IP address! " + error,
-              });
+              if (error.response && error.response.status == "403") {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Access Denied",
+                });
+              } else {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Error while checking IP address! " + error,
+                });
+              }
             });
         });
       }

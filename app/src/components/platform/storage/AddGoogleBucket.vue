@@ -50,6 +50,26 @@
     </div>
 
     <div v-on:click.stop="" style="cursor: initial">
+      <div class="m-3">Description:</div>
+      <div class="m-3">
+        <b-form-textarea
+          v-model="description"
+          :disabled="!googleSelected"
+          class="form-control input"
+        ></b-form-textarea>
+      </div>
+      <div class="">
+        <p
+          v-if="googleSelected && $v.description.$invalid"
+          class="m-3 help text-danger"
+        >
+          Invalid Description
+        </p>
+        <div v-else></div>
+      </div>
+    </div>
+
+    <div v-on:click.stop="" style="cursor: initial">
       <div class="m-3"> Storage Class: * </div>
       <div class="m-3">
         <select class="custom-select d-block w-100" v-model="storage_class" :disabled="!(googleSelected)">
@@ -163,6 +183,7 @@ import { validationMixin } from "vuelidate";
 import {
   required,
   minLength,
+  maxLength,
   helpers,
 } from "vuelidate/lib/validators";
 
@@ -245,6 +266,7 @@ export default {
       location: "",
       location2: "",
       continent: "North America",
+      description: "",
     };
   },
   props: {
@@ -308,6 +330,7 @@ export default {
         name: this.bucketName,
         storage_class: this.storage_class,
         bucket_location: this.location,
+        description: this.description,
       };
 
       if (this.location_type == "Dual-region") {
@@ -315,7 +338,11 @@ export default {
       }
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -334,12 +361,21 @@ export default {
             self.$emit("showAlert", false)
             self.$emit("alertKey", 1)
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while creating bucket.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while creating bucket.",
+              });
+            }
           }
         });
     },
@@ -364,6 +400,9 @@ export default {
       nameSymbolsValidation,
       bucketNameValidation,
       notIPAddress,
+    },
+    description: {
+      maxLength: maxLength(1024),
     },
   },
 };

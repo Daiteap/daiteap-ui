@@ -35,7 +35,13 @@
         <br />
         <br />
 
-        <WarningAlert v-if="showWAlert" :msg="alertMsg" color="warning" :key="alertKey" link="/documentation/cloud_credentials/"/>
+        <WarningAlert
+          v-if="showWAlert"
+          :msg="alertMsg"
+          color="warning"
+          :key="alertKey"
+          link="/documentation/cloud_credentials/"
+        />
 
         <AddAwsAccount
           :awsAccountFromParent="aws"
@@ -407,9 +413,11 @@ export default {
 
       this.axios
         .post(
-          "/server/validateCredentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/validate",
           {
-            credentials: accountRequest
+            credentials: accountRequest,
           },
           this.get_axiosConfig()
         )
@@ -428,7 +436,7 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post("/server/gettaskmessage", { taskId: taskId }, self.get_axiosConfig())
+              .get("/server/task-message/" + taskId, self.get_axiosConfig())
               .then(function (response) {
                 if (response.data.status == "PENDING") {
                   self.statusOfValidation = "pending";
@@ -437,77 +445,62 @@ export default {
                       gettaskmessage(taskId);
                     }
                   }, 1000);
-                } 
-                else 
-                {
+                } else {
                   self.statusOfValidation = true;
                   self.loading = false;
 
-                  if (response.data.msg.hasOwnProperty("error")) 
-                  {
-                    self.statusOfValidation = "error";                
-                    console.log(response.data.msg.error);
+                  if (response.data.error) {
+                    self.statusOfValidation = "error";
                     self.showWAlert = true;
+                    self.alertMsg = response.data.errorMessage;
 
-                    if(provider === "openstack") {
-                      self.alertMsg =
-                        `No connectivity could be established with the provided cloud credentials information.
-                         Please check the following fields: Application Credential ID, Application Credential Secret, Region Name or Auth URL.`;
-                    } else {
-                      self.alertMsg = "Check your entries.";
+                    for (let i = 0; i < response.data.lcmStatuses.length; i++) {
+                      let key = Object.keys(response.data.lcmStatuses[i])[0];
+                      let value = Object.values(
+                        response.data.lcmStatuses[i]
+                      )[0];
+
+                      if (value == false) {
+                        if (key == "dlcmV2Images") {
+                          self.alertMsg += ", Check the DLCMV2 images.";
+                        } else if (
+                          provider == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_capi &&
+                          key == "capiImages"
+                        ) {
+                          self.alertMsg += ", Check the CAPI images.";
+                        } else if (
+                          provider == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_yaookcapi &&
+                          key == "yaookCapiImages"
+                        ) {
+                          self.alertMsg += ", Check the YaookCAPI images.";
+                        } else if (
+                          provider == "openstack" &&
+                          key == "externalNetwork"
+                        ) {
+                          self.alertMsg += ", Check the external network.";
+                        }
+                      }
                     }
 
-                    if (response.data.msg.error.includes('Missing storage permissions.')) {
-                      self.alertMsg = "Insufficient storage permissions.";
-                    } else if (response.data.msg.error.includes('No storage accounts found.')) {
-                      self.alertMsg = "No storage accounts found.";
-                    }
-                    
                     self.alertKey += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_capi == true
-                   && provider === "openstack"
-                   && response.data.msg.capiImages == false)
-                  {
-                    self.statusOfValidation = "error";            
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the CAPI images.";
-                    self.alertKey += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_yaookcapi == true
-                   && provider === "openstack"
-                   && response.data.msg.yaookCapiImages == false)
-                  {
-                    self.statusOfValidation = "error";            
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the YaookCAPI images.";
-                    self.alertKey += 1;
-                  }
-                  else if(response.data.msg.dlcmV2Images == false)
-                  {
-                    self.statusOfValidation = "error";       
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the DLCMV2 images.";
-                    self.alertKey += 1;
-                  }
-                  else if(provider === "openstack" && response.data.msg.externalNetwork == false)
-                  {
-                    self.statusOfValidation = "error";                    
-                    self.showWAlert = true;
-                    self.alertMsg = "Check the external network.";
-                    self.alertKey += 1;
-                  }
-                  else 
-                  {                   
+                  } else {
                     self.showWAlert = false;
                     self.alertMsg = "";
                     self.alertKey += 1;
 
-                    if(self.loading == false && self.statusOfValidation == true)
-                    {        
+                    if (
+                      self.loading == false &&
+                      self.statusOfValidation == true
+                    ) {
                       self.axios
                         .post(
-                          "/server/cloud-credentials",
+                          "/server/tenants/" +
+                            self.computed_active_tenant_id +
+                            "/cloud-credentials",
                           {
                             provider: provider,
                             account_params: account_params,
@@ -529,12 +522,21 @@ export default {
                           if (error.response) {
                             console.log(error.response.data);
                           }
-                          self.$notify({
-                            group: "msg",
-                            type: "error",
-                            title: "Notification:",
-                            text: "Error while saving cloud credentials.",
-                          });
+                          if (error.response && error.response.status == "403") {
+                            self.$notify({
+                              group: "msg",
+                              type: "error",
+                              title: "Notification:",
+                              text: "Access Denied",
+                            });
+                          } else {
+                            self.$notify({
+                              group: "msg",
+                              type: "error",
+                              title: "Notification:",
+                              text: "Error while saving cloud credentials.",
+                            });
+                          }
                         });                     
                     }
                   }
@@ -557,6 +559,14 @@ export default {
             console.log(error);
             if (error.response) {
               console.log(error.response.data);
+            }
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
             }
           }
         })
@@ -629,11 +639,11 @@ export default {
             return new Promise((resolve) => {
               setTimeout(() => {
                 this.axios
-                  .post(
-                    "/server/isProjectNameFree",
-                    {
-                      projectName: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/projects/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -645,6 +655,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);

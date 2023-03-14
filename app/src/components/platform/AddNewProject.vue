@@ -38,12 +38,12 @@
 
         <div>
             <label for="project-description">Project Description:</label>
-            <b-form-input
+            <b-form-textarea
               v-model="form.description"
               id="project-description"
               placeholder="Project Description"
               v-on:change="$v.form.description.$touch"
-            ></b-form-input>
+            ></b-form-textarea>
             <p
               v-if="$v.form.description.$invalid"
               class="help text-danger"
@@ -128,11 +128,11 @@ export default {
         }
 
         this.axios
-          .post(
-            "/server/isProjectNameFree",
-            {
-              projectName: value,
-            },
+          .get(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/projects/name-available/" +
+              value,
             this.get_axiosConfig()
           )
           .then(function (response) {
@@ -144,6 +144,14 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            }
           });
 
       } else {
@@ -155,7 +163,11 @@ export default {
       var request = this.form;
 
       this.axios
-        .post("/server/projects", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$router.push({
             name: "ProjectList",
@@ -165,7 +177,16 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
           self.errorMsg = error;
-          self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.showAlert(error);
+          }
         });
     },
     showAlert(error) {

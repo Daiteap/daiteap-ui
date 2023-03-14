@@ -52,7 +52,7 @@
                 <div v-else style="height: 1.2rem"></div>
               </div>
             </div>
-            <div v-if="configuration.type != 2 && configuration.type != 6" class="form-group col-lg-12" :class="
+            <div class="form-group col-lg-12" :class="
               templateProvidersList.length == 5 ? 'px-1 mb-0' : 'px-1 mb-3'
             ">
               <label class="control-label" :class="
@@ -61,11 +61,19 @@
                 Description:
               </label>
               <div class="">
-                <input v-model="clusterDescription" v-on:change="$v.clusterDescription.$touch" placeholder="Description"
-                  class="form-control" :class="[
+                <b-form-textarea
+                  v-model="clusterDescription"
+                  v-on:change="$v.clusterDescription.$touch"
+                  placeholder="Description"
+                  class="form-control"
+                  :class="[
                     'input',
                     $v.clusterDescription.$invalid ? 'is-danger' : '',
-                  ]" autocomplete="off" type="text" id="clusterDescriptionField" />
+                  ]"
+                  autocomplete="off"
+                  type="text"
+                  id="clusterDescriptionField"
+                ></b-form-textarea>
                 <p v-if="$v.clusterDescription.$invalid" class="help text-danger">
                   Invalid cluster description
                 </p>
@@ -357,18 +365,27 @@ export default {
               let checkNameEndpoint = ""
 
               if (this.configuration.type == 6 || this.configuration.type == 2) {
-                checkNameEndpoint = "/server/isComputeNameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/compute-name-available/" +
+                  value;
               } else if (this.configuration.type == 7) {
-                checkNameEndpoint = "/server/isDLCMv2NameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/dlcmv2-name-available/" +
+                  value;
               } else {
-                checkNameEndpoint = "/server/isClusterNameFree"
+                checkNameEndpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/cluster-name-available/" +
+                  value;
               }
               this.axios
-                .post(
+                .get(
                   checkNameEndpoint,
-                  {
-                    clusterName: value,
-                  },
                   this.get_axiosConfig()
                 )
                 .then(function (response) {
@@ -384,6 +401,14 @@ export default {
                 })
                 .catch(function (error) {
                   console.log(error);
+                  if (error.response && error.response.status == "403") {
+                    self.$notify({
+                      group: "msg",
+                      type: "error",
+                      title: "Notification:",
+                      text: "Access Denied",
+                    });
+                  }
                   resolve(false);
                 });
             }, 350);
@@ -408,20 +433,31 @@ export default {
       self.configuration.config.clusterName = self.environmentName;
       self.configuration.config.clusterDescription = self.clusterDescription;
       self.configuration.config.projectId = self.projectId;
-      let payload = { clusterName: self.configuration.config.clusterName };
 
       let checkNameEndpoint = ""
 
       if (this.configuration.type == 6) {
-        checkNameEndpoint = "/server/isComputeNameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/compute-name-available/" +
+          self.configuration.config.clusterName;
       } else if (this.configuration.type == 7) {
-        checkNameEndpoint = "/server/isDLCMv2NameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/dlcmv2-name-available/" +
+          self.configuration.config.clusterName;
       } else {
-        checkNameEndpoint = "/server/isClusterNameFree"
+        checkNameEndpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/cluster-name-available/" +
+          self.configuration.config.clusterName;
       }
 
       this.axios
-        .post(checkNameEndpoint, payload, this.get_axiosConfig())
+        .get(checkNameEndpoint, this.get_axiosConfig())
         .then(function (response) {
           if (response.data.free == true) {
             self.sendToCorrectEndpoint();
@@ -429,12 +465,21 @@ export default {
         })
         .catch(function (error) {
           console.info(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error confirming name availability " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error confirming name availability " + error,
+            });
+          }
         });
     },
     sendToCorrectEndpoint() {
@@ -484,7 +529,10 @@ export default {
       let self = this;
       this.axios
         .get(
-          "/server/environmenttemplates/get/" + environmentTemplateId,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environment-templates/" +
+            environmentTemplateId,
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -505,12 +553,21 @@ export default {
         })
         .catch(function (error) {
           self.error = error;
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error getting template configuration " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error getting template configuration " + error,
+            });
+          }
         });
     },
     formatDate(date) {
@@ -617,7 +674,13 @@ export default {
       request.clusterDescription = this.clusterDescription;
 
       this.axios
-        .post("/server/createDlcmV2", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/dlcmv2-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitKubernetesCluster",
@@ -638,12 +701,21 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error.response);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: error.response.data.error.message,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: error.response.data.error.message,
+            });
+          }
         });
     },
     submitKubernetesCluster() {
@@ -651,7 +723,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createDlcm", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/dlcm-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitKubernetesCluster",
@@ -672,6 +750,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error.status.code);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitCAPICluster() {
@@ -679,7 +765,7 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createCapiCluster", request, this.get_axiosConfig())
+        .post("/server/tenants/" + this.computed_active_tenant_id + "/clusters/capi-create", request, this.get_axiosConfig())
         .then(function (response) {
           self.$router.push({
             name: "SubmitCAPICluster",
@@ -700,6 +786,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitK3sCluster() {
@@ -707,7 +801,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createK3sCluster", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/k3s-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitK3sCluster",
@@ -728,6 +828,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitVM() {
@@ -735,7 +843,13 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createComputeVMs", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/compute-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.$router.push({
             name: "SubmitVMs",
@@ -756,6 +870,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     submitYaookCluster() {
@@ -763,7 +885,7 @@ export default {
       var request = self.configuration.config;
 
       this.axios
-        .post("/server/createYaookCluster", request, this.get_axiosConfig())
+        .post("/server/tenants/" + this.computed_active_tenant_id + "/clusters/yaook-create", request, this.get_axiosConfig())
         .then(function (response) {
           self.$router.push({
             name: "SubmitYaookCluster",
@@ -784,6 +906,14 @@ export default {
             self.$bvModal.show("bv-modal-modalshowerrorcreatingcluster");
           }
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
   },

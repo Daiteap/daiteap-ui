@@ -1,8 +1,5 @@
 <template>
   <div class="row m-0 p-0">
-    <DeleteManyDialog
-      :deleteManyDialogParams="deleteManyDialogParams"
-    ></DeleteManyDialog>
     <div class="col mt-5 w-100">
       <div class="container-fluid pr-0 mr-0">
         <ConfirmDialog
@@ -232,7 +229,6 @@
 </template>
 
 <script>
-import DeleteManyDialog from "@/components/platform/popup_modals/DeleteManyDialog";
 import QuotaExceededModal from "@/components/platform/popup_modals/QuotaExceededModal";
 import axios from "axios";
 import ConfirmDialog from "./popup_modals/ConfirmDialog";
@@ -252,11 +248,6 @@ export default {
       alert: {
         show: false,
         msg: "",
-      },
-      deleteManyDialogParams: {
-        requestBody: {},
-        text: "",
-        endpoint: "",
       },
       kibanaPWCopied: false,
       grafanaPWCopied: false,
@@ -280,7 +271,6 @@ export default {
       showClusterUserInfoModal: false,
       showAddClusterUser: false,
       showAddClusterMachines: false,
-      showRenameCluster: false,
       showAddClusterAccount: false,
       showUpgradeKubernetesCluster: false,
       showUpgradeK3sCluster: false,
@@ -328,7 +318,6 @@ export default {
   },
   components: {
     ProviderNodesCard,
-    DeleteManyDialog,
     ConfirmDialog,
     DeleteDialog,
     QuotaExceededModal,
@@ -349,7 +338,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getClusterDetails(self);
-    }, 3000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);

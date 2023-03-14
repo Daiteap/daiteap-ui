@@ -325,7 +325,7 @@ export default {
         return new Promise((resolve) => {
           axios
             .post(
-              "/server/checkforipconflicts",
+              "/server/check-ip-conflicts",
               {
                 networks: networks,
               },
@@ -362,13 +362,14 @@ export default {
       let self = this;
       self.loadingZones = true;
       axios
-        .post(
-          "/server/getValidZones",
-          {
-            provider: self.provider,
-            accountId: self.form.google.account,
-            region: self.form.google.region,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.google.account +
+            "/regions/" +
+            self.form.google.region +
+            "/zones",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -384,26 +385,37 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting zones information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting zones information! " + error,
+            });
+          }
         });
     },
     getZoneInstancesList(nodeGroup) {
       let self = this;
       nodeGroup.loadingInstanceTypes = true;
       axios
-        .post(
-          "/server/getValidInstances",
-          {
-            provider: self.provider,
-            accountId: self.form.google.account,
-            region: self.form.google.region,
-            zone: nodeGroup.zone,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            self.form.google.account +
+            "/regions/" +
+            self.form.google.region +
+            "/zones/" +
+            nodeGroup.zone +
+            "/instances",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -419,12 +431,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting instances information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting instances information! " + error,
+            });
+          }
         });
     },
     getOperatingSystemsList() {
@@ -432,14 +453,13 @@ export default {
       self.loadingOperatingSystems = true;
       axios
         .get(
-          "/server/getValidOperatingSystems/" +
-            self.computed_userInfo.username +
-            "/" +
-            self.provider +
-            "/" +
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/cloud-credentials/" +
             self.form.google.account +
-            "/7/" +
-            self.form.google.region,
+            "/regions/" +
+            self.form.google.region +
+            "/environment-type/7/operating-systems",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -466,12 +486,21 @@ export default {
         .catch(function (error) {
           self.errorMsg = error;
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while getting operating systems information! " + error,
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while getting operating systems information! " + error,
+            });
+          }
         });
     },
     stopAllIntervals() {

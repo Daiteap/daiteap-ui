@@ -50,6 +50,26 @@
     </div>
 
     <div v-on:click.stop="" style="cursor: initial">
+      <div class="m-3">Description:</div>
+      <div class="m-3">
+        <b-form-textarea
+          v-model="description"
+          :disabled="!awsSelected"
+          class="form-control input"
+        ></b-form-textarea>
+      </div>
+      <div class="">
+        <p
+          v-if="awsSelected && $v.description.$invalid"
+          class="m-3 help text-danger"
+        >
+          Invalid Description
+        </p>
+        <div v-else></div>
+      </div>
+    </div>
+
+    <div v-on:click.stop="" style="cursor: initial">
       <div class="m-3">Location: * </div>
       <div class="m-3">
         <select class="custom-select" :disabled="!(awsSelected)" v-model="location">
@@ -131,6 +151,7 @@ export default {
       bucketName: "",
       locations: [],
       location: "",
+      description: "",
     };
   },
   props: {
@@ -177,10 +198,15 @@ export default {
         project: this.project_id,
         name: this.bucketName,
         bucket_location: this.location,
+        description: this.description,
       };
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -199,12 +225,21 @@ export default {
             self.$emit("showAlert", false)
             self.$emit("alertKey", 1)
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while creating bucket.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while creating bucket.",
+              });
+            }
           }
         });
     },
@@ -230,6 +265,9 @@ export default {
       nameSymbolsValidation,
       bucketNameValidation,
       notIPAddress,
+    },
+    description: {
+      maxLength: maxLength(1024),
     },
   },
 };

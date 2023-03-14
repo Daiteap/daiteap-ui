@@ -50,7 +50,6 @@
           :allAccounts="allAccounts"
           :providers="providers"
           :alerts="alerts"
-          :returnCurrentStatusOfValidation="returnCurrentStatusOfValidation"
           :listOfAccountsInDeletion="listOfAccountsInDeletion"
           @validateAllCredentials="validateCredentialsList"
           @openEditPopup="openEditAccountNameModal"
@@ -205,7 +204,6 @@ export default {
         provider: "",
       },
       allAccounts: [],
-      allValidations: [],
       userAccount: {
         type: "",
         id: "",
@@ -260,7 +258,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getCloudCredentials(self);
-    }, 1000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -281,6 +279,7 @@ export default {
       let credentials;
       credentials = await this.getCredentials();
 
+      let accounts = self.allAccounts;
       self.allAccounts = [];
       for (let i = 0; i < credentials.length; i++) {
         self.allAccounts[i] = {};
@@ -316,6 +315,22 @@ export default {
         } else if (credentials[i].type === "iotarm") {
           self.allAccounts[i].provider = "iotarm";
         }
+
+        let currentAccount = accounts.filter(
+          (x) => x.id == self.allAccounts[i].id
+        )[0];
+        if (currentAccount && currentAccount.validating) {
+          self.allAccounts[i].statusOfValidation = "loading";
+        } else {
+          if (self.allAccounts[i].valid != null) {
+            self.allAccounts[i].statusOfValidation = self.allAccounts[i].valid
+              ? true
+              : "error";
+          } else {
+            self.allAccounts[i].statusOfValidation = "loading";
+          }
+        }
+
         self.allAccounts.sort(function (a, b) {
           return a.created_at - b.created_at;
         });
@@ -334,24 +349,6 @@ export default {
         }
       }
 
-      self.allValidations = [];
-
-      self.allAccounts.forEach((account) => {
-        if (account.valid != null) {
-          self.allValidations.push({
-            id: account.id,
-            label: account.label,
-            statusOfValidation: account.valid ? true : "error",
-          });
-        } else {
-          self.allValidations.push({
-            id: account.id,
-            label: account.label,
-            statusOfValidation: "loading",
-          });
-        }
-      });
-
       self.loadingTable = false;
     },
     deleteAccount(account) {
@@ -360,11 +357,14 @@ export default {
       let self = this;
       this.axios
         .delete(
-          `/server/cloud-credentials/${account.id}`,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account.id,
           this.get_axiosConfig()
         )
         .then(function () {
-          self.markAccountAsBeingInDeletion(account);
+          account.statusOfValidation = "deleting";
           let thisLabelIndex = self.allCurrentLabels.findIndex(
             (thisLabel) => thisLabel === account
           );
@@ -430,20 +430,31 @@ export default {
               }
             }
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while deleting cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while deleting cloud credentials.",
+            });
+          }
         });
     },
     updateAccountName(accountWithEditedName, id, provider) {
-      let endpointAccountNameChange = "/server/cloud-credentials/" + id;
       let self = this;
       this.axios
         .put(
-          endpointAccountNameChange,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            id,
           {
             label: accountWithEditedName.label,
             description: accountWithEditedName.description,
@@ -469,12 +480,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cloud credentials.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cloud credentials.",
+            });
+          }
         });
     },
     saveNewAccount(provider, account) {
@@ -483,7 +503,9 @@ export default {
       let self = this;
       this.axios
         .post(
-          "/server/cloud-credentials",
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials",
           {
             provider: provider,
             account_params: account_params,
@@ -503,58 +525,46 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while saving the user information",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while saving the user information",
+            });
+          }
         });
     },
-    validateCredentials(account_id) {
-      if (
-        this.returnCurrentStatusOfValidation(account_id) === "loading" ||
-        this.returnCurrentStatusOfValidation(account_id) === "pending"
-      ) {
-        return;
-      }
+    validateCredentials(account_credentials) {
       // Check if account is on-premise account and stop validating
-      let checkIfAccountCanBeValidated = this.allAccounts.find(
-        (labels) => labels.id === account_id
-      );
       if (
-        checkIfAccountCanBeValidated.type === "ONPREM" ||
-        checkIfAccountCanBeValidated.type === "IOTARM"
+        account_credentials.type === "ONPREM" ||
+        account_credentials.type === "IOTARM"
       ) {
         return;
       }
 
-      // Check if account is is being tracked in the list of validations; if not add
-      let accountToValidate = this.allValidations.find(
-        (labels) => labels.id === account_id
-      );
-      if (!accountToValidate) {
-        this.allValidations.push({
-          label: account_id,
-          statusOfValidation: false,
-        });
-      }
-
-      // Find the account in the list of validations and continue to validate
-      let account_credentials = this.allValidations.find(
-        (labels) => labels.id === account_id
-      );
       let self = this;
-
+      account_credentials.statusOfValidation = "loading";
+      account_credentials.validating = true;
       self.errorMsg = "";
       self.error = false;
 
-      let request = { account_id: account_id };
-
       this.axios
         .post(
-          "/server/validateCredentials",
-          request,
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            account_credentials.id +
+            "/validate",
+          {},
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -574,13 +584,12 @@ export default {
           gettaskmessage(taskId);
           function gettaskmessage(taskId) {
             self.axios
-              .post(
-                "/server/gettaskmessage",
-                { taskId: taskId },
+              .get(
+                "/server/task-message/" + taskId,
                 self.get_axiosConfig()
               )
               .then(function (response) {
-                let alert = self.alerts.find(alert => alert.id === account_id);
+                let alert = self.alerts.find(alert => alert.id === account_credentials.id);
 
                 if (response.data.status == "PENDING") {
                   account_credentials.statusOfValidation = "pending";
@@ -590,70 +599,58 @@ export default {
                     }
                   }, 1000);
                 } else {
-                  account_credentials.statusOfValidation = true;
-                  self.loading = false;
-                  if (response.data.msg.hasOwnProperty("error")) {
+                  account_credentials.validating = false;
+
+                  if (response.data.error) {
                     account_credentials.statusOfValidation = "error";
                     self.error = true;
-                    console.log(response.data.msg.error);
-                    self.errorMsg = response.data.msg.error;
-
+                    self.errorMsg = response.data.errorMessage;
                     alert.show = true;
+                    alert.msg = alert.label + ": " + response.data.errorMessage;
 
-                    if(checkIfAccountCanBeValidated.type === "openstack") {
-                      alert.msg =
-                        alert.label + `: No connectivity could be established with the provided cloud credentials information.
-                         Please check the following fields: Application Credential ID, Application Credential Secret, Region Name or Auth URL.`;
-                    } else {
-                      alert.msg = alert.label + ": " + response.data.msg.error;
+                    for (let i = 0; i < response.data.lcmStatuses.length; i++) {
+                      let key = Object.keys(response.data.lcmStatuses[i])[0];
+                      let value = Object.values(
+                        response.data.lcmStatuses[i]
+                      )[0];
+
+                      if (value == false) {
+                        if (key == "dlcmV2Images") {
+                          alert.msg += ", Check the DLCMV2 images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_capi &&
+                          key == "capiImages"
+                        ) {
+                          alert.msg += ", Check the CAPI images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          self.computed_account_settings
+                            .enable_kubernetes_yaookcapi &&
+                          key == "yaookCapiImages"
+                        ) {
+                          alert.msg += ", Check the YaookCAPI images.";
+                        } else if (
+                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          key == "externalNetwork"
+                        ) {
+                          alert.msg += ", Check the external network.";
+                        }
+                      }
                     }
-
-                    if (response.data.msg.error.includes('Missing storage permissions.')) {
-                      alert.msg =
-                        alert.label + ": Insufficient storage permissions.";
-                    } else if (response.data.msg.error.includes('No storage accounts found.')) {
-                      alert.msg = alert.label + ": No storage accounts found.";
-                    }
-                    
-                    alert.key += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_capi == true
-                   && checkIfAccountCanBeValidated.type === "openstack"
-                   && response.data.msg.capiImages == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the CAPI images.";
-                    alert.key += 1;
-                  }
-                  else if(self.computed_account_settings.enable_kubernetes_yaookcapi == true
-                   && checkIfAccountCanBeValidated.type === "openstack"
-                   && response.data.msg.yaookCapiImages == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the YaookCAPI images.";
-                    alert.key += 1;
-                  }
-                  else if(response.data.msg.dlcmV2Images == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the DLCMV2 images.";
-                    alert.key += 1;
-                  }
-                  else if(checkIfAccountCanBeValidated.type === "openstack" && response.data.msg.externalNetwork == false)
-                  {
-                    alert.show = true;
-                    alert.msg = alert.label + ": Check the external network.";
-                    alert.key += 1;
-                  }
-                  else 
-                  {
+                  } else {
+                    account_credentials.statusOfValidation = true;
                     alert.show = false;
                     alert.msg = alert.label + ": ";
-                    alert.key += 1;
                   }
+
+                  self.loading = false;
+                  alert.key += 1;
                 }
               })
               .catch(function (error) {
+                account_credentials.validating = false;
                 account_credentials.statusOfValidation = "error";
                 self.loading = false;
                 self.error = true;
@@ -674,16 +671,26 @@ export default {
               "Cloud credentials validation is not finished yet"
             )
           ) {
+            account_credentials.validating = false;
             account_credentials.statusOfValidation = "error";
             if (error.response) {
               console.log(error.response.data);
             }
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error while validating the user information",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while validating the user information",
+              });
+            }
           }
         });
     },
@@ -873,7 +880,7 @@ export default {
       var allAccountsCount = this.allAccounts.length;
       var allAccountsToCheck = 0;
       while (allAccountsToCheck < allAccountsCount) {
-        this.validateCredentials(this.allAccounts[allAccountsToCheck].id);
+        this.validateCredentials(this.allAccounts[allAccountsToCheck]);
         allAccountsToCheck++;
       }
     },
@@ -921,36 +928,6 @@ export default {
       }
       let indexToRemove = this.allCurrentLabels.findIndex(findIndexToRemove);
       this.allCurrentLabels.splice(indexToRemove, 1);
-    },
-    returnCurrentStatusOfValidation(account_label) {
-      function fundIndexToValidate(labelOfIndex) {
-        return labelOfIndex.label === account_label;
-      }
-      let indexofAccountToValidate =
-        this.allValidations.findIndex(fundIndexToValidate);
-      let result = false;
-      if (indexofAccountToValidate >= 0) {
-        result =
-          this.allValidations[indexofAccountToValidate].statusOfValidation;
-      } else {
-        result = false;
-      }
-      return result;
-    },
-    markAccountAsBeingInDeletion(account_id) {
-      let accountToDelete = this.allValidations.find(
-        (labels) => labels.label === account_id
-      );
-      if (!accountToDelete) {
-        this.allValidations.push({
-          label: account_id,
-          statusOfValidation: false,
-        });
-      }
-      let accountInDeletion = this.allValidations.find(
-        (labels) => labels.label === account_id
-      );
-      accountInDeletion.statusOfValidation = "deleting";
     },
   },
 };

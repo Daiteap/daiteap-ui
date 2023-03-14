@@ -30,6 +30,7 @@ export default {
       msg: "",
       error: "",
       error_description: "",
+      subscriptionId: "",
       loading: true
     };
   },
@@ -49,7 +50,7 @@ export default {
       let splittedState = self.$route.query.authState.split("|");
       let tenant = splittedState[0];
       self.msg = "Getting azure credentials...";
-      let subscriptionId = splittedState[1];
+      self.subscriptionId = splittedState[1];
 
       let authCode = self.$route.query.authCode;
       this.axios
@@ -57,7 +58,7 @@ export default {
           "/server/oauth/azure/createApp",
           {
             tenant: tenant,
-            subscriptionId: subscriptionId,
+            subscriptionId: self.subscriptionId,
             authCode: authCode,
             origin: window.origin
           },
@@ -96,28 +97,48 @@ export default {
     gettaskmessage(taskId) {
       let self = this;
       self.axios
-        .post("/server/gettaskmessage", { taskId: taskId }, this.get_axiosConfig())
+        .get("/server/task-message/" + taskId, this.get_axiosConfig())
         .then(function (response) {
           if (response.data.status !== "PENDING") {
             clearInterval(self.intervalGetTaskMessage);
-            if (response.data.msg.hasOwnProperty("error")) {
+            if (response.data.error) {
               self.$notify({
                 group: "msg",
                 type: "error",
                 title: "Notification:",
                 text: "Error creating OAuth credentials"
               });
-              console.log(response.data.msg.error);
-              self.error = response.data.msg.error;
+              console.log(response.data.errorMessage);
+              self.error = response.data.errorMessage;
             }
             else {
-              self.$notify({
-                group: "msg",
-                type: "success",
-                title: "Notification:",
-                text: "Successfuly created OAuth credentials"
-              });
-              self.backToCloudProfile()
+              console.log(response.data);
+              self.axios
+                .post(
+                  "/server/oauth/azure/getgrantauthurladminconsent",
+                  { origin: window.origin, subscriptionId: self.subscriptionId },
+                  self.get_axiosConfig()
+                )
+                .then(function (response) {
+                  console.log(response.data);
+                  window.location.href = response.data.auth_url;
+                })
+                .catch(function (error) {
+                  self.loading = false;
+                  console.log(error);
+                  self.error = error;
+                  if (error.response) {
+                    console.log(error.response.data);
+                    self.error_description = error.response.data;
+                  }
+
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: "Error creating user credentials"
+                  });
+                });
             }
           }
         })
@@ -132,9 +153,6 @@ export default {
           console.log(error);
         });
     },
-    backToCloudProfile() {
-      this.$router.push({ name: "CloudProfile" });
-    }
   },
   destroyed() {
     if (window.intervals) {

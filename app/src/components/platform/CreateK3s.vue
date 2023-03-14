@@ -81,7 +81,12 @@ export default {
   mounted() {
     let self = this;
     this.axios
-      .get("/server/checkProvidedCredentials", this.get_axiosConfig())
+      .get(
+        "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/cloud-credentials/check-provided-credentials",
+        this.get_axiosConfig()
+      )
       .then(function(response) {
         if (
           response.data.alicloud_key_provided == false &&
@@ -101,12 +106,21 @@ export default {
       })
       .catch(function(error) {
         console.log(error);
-        self.$notify({
-          group: "msg",
-          type: "error",
-          title: "Notification:",
-          text: "Error while getting user information!"
-        });
+        if (error.response && error.response.status == "403") {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          self.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Error while getting user information!"
+          });
+        }
       });
 
     this.$root.$on("updateSteps", (alicloud, aws, azure, gcp, openstack, onpremise, iotarm) => {
@@ -243,7 +257,13 @@ export default {
       let self = this;
 
       this.axios
-        .post("/server/createK3sCluster", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/k3s-create",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function(response) {
           self.$router.push({
             name: "SubmitK3sCluster",
@@ -263,6 +283,14 @@ export default {
           console.log(error);
           self.errorMsg = error;
           // self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     }
   }

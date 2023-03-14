@@ -68,12 +68,12 @@
             <label for="template-description">Template Description:</label>
           </b-col>
           <b-col sm="6">
-            <b-form-input
+            <b-form-textarea
               id="template-description"
               placeholder="Template Description"
               v-on:change="$v.form.description.$touch"
               v-model="form.description"
-            ></b-form-input>
+            ></b-form-textarea>
             <p
               v-if="$v.form.description.$invalid && $v.form.description.$dirty"
               class="help text-danger"
@@ -154,11 +154,11 @@ export default {
               setTimeout(() => {
                 let self = this;
                 this.axios
-                  .post(
-                    "/server/environmenttemplates/isnamefree",
-                    {
-                      name: value,
-                    },
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/environment-templates/name-available/" +
+                      value,
                     this.get_axiosConfig()
                   )
                   .then(function (response) {
@@ -174,6 +174,14 @@ export default {
                   })
                   .catch(function (error) {
                     console.log(error);
+                    if (error.response && error.response.status == "403") {
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Access Denied",
+                      });
+                    }
                     resolve(false);
                   });
               }, 350);
@@ -233,7 +241,13 @@ export default {
       request.description = this.form.description;
 
       this.axios
-        .post("/server/environmenttemplates/create", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/environment-templates",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.templateSaved = "Saved";
         })
@@ -241,7 +255,16 @@ export default {
           // eslint-disable-next-line no-console
           console.log(error);
           self.errorMsg = error;
-          self.showAlert(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.showAlert(error);
+          }
         });
     },
   },

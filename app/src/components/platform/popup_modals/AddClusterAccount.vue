@@ -104,11 +104,11 @@ export default {
       let self = this;
       this.loadingAccounts=true
       axios
-        .post(
-          "/server/getProviderAccounts",
-          {
-            provider: self.account.provider
-          },
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/providers/" +
+            self.account.provider,
           this.get_axiosConfig()
         )
         .then(function(response) {
@@ -120,6 +120,14 @@ export default {
         .catch(function(error) {
           self.errorMsg = error;
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     addAccountToCluster() {
@@ -149,12 +157,21 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Notification:",
-            text: "Error while updating cluster accounts!"
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while updating cluster accounts!"
+            });
+          }
         });
     }
   }

@@ -309,12 +309,13 @@ export default {
       this.$bvModal.hide("deleteUserWarning");
       let self = this;
       axios
-        .post(
-          "/server/removeUserFromProject",
-          {
-            username: self.removeUsername,
-            project_id: self.projectID,
-          },
+        .delete(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/projects/" +
+            self.projectID +
+            "/users/" +
+            self.removeUsername,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -323,6 +324,14 @@ export default {
         .catch(function (error) {
           console.error("Error on get_project_userlist occurred.");
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     removeUser(user) {
@@ -330,59 +339,68 @@ export default {
       this.removeUsername = user.username;
     },
     deleteAllKubernetesClusters() {
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.clustersList.length; i++) {
-        this.deleteManyDialogParams.requestBody.push({
-          clusterID: this.clustersList[i].ID,
-        });
+        this.deleteManyDialogParams.endpoint.push(
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/clusters/" +
+          this.clustersList[i].ID +
+          "/delete"
+        );
       }
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Kubernetes Clusters";
-      this.deleteManyDialogParams.endpoint = "/server/deleteCluster";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
     deleteAllUsers() {
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].role != "Owner") {
-          this.deleteManyDialogParams.requestBody.push({
-            username: this.users[i].username,
-            project_id: this.projectID,
-          });
+          this.deleteManyDialogParams.endpoint.push(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/projects/" +
+              this.projectID +
+              "/users/" +
+              this.users[i].username
+          );
         }
       }
       this.deleteManyDialogParams.text = "Are you sure you want to remove all users";
-      this.deleteManyDialogParams.endpoint = "/server/removeUserFromProject";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
     deleteAllVms() {
       let self = this;
-      this.deleteManyDialogParams.requestBody = [];
+      this.deleteManyDialogParams.endpoint = [];
       for (let i = 0; i < self.vmsClusters.length; i++) {
         if (self.vmsClusters[i].type == 2 || self.vmsClusters[i].type == 6) {
-          this.deleteManyDialogParams.requestBody.push({
-            clusterID: self.vmsClusters[i].id,
-          });
+          this.deleteManyDialogParams.endpoint.push(
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            self.vmsClusters[i].id +
+            "/delete"
+          );
         }
       }
 
-      console.log(this.deleteManyDialogParams.requestBody);
       this.deleteManyDialogParams.text =
         "Are you sure you want to delete all Compute (VMs)";
-      this.deleteManyDialogParams.endpoint = "/server/deleteCluster";
 
       this.$bvModal.show("bv-modal-deletemanydialog");
     },
     getUsersList() {
       let self = this;
       axios
-        .post(
-          "/server/get_project_userlist",
-          {
-            project_id: self.projectID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/projects/" +
+            self.projectID +
+            "/users",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -393,6 +411,14 @@ export default {
           self.loadingUsers = false;
           console.error("Error on get_project_userlist occurred.");
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     goToProgress(item) {
@@ -502,6 +528,7 @@ export default {
           self.clustersList[i].ResizeStep = kubernetesClusters[i].resizestep;
           self.clustersList[i].Type = kubernetesClusters[i].type;
           self.clustersList[i].Status = kubernetesClusters[i].status;
+          self.clustersList[i].Credentials = kubernetesClusters[i].credentials;
           self.clustersList[i].CreatedAt = new Date(
             kubernetesClusters[i].created_at
           );
@@ -597,7 +624,7 @@ export default {
 
     self.interval = setInterval(() => {
       self.getUsersList();
-    }, 2000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);

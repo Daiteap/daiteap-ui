@@ -48,9 +48,8 @@ export default {
     confirmAction() {
       let self = this;
       this.axios
-        .post(
+        .delete(
           self.deleteDialogParams.endpoint,
-          self.deleteDialogParams.requestBody,
           this.get_axiosConfig()
         )
         .then(function () {
@@ -62,29 +61,36 @@ export default {
               text: self.deleteDialogParams.successMessage,
             });
           }
-          if (self.deleteDialogParams.endpoint=="/server/deleteService"){
-            self.closeModal()
-          }
+          self.closeModal()
         })
         .catch(function (error) {
           console.log(error);
           if (error.response) {
             error= error.response.data.error.message;
           }
-          if (self.deleteDialogParams.failureMessage) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: self.deleteDialogParams.failureMessage,
+              text: "Access Denied",
             });
           } else {
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Error deleting template: " + error,
-            });
+            if (self.deleteDialogParams.failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: self.deleteDialogParams.failureMessage,
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error deleting template: " + error,
+              });
+            }
           }
           self.closeModal();
         });

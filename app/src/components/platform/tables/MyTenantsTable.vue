@@ -6,47 +6,53 @@
     ></ConfirmAndRedirectDialog>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="tenantsDataTable"
       width="100%"
       cellspacing="0"
     >
       <thead>
         <tr>
           <th>Name</th>
-          <th>Owner</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Company</th>
-          <th>Created at</th>
-          <th>Updated at</th>
+          <th name="tenantsHidePriority2">Owner</th>
+          <th name="tenantsHidePriority4">Email</th>
+          <th name="tenantsHidePriority3">Phone</th>
+          <th name="tenantsHidePriority5">Company</th>
+          <th name="tenantsHidePriority1">Created at</th>
+          <th name="tenantsHidePriority0">Updated at</th>
           <th>Activate</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in tenantsList" :key="item.id">
-          <td>
+          <td :title="item.name">
             {{ item.name }}
           </td>
-          <td>
+          <td name="tenantsHidePriority2" :title="item.owner">
             {{ item.owner }}
           </td>
-          <td>
+          <td name="tenantsHidePriority4" :title="item.email">
             {{ item.email }}
           </td>
-          <td>
+          <td name="tenantsHidePriority3">
             {{ item.phone }}
           </td>
-          <td>
+          <td name="tenantsHidePriority5" :title="item.company">
             {{ item.company }}
           </td>
-          <td>
+          <td name="tenantsHidePriority1">
             {{ item.createdAt | formatDate }}
           </td>
-          <td>
+          <td name="tenantsHidePriority0">
             {{ item.updatedAt | formatDate }}
           </td>
           <td>
-            <toggle-button :value="item.selected" data-test-id="compute-option-button" @input="changeTenant(item)" :disabled="item.selected" sync />
+            <toggle-button
+              :value="item.selected"
+              data-test-id="compute-option-button"
+              @input="changeTenant(item)"
+              :disabled="item.selected"
+              sync
+            />
           </td>
         </tr>
       </tbody>
@@ -60,10 +66,10 @@ import ConfirmAndRedirectDialog from "../popup_modals/ConfirmAndRedirectDialog";
 export default {
   props: {
     tenantsList: Array,
-    selectedTenant: String
+    selectedTenant: String,
   },
   components: {
-    ConfirmAndRedirectDialog
+    ConfirmAndRedirectDialog,
   },
   data() {
     return {
@@ -77,11 +83,22 @@ export default {
         envName: "",
         envId: "",
         action: "",
+        columnsEvent: "",
       },
     };
   },
   created() {
     this.loadingTable = true;
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("tenants", 5);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "tenants", 5);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
     changeTenant(tenant) {
@@ -92,7 +109,7 @@ export default {
       this.confirmAndRedirectDialogParams.action = "Change";
       this.confirmAndRedirectDialogParams.envId = "";
       this.confirmAndRedirectDialogParams.envName = tenant.name;
-      this.confirmAndRedirectDialogParams.endpoint = "/server/selectTenant";
+      this.confirmAndRedirectDialogParams.endpoint = "/server/user/select-tenant";
       this.confirmAndRedirectDialogParams.redirect = "DaiteapWebLandingPage";
       this.confirmAndRedirectDialogParams.successMessage =
         'You have successfully submitted tenant change.';
@@ -106,6 +123,13 @@ export default {
 </script>
 
 <style scoped>
+td {
+  max-width: 17rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 a:not([href]):not([tabindex]) {
   color: #4e73df;
   text-decoration: none;

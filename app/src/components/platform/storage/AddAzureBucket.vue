@@ -50,6 +50,26 @@
     </div>
 
     <div v-on:click.stop="" style="cursor: initial">
+      <div class="m-3">Description:</div>
+      <div class="m-3">
+        <b-form-textarea
+          v-model="description"
+          :disabled="!azureSelected"
+          class="form-control input"
+        ></b-form-textarea>
+      </div>
+      <div class="">
+        <p
+          v-if="azureSelected && $v.description.$invalid"
+          class="m-3 help text-danger"
+        >
+          Invalid Description
+        </p>
+        <div v-else></div>
+      </div>
+    </div>
+
+    <div v-on:click.stop="" style="cursor: initial">
       <div class="m-3"> Storage Account: * </div>
       <div class="m-3">
         <select :disabled="!(azureSelected)" class="custom-select d-block w-100" v-model="storageAccount">
@@ -62,6 +82,7 @@
         <div class="">
           <p v-if="
             azureSelected &&
+            credential_id &&
             storageAccounts.filter(
               (acc) => acc.credential_id == credential_id
             ).length == 0
@@ -129,6 +150,7 @@ export default {
       bucketName: "",
       storageAccounts: [],
       storageAccount: "",
+      description: "",
     };
   },
   props: {
@@ -171,24 +193,36 @@ export default {
     },
     getStorageAccounts(credentialID) {
       let self = this;
-      let request = {
-        provider: "azure",
-        credential_id: credentialID,
-      };
 
       this.axios
-        .post("/server/getStorageAccounts", request, this.get_axiosConfig())
+        .get(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/cloud-credentials/" +
+            credentialID +
+            "/storage-accounts",
+          this.get_axiosConfig()
+        )
         .then(function (response) {
           self.storageAccounts.push(...response.data.storage_accounts);
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: "Error while getting storage accounts.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: "Error while getting storage accounts.",
+            });
+          }
         });
     },
     saveBucket() {
@@ -200,10 +234,15 @@ export default {
         name: this.bucketName,
         storage_account:
           "https://" + this.storageAccount + ".blob.core.windows.net/",
+        description: this.description,
       };
 
       return this.axios
-        .post("/server/buckets", request, this.get_axiosConfig())
+        .post(
+          "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -222,12 +261,21 @@ export default {
             self.$emit("showAlert", false)
             self.$emit("alertKey", 1)
             console.log(error);
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Message:",
-              text: "Error while creating container.",
-            });
+            if (error.response && error.response.status == "403") {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Access Denied",
+              });
+            } else {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Message:",
+                text: "Error while creating container.",
+              });
+            }
           }
         });
     },
@@ -252,6 +300,9 @@ export default {
       maxLength: maxLength(63),
       nameSymbolsValidation,
       bucketNameValidation,
+    },
+    description: {
+      maxLength: maxLength(1024),
     },
   },
 };

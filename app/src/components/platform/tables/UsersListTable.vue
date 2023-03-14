@@ -1,8 +1,8 @@
 <template>
-  <div class="table-responsive">
+  <div>
     <table
       class="table table-bordered"
-      id="dataTable"
+      id="usersDataTable"
       width="100%"
       cellspacing="0"
     >
@@ -17,13 +17,13 @@
         <tr>
           <th v-if="clickableRows"></th>
           <th>User</th>
-          <th v-if="!showTenant">Role</th>
+          <th name="usersHidePriority3" v-if="!showTenant">Role</th>
           <th v-if="showTenant">Workspaces</th>
           <th v-if="showTenant">Created At</th>
-          <th v-if="!showTenant">Projects</th>
-          <th>Phone Number</th>
+          <th name="usersHidePriority1" v-if="!showTenant">Projects</th>
+          <th name="usersHidePriority0">Phone Number</th>
           <th v-if="showTenant">Quotas</th>
-          <th v-if="showEdit">Edit</th>
+          <th name="usersHidePriority2" v-if="showEdit">Edit</th>
           <th v-if="showdelete == true">
             Remove
           </th>
@@ -43,10 +43,11 @@
         <td
           class="clickForDetails"
           v-on:click="showUserDetails(user)"
+          :title="user.username"
         >
           {{ user.username }}
         </td>
-        <td v-if="!showTenant">
+        <td name="usersHidePriority3" v-if="!showTenant">
           {{ user.role }}
         </td>
         <td v-if="showTenant">
@@ -67,10 +68,14 @@
         <td v-if="showTenant">
           {{ user.created | formatDate }}
         </td>
-        <td v-if="!showTenant">
+        <td
+          name="usersHidePriority1"
+          :title="user.projects.toString()"
+          v-if="!showTenant"
+        >
           {{ user.projects.toString() }}
         </td>
-        <td>
+        <td name="usersHidePriority0">
           {{ user.phone }}
         </td>
         <td v-if="showTenant">
@@ -82,7 +87,7 @@
             ></div>
           </div>
         </td>
-        <td v-if="showEdit">
+        <td name="usersHidePriority2" v-if="showEdit">
           <div class="pl-2">
             <div
               title="Edit"
@@ -94,7 +99,7 @@
         <td v-if="showdelete == true">
           <div class="pl-2">
             <div
-              title="Remove user"
+              title="Remove"
               @click="user.role == 'Owner' ? null : onUserDelete(user)"
               class="far fa-trash-alt removeUserIcon"
               :class="user.role == 'Owner' ? 'disabledRemoveUserIcon' : ''"
@@ -136,10 +141,21 @@ export default {
       userToEdit: {},
       userToEditName: "",
       showEditUserPopup: false,
+      columnsEvent: "",
     };
   },
   created() {
     this.loadingTable = true;
+  },
+  mounted() {
+    setTimeout(() => {
+      this.changeColumnsVisibility("users", 3);
+      this.columnsEvent = this.changeColumnsVisibility.bind(null, "users", 3);
+      window.addEventListener("resize", this.columnsEvent);
+    }, 200);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
     showUserDetails(user) {
@@ -163,6 +179,7 @@ export default {
       let request;
       if(user.password != '') {
         request = {
+          username: user.username,
           user_id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
@@ -172,6 +189,7 @@ export default {
         }
       } else {
         request = {
+          username: user.username,
           user_id: user.id,
           firstname: user.firstname,
           lastname: user.lastname,
@@ -239,6 +257,7 @@ td {
   overflow: hidden;
   white-space: nowrap;
 }
+
 .selectable_table_row:hover {
   cursor: pointer;
   box-shadow: 0 1px 6px 0 #a3a3a3;

@@ -76,7 +76,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getUsersProjectsList(self);
-    }, 1000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -124,17 +124,6 @@ export default {
       self.projectsList.sort(function (a, b) {
         return a.CreatedAt - b.CreatedAt;
       });
-
-      let options = {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      };
-      for (let i = 0; i < self.projectsList.length; i++) {
-        self.projectsList[i].CreatedAt = self.projectsList[
-          i
-        ].CreatedAt.toLocaleString("en-US", options);
-      }
 
       self.loading = false;
     },

@@ -170,23 +170,31 @@ export default {
           }
 
           let request = {
-            bucket_id: self.bucket.id,
-            file_name: fileName,
             content_type: fileContentType,
             contents: fileByteArray,
           };
+
           if (self.path != undefined) {
-            request.file_name = self.path + fileName;
+            fileName = self.path + fileName;
           }
-          if (request.file_name[0] == "/") {
-            request.file_name = request.file_name.substring(1);
+          if (fileName[0] == "/") {
+            fileName = fileName.substring(1);
           }
           if (fileContentType == "") {
             request.content_type = "plain/text";
           }
 
           self.axios
-            .post("/server/addBucketFile", request, self.get_axiosConfig())
+            .post(
+              "/server/tenants/" +
+                self.computed_active_tenant_id +
+                "/buckets/" +
+                self.bucket.id +
+                "/files/-" +
+                fileName,
+              request,
+              self.get_axiosConfig()
+            )
             .then(function () {
               self.$notify({
                 group: "msg",
@@ -199,12 +207,21 @@ export default {
             })
             .catch(function (error) {
               console.log(error);
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Message:",
-                text: "Error while adding file.",
-              });
+              if (error.response && error.response.status == "403") {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Access Denied",
+                });
+              } else {
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Message:",
+                  text: "Error while adding file.",
+                });
+              }
             });
         }
       };
@@ -216,20 +233,29 @@ export default {
       let self = this;
       
       let request = {
-        bucket_id: this.bucket.id,
-        file_name: this.newFolderName + "/",
         content_type: "folder",
         contents: "",
       };
+
+      let fileName = this.newFolderName + "/";
       if (this.path != undefined) {
-        request.file_name = this.path + this.newFolderName + "/";
+        fileName = this.path + this.newFolderName + "/";
       }
-      if (request.file_name[0] == "/") {
-        request.file_name = request.file_name.substring(1);
+      if (fileName[0] == "/") {
+        fileName = fileName.substring(1);
       }
 
       this.axios
-        .post("/server/addBucketFile", request, self.get_axiosConfig())
+        .post(
+          "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/buckets/" +
+            this.bucket.id +
+            "/files/-" +
+            fileName,
+          request,
+          this.get_axiosConfig()
+        )
         .then(function () {
           self.$notify({
             group: "msg",
@@ -244,12 +270,21 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-          self.$notify({
-            group: "msg",
-            type: "error",
-            title: "Message:",
-            text: "Error while creating folder.",
-          });
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Message:",
+              text: "Error while creating folder.",
+            });
+          }
         });
 
       this.$emit("loading", false);

@@ -182,7 +182,7 @@ export default {
     let self = this;
     self.interval = setInterval(() => {
       self.getInstallationStatus(self);
-    }, 3000);
+    }, 5000);
 
     window.intervals = [];
     window.intervals.push(self.interval);
@@ -198,12 +198,12 @@ export default {
       let self = currentObject;
 
       axios
-        .post(
-          "/server/getInstallationStatus",
-          {
-            ID: self.ID,
-            details: self.timestamp,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.ID +
+            "/installation-status",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -228,6 +228,14 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     changeInstallationStatus() {
@@ -262,10 +270,14 @@ export default {
       }
     },
     deleteCluster(id, name) {
-      this.deleteDialogParams.requestBody = { clusterID: id };
       this.deleteDialogParams.text = "Are you sure you want to delete:";
       this.deleteDialogParams.envName = name;
-      this.deleteDialogParams.endpoint = "/server/deleteYaookCluster";
+      this.deleteDialogParams.endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/clusters/" +
+        id +
+        "/yaook-delete";
       this.deleteDialogParams.successMessage =
         'You have successfully submitted deletion for "' + name + '".';
       this.deleteDialogParams.failureMessage =

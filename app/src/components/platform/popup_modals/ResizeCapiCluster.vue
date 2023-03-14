@@ -117,7 +117,7 @@ export default {
         clusterID: self.clusterID,
       };
 
-      let endpoint = "/server/resizeCapiCluster";
+      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/capi-resize";
 
       axios
         .post(endpoint, resizeCapiClusterRequestBody, this.get_axiosConfig())

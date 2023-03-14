@@ -71,6 +71,7 @@ export default {
             });
           }
           self.closeModal();
+          self.getActiveTenants();
           self.$router.push({
             name: self.confirmAndRedirectDialogParams.redirect
           });
@@ -80,13 +81,22 @@ export default {
           if (error.response) {
             console.log(error.response.data);
           }
-          if (self.confirmAndRedirectDialogParams.failureMessage) {
+          if (error.response && error.response.status == "403") {
             self.$notify({
               group: "msg",
               type: "error",
               title: "Notification:",
-              text: self.confirmAndRedirectDialogParams.failureMessage,
+              text: "Access Denied",
             });
+          } else {
+            if (self.confirmAndRedirectDialogParams.failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: self.confirmAndRedirectDialogParams.failureMessage,
+              });
+            }
           }
           self.closeModal();
         });

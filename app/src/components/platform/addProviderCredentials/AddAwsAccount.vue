@@ -13,26 +13,21 @@
         <div class="col pl-4 pr-4">
           <p class="card-text"></p>
           <div class="p">
+            Create a new user. Go to
+            <b>Services -> IAM -> Users -> Add user</b>, input new name and
+            select <b>Programmatic access</b>. <br /><br />
+            For permissions, attach the following policies:<br />
             <ul>
-              <li>
-                Create new user.
-              </li>
-              <li>
-                Go to <b>Services -> IAM -> Users -> Add user</b>, input new name and select <b>Programmatic access</b>.
-              </li>
-              <li>
-                For permissions, attach the following policies: <b>AmazonEC2FullAccess</b>, <b>AmazonS3FullAccess</b>,
-                <b>ResourceGroupsandTagEditorReadOnlyAccess</b>, <b>AmazonRoute53FullAccess</b> and
-                <b>IAMReadOnlyAccess</b>.
-              </li>
-              <li>
-                Create the user.
-              </li>
-              <li>
-                Copy and paste the <b>Access key ID</b> and <b>Secret access key</b> from AWS into the corresponding
-                Daiteap fields.
-              </li>
+              <li><b>AmazonEC2FullAccess</b></li>
+              <li><b>AmazonS3FullAccess</b></li>
+              <li><b>ResourceGroupsandTagEditorReadOnlyAccess</b></li>
+              <li><b>AmazonRoute53FullAccess</b></li>
+              <li><b>IAMReadOnlyAccess</b></li>
+              <li><b>AWSOrganizationsReadOnlyAccess</b></li>
             </ul>
+            Create the user. Copy and paste the <b>Access key ID</b> and
+            <b>Secret access key</b> from AWS into the corresponding Daiteap
+            fields. <br /><br />
             <a
               href="/documentation/cloud_credentials/#amazon-aws"
               target="_blank"
@@ -77,8 +72,15 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <input autocomplete="off" v-model="aws.description" class="form-control" :class="['input']" type="text"
-                id="awsdescription" data-test-id="input-description" />
+              <b-form-textarea
+                autocomplete="off"
+                v-model="aws.description"
+                class="form-control"
+                :class="['input']"
+                type="text"
+                id="awsdescription"
+                data-test-id="input-description"
+              ></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.aws.description.$invalid" class="help text-danger">

@@ -90,11 +90,12 @@ export default {
     getK3sAvailableUpgradeVersions() {
       let self = this;
       axios
-        .post(
-          "/server/getK3sAvailableUpgradeVersions",
-          {
-            clusterID: self.clusterID,
-          },
+        .get(
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/k3s-upgrade-versions",
           this.get_axiosConfig()
         )
         .then(function (response) {
@@ -112,15 +113,26 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     upgradeK3sCluster() {
       let self = this;
       axios
         .post(
-          "/server/upgradeK3sCluster",
+          "/server/tenants/" +
+            self.computed_active_tenant_id +
+            "/clusters/" +
+            self.clusterID +
+            "/k3s-upgrade",
           {
-            clusterID: self.clusterID,
             version: self.upgradeVersion,
           },
           this.get_axiosConfig()
@@ -131,6 +143,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          }
         });
     },
     closeModal() {

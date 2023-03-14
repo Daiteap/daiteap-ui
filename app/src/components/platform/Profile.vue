@@ -162,7 +162,12 @@
             </div>
             <div
               class="custom-button mr-5 mt-5 float-right"
-              @click="cancelChanges()"
+              @click="
+                cancelChanges();
+                $router.push({
+                  name: 'DaiteapWebLandingPage',
+                });
+              "
             >
               Cancel Changes
             </div>
@@ -308,10 +313,6 @@ export default {
         this.imageFile = [];
         this.imageFileDirty = false;
       }, 200);
-
-      this.$router.push({
-        name: "DaiteapWebLandingPage",
-      });
     },
   },
 };

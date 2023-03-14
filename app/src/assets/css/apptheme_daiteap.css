@@ -94,24 +94,18 @@ html {
 }
 
 .vsm--mobile-item .vsm--item {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    box-shadow: inset 0px 0px 0px 1px #000000;
+    background-color: #ffffff;
+    color: #000000 !important;
 }
 
 .vsm--mobile-item .vsm--item .vsm--icon {
-    background-color: #000000 !important;
+    background-color: #ffffff !important;
     color: #ffffff !important;
 }
 
 .v-sidebar-menu .vsm--link_mobile {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-}
-
-.v-sidebar-menu .vsm--item:hover {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .v-sidebar-menu .vsm--item .vsm--icon {
@@ -119,11 +113,19 @@ html {
 }
 
 .v-sidebar-menu .vsm--link:hover {
-    background-color: #000000;
+    background-color: #ffffff;
+    border-bottom: solid 1px black;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.v-sidebar-menu .vsm--link {
+    border-bottom: solid 1px #ffffff;
+    margin-left: 5px;
 }
 
 .v-sidebar-menu .vsm--link:hover .vsm--title {
-    color: #ffffff;
+    color: #000000;
 }
 
 .v-sidebar-menu .vsm--title {
@@ -133,7 +135,7 @@ html {
 
 .v-sidebar-menu.vsm_collapsed .vsm--title {
     font-size: 1.2rem;
-    color: #ffffff;
+    color: #000000;
 }
 
 .v-sidebar-menu .vsm--icon {
@@ -144,7 +146,7 @@ html {
 .v-sidebar-menu .vsm--header {
     font-size: 1.4rem;
     margin-top: 2rem;
-    color: #ffffff;
+    color: #000000;
 }
 
 .vsm--list {
@@ -157,8 +159,8 @@ html {
 }
 
 .v-sidebar-menu .vsm--toggle-btn:hover {
-    color: #ffffff;
-    background-color: #000000;
+    color: #000000;
+    background-color: #ffffff;
 }
 
 .v-sidebar-menu .vsm--link.vsm--link_active {
@@ -166,13 +168,13 @@ html {
 }
 
 .v-sidebar-menu .vsm--mobile-bg {
-    background-color: #000000;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .v-sidebar-menu .vsm--mobile-bg:hover {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .daiteap-content-card {

@@ -1,19 +1,19 @@
 <template>
-  <b-modal centered id="bv-modal-editcluster" hide-footer>
+  <b-modal centered id="bv-modal-edittemplate" hide-footer>
     <div v-on:click="cancelBtn()"></div>
     <div>
       <div class="box mb-3">
         <form class="form-horizontal" role="form">
-          <div class="h4 text-center">Edit Cluster</div>
+          <div class="h4 text-center">Edit Template</div>
           <hr />
 
           <div>
             <div>
-              <label> Cluster Name: * </label>
+              <label> Template Name: * </label>
               <div>
                 <input
                   autocomplete="off"
-                  v-model="currentCluster.Name"
+                  v-model="currentTemplate.name"
                   class="form-control"
                   type="text"
                   id="name"
@@ -22,13 +22,13 @@
 
               <div>
                 <p
-                  v-if="!$v.currentCluster.Name.maxLength"
+                  v-if="!$v.currentTemplate.name.maxLength"
                   class="help text-danger" style="height: 1.2rem"
                 >
-                  Invalid Cluster Name
+                  Invalid Template Name
                 </p>
                 <p
-                  v-else-if="nameResolved && !$v.currentCluster.Name.isNameFree && currentCluster.Name != ''"
+                  v-else-if="nameResolved && !$v.currentTemplate.name.isNameFree && currentTemplate.name != ''"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
@@ -41,21 +41,21 @@
           <div>
             <div>
               <label>
-                Cluster Description:
+                Template Description:
               </label>
               <div>
                 <b-form-textarea
                   autocomplete="off"
-                  v-model="currentCluster.Description"
+                  v-model="currentTemplate.description"
                   class="form-control"
                   :class="['input']"
                   type="text"
                   id="description"
                 ></b-form-textarea>
               </div>
-              <div v-if="$v.currentCluster.Description.$invalid">
+              <div v-if="$v.currentTemplate.description.$invalid">
                 <p class="help text-danger">
-                  Invalid Cluster Description
+                  Invalid Template Description
                 </p>
               </div>
               <div v-else style="height: 0rem"></div>
@@ -67,7 +67,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.currentCluster.$invalid ? 'deactivated' : '']"
+                :class="[$v.currentTemplate.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
               >
                 Save
@@ -91,22 +91,22 @@ import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 
 export default {
-  name: 'EditClusterPopup',
+  name: 'EditTemplatePopup',
   mixins: [validationMixin],
   data() {
     return {
-      cluster: {},
+      template: {},
       nameResolved: true,
-      nameTakenMsg: "This cluster name is taken",
+      nameTakenMsg: "This template name is taken",
     };
   },
   props: {
-    currentCluster: {},
+    currentTemplate: {},
     oldName: String,
   },
   validations: {
-    currentCluster: {
-      Name: {
+    currentTemplate: {
+      name: {
         required,
         maxLength: maxLength(1024),
         isNameFree(Name) {
@@ -124,7 +124,7 @@ export default {
                   .get(
                     "/server/tenants/" +
                       this.computed_active_tenant_id +
-                      "/clusters/dlcmv2-name-available/" +
+                      "/environment-templates/name-available/" +
                       Name,
                     this.get_axiosConfig()
                   )
@@ -135,7 +135,7 @@ export default {
                       resolve(true);
                     } else {
                       self.nameResolved = true;
-                      self.nameTakenMsg = "This cluster name is taken";
+                      self.nameTakenMsg = "This template name is taken";
                       resolve(false);
                     }
                   })
@@ -158,24 +158,23 @@ export default {
           }
         },
       },
-      Description: {
+      description: {
         maxLength: maxLength(1024),
       },
     },
   },
   methods: {
     submitChanges() {
-      this.cluster.Name = document.getElementById("name").value;
-      this.cluster.Description = document.getElementById("description").value;
-      this.cluster.id = this.currentCluster.ID;
-      this.cluster.type = this.currentCluster.Type;
+      this.template.name = document.getElementById("name").value;
+      this.template.description = document.getElementById("description").value;
+      this.template.id = this.currentTemplate.id;
 
-      this.$emit("updateCluster", this.cluster);
+      this.$emit("updateTemplate", this.template);
 
       this.cancelBtn();
     },
     cancelBtn() {
-      this.$bvModal.hide("bv-modal-editcluster");
+      this.$bvModal.hide("bv-modal-edittemplate");
     },
   },
 };
