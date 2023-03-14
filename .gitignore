@@ -20,4 +20,4 @@ yarn-error.log*
 *.sln
 *.sw*
 **/.env
-.github/workflows/build-and-push-images.yml
+
