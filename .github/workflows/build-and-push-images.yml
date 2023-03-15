@@ -51,8 +51,8 @@ jobs:
         id: build_and_push_daiteap_ui
         uses: docker/build-push-action@v4
         with:
-          context: ./server
-          file: ./server/Dockerfile
+          context: ./app
+          file: ./app/Dockerfile
           push: true
           tags: ${{ steps.daiteap-ui-meta.outputs.tags }}
           labels: ${{ steps.daiteap-ui-meta.outputs.labels }}
