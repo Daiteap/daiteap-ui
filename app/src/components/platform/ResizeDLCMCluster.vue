@@ -19,6 +19,7 @@
           @active-step="isStepActive"
           @stepper-finished="submitResizeDLCMCluster"
           :isInResize="true"
+          :clusterID="clusterID"
         ></horizontal-stepper>
       </div>
     </div>
@@ -78,8 +79,6 @@ export default {
   beforeMount() {
     let self = this;
     this.getClusterConfig().then(function (cluster) {
-      console.log("Cluster.config", cluster.config);
-
       Vue.prototype.$finalModel = cluster.config;
       Vue.prototype.$finalModel.projectId = cluster.projectId;
       Vue.prototype.$finalModel.gatewayCloud = cluster.gatewayCloud;
@@ -242,9 +241,6 @@ export default {
         })
         .catch(function (error) {
           if (error.response.data.authorized == false) {
-            self.$parent.exceededResources =
-              error.response.data.exceededResources;
-            self.$parent.showQuotaExceeded = true;
             self.$bvModal.show("bv-modal-quotaexceeded");
           } else {
             console.log(error);

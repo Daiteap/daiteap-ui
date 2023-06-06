@@ -41,30 +41,6 @@
               rows="17"
               v-model="valuesFile"
             ></textarea>
-
-<!--             <div class="row">
-              <div
-                class="col-xl-12 p-2 d-flex align-items-end justify-content-around"
-                style="border-top: black solid 1 pix"
-              >
-                <input
-                  type="button"
-                  class="btn btn-outline-success col-xl-6 mx-1 px-0"
-                  value="Cancel Custom Configuration"
-                  @click="closeModal()"
-                />
-                <input
-                  type="button"
-                  class="btn btn-outline-success col-md-6 mx-1 px-0"
-                  @click="
-                    submitCustomConfiguration();
-                    $parent.$parent.$parent.currentAccordion = 'submitted';
-                    $parent.$parent.$parent.installStep = 4;
-                  "
-                  value="Install Service"
-                />
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -105,11 +81,6 @@ export default {
         console.error(evt);
       };
     },
-    submitCustomConfiguration() {
-      this.$finalModel.valuesFile = this.valuesFile;
-      this.$finalModel.configurationType = "yamlConfig";
-      this.$parent.$parent.submitServiceConfiguration();
-    },
     getValues() {
       let self = this;
       axios
@@ -139,17 +110,7 @@ export default {
     },
   },
   beforeUpdate(){
-    if(this.$parent.$parent.$parent.form){
-      this.$parent.$parent.$parent.form.valuesFile = this.valuesFile
-      if (this.fileUploaded){
-        this.$parent.$parent.$parent.form.configurationType = "yamlConfig"
-        this.$finalModel.configurationType = "yamlConfig"
-        this.$finalModel.valuesFile = this.valuesFile;
-      } else {
-        this.$parent.$parent.$parent.form.configurationType = "simpleConfig"
-        this.$finalModel.configurationType = "simpleConfig"
-      }
-    }
+    this.$emit('yaml-upload-update-form', this.fileUploaded)
   }
 };
 </script>

@@ -101,7 +101,15 @@ const VUEX_INIT_STATE = {
     create_cluster_settings: {
         show_advanced: false,
         cluster_name: "",
-        cluster_description: ""
+        cluster_description: "",
+        selected_project: "",
+        cluster_type: "",
+        cluster_type_number: 0,
+        installation_type: "",
+        selected_template_id: "",
+        projects: [],
+        types: [],
+        templates: [],
     },
     aws_bucket_locations: [{
         name: "us-east-2",
@@ -447,6 +455,42 @@ const store = new Vuex.Store({
         },
         updateCreateClusterSettingsClusterDescription(state, clusterDescription) {
             state.create_cluster_settings.cluster_description = clusterDescription;
+        },
+        updateCreateClusterSettingsSelectedProject(state, selectedProject) {
+            state.create_cluster_settings.selected_project = selectedProject;
+        },
+        updateCreateClusterSettingsClusterType(state, clusterType) {
+            state.create_cluster_settings.cluster_type = clusterType;
+            if (clusterType == "Kubernetes Cluster (DLCM)") {
+                state.create_cluster_settings.cluster_type_number = 1;
+            } else if (clusterType == "Kubernetes Cluster (CAPI)") {
+                state.create_cluster_settings.cluster_type_number = 5;
+            } else if (clusterType == "K3S") {
+                state.create_cluster_settings.cluster_type_number = 3;
+            } else if (clusterType == "Kubernetes Cluster (DLCM v2)") {
+                state.create_cluster_settings.cluster_type_number = 7;
+            } else if (clusterType == "Kubernetes Cluster (YaookCAPI)") {
+                state.create_cluster_settings.cluster_type_number = 8;
+            } else if (clusterType == "Compute") {
+                state.create_cluster_settings.cluster_type_number = 2;
+            } else {
+                state.create_cluster_settings.cluster_type_number = 6;
+            }
+        },
+        updateCreateClusterSettingsInstallationType(state, installationType) {
+            state.create_cluster_settings.installation_type = installationType;
+        },
+        updateCreateClusterSettingsSelectedTemplateID(state, selectedTemplateID) {
+            state.create_cluster_settings.selected_template_id = selectedTemplateID;
+        },
+        updateCreateClusterSettingsProjects(state, projects) {
+            state.create_cluster_settings.projects = projects;
+        },
+        updateCreateClusterSettingsTypes(state, types) {
+            state.create_cluster_settings.types = types;
+        },
+        updateCreateClusterSettingsTemplates(state, templates) {
+            state.create_cluster_settings.templates = templates;
         },
     }
 });

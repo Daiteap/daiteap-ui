@@ -59,6 +59,11 @@
             :current-step="currentStep"
             :isInResize="isInResize"
             @changeStepperVisibility="showStepper = !showStepper"
+            @installation-type-change="$emit('installation-type-change')"
+            @template-change="$emit('template-change')"
+            :clusterID="clusterID"
+            @set-show-cluster-details="$emit('set-show-cluster-details')"
+            :clusterType="clusterType"
           ></component>
         </keep-alive>
         <!--If not show component and destroy it in each step change-->
@@ -70,6 +75,11 @@
           @change-next="changeNextBtnValue"
           :current-step="currentStep"
           :isInResize="isInResize"
+          @installation-type-change="$emit('installation-type-change')"
+          @template-change="$emit('template-change')"
+          :clusterID="clusterID"
+          @set-show-cluster-details="$emit('set-show-cluster-details')"
+          :clusterType="clusterType"
         ></component>
       </transition>
     </div>
@@ -104,7 +114,6 @@ export default {
       return translations[locale][value];
     }
   },
-
   props: {
     locale: {
       type: String,
@@ -145,12 +154,19 @@ export default {
       type: Boolean,
       default: false
     },
+    clusterID: {
+      type: String,
+      default: ""
+    },
+    clusterType: {
+      type: String,
+      default: ""
+    },
     disableNextButton: {
       type: Boolean,
       default: false
     },
   },
-
   data() {
     return {
       currentStep: {},
@@ -164,7 +180,6 @@ export default {
       showStepper: true,
     };
   },
-
   computed: {
     enterAnimation() {
       if (this.currentStep.index < this.previousStep.index) {
@@ -181,7 +196,6 @@ export default {
       }
     }
   },
-
   methods: {
     isStepActive(index) {
       if (this.currentStep.index === index) {
@@ -273,7 +287,6 @@ export default {
       });
     }
   },
-
   watch: {
     reset(val) {
       if (!val) {
@@ -292,7 +305,6 @@ export default {
 
     }
   },
-
   created() {
     this.init();
   }

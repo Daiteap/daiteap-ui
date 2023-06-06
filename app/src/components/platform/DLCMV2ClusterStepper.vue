@@ -10,6 +10,9 @@
       :top-buttons="true"
       @active-step="isStepActive"
       @stepper-finished="submitCluster"
+      @installation-type-change="$emit('installation-type-change')"
+      @template-change="$emit('template-change')"
+      @set-show-cluster-details="$emit('set-show-cluster-details')"
     />
   </div>
 </template>
@@ -72,7 +75,6 @@ export default {
   },
   mounted() {
     let self = this;
-    Vue.prototype.$finalModel = {};
 
     if (!this.computed_account_settings.advanced_cluster_configuration) {
       this.clusterSteps[1] = {
@@ -255,7 +257,7 @@ export default {
     },
     submitCluster() {
       var request = this.$finalModel;
-      request.projectId = this.$parent.selectedProject
+      request.projectId = this.computed_create_cluster_settings.selected_project;
 
       let self = this;
 
@@ -279,7 +281,6 @@ export default {
         .catch(function (error) {
           if (error.response.status == 400) {
             if (error.response.data.authorized == false) {
-              console.info("Opening quota modal");
               self.exceededResources = error.response.data.exceededResources;
               self.showQuotaExceeded = true;
               self.$bvModal.show("bv-modal-quotaexceeded");

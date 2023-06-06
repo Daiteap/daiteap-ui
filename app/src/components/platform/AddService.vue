@@ -12,19 +12,16 @@
       v-show="showQuotaExceeded"
       :exceededResources="exceededResources"
     ></QuotaExceededModal>
-    <!--     <div v-if="showAccordion('chooseService')" class="col-12 w-100 text-center ">
-      <h2 class="d-flex justify-content-center">Available services for your cluster:</h2>
-    </div> -->
     <div style="text-align: left" class="col w-100">
       <b-collapse
         id="chooseService"
         :visible="showAccordion('chooseService')"
         class="mt-2"
       >
-        <div v-if="loadingSrvices" class="d-flex justify-content-center p-5">
+        <div v-if="loadingServices" class="d-flex justify-content-center p-5">
           <div class="circle-loader-large" role="status"></div>
         </div>
-        <div v-if="!loadingSrvices">
+        <div v-if="!loadingServices">
           <div class="col d-flex p-0 mb-3 justify-content-start">
             <div>Catergories:</div>
             <span
@@ -111,18 +108,6 @@
                         "
                         >Details</b-button
                       >
-                      <!--                     <b-button
-                      class="btn btn-outline-success col-5"
-                      @click="
-                        chooseService(item.name);
-                        currentAccordion = 'simpleConfiguration';
-                        installStep = 2;
-                        copyUrl(item.logo_url);
-                        chosenServicelogoUrl = item.logo_url;
-                        chosenServiceDescription = item.description;
-                      "
-                      >Install</b-button
-                    > -->
                     </div>
                   </template>
                 </b-card>
@@ -145,6 +130,10 @@
             <AdvancedConfig
               ref="advancedConfig"
               @can-continue="proceed"
+              clusterID=this.clusterID
+              @set-form-name="setFormName()"
+              @set-form-namespace="setFormNamespace()"
+              @set-form-values-file="setFormValuesFile()"
             ></AdvancedConfig>
             <div class="row">
               <div
@@ -189,7 +178,6 @@
         </h2>
         <div class="row m-0 p-0">
           <div class="col">
-            <!-- <SimpleConfig ref="simpleConfig" @can-continue="proceed"></SimpleConfig> -->
             <div>
               <br />
               <div class="d-flex justify-content-between">
@@ -259,6 +247,14 @@
             <SimpleConfig
               ref="simpleConfig"
               @can-continue="proceed"
+              @set-form-name="setFormName()"
+              @set-form-namespace="setFormNamespace()"
+              @get-form-name="getFormName()"
+              @get-form-namespace="getFormNamespace()"
+              @set-cluster-id="setClusterID()"
+              @set-form-values-file="setFormValuesFile()"
+              @set-form-configuration-type="setFormConfigurationType()"
+              @get-form-configuration-type="getFormConfigurationType()"
             ></SimpleConfig>
             <div class="row">
               <div
@@ -356,16 +352,17 @@ export default {
       exceededResources: [],
       categoriesListAll: [],
       categoriesListSelected: [],
-      loadingSrvices: true,
+      loadingServices: true,
       installStep: 1,
       servicesList: [],
       form: {
         name: "service",
         namespace: "",
         serviceName: "",
+        valuesFile: "",
         configurationType: "simpleConfig",
       },
-      serchQuery: "",
+      searchQuery: "",
       chosenService: {
         image: "",
         description: "",
@@ -398,6 +395,30 @@ export default {
             this.currentServiceDetails.description;
         }
       });
+    },
+    setFormName(value) {
+      this.form.name = value;
+    },
+    setFormNamespace(value) {
+      this.form.name = value;
+    },
+    setFormValuesFile(value) {
+      this.form.valuesFile = value;
+    },
+    setFormConfigurationType(value) {
+      this.form.configurationType =value;
+    },
+    setClusterID(value) {
+      this.clusterID = value;
+    },
+    getFormName() {
+      return this.form.name;
+    },
+    getFormNamespace() {
+      return this.form.namespace;
+    },
+    getFormConfigurationType() {
+      return this.form.configurationType;
     },
     completeStep(payload) {
       this.servicesSteps.forEach((step) => {
@@ -555,7 +576,7 @@ export default {
             }
           }
 
-          self.loadingSrvices = false;
+          self.loadingServices = false;
         })
         .catch(function (error) {
           console.log(error);
@@ -564,9 +585,9 @@ export default {
     searachResults(service, description) {
       let showAsResult = true;
       if (
-        this.serchQuery &&
-        !service.toLowerCase().includes(this.serchQuery.toLowerCase()) &&
-        !description.toLowerCase().includes(this.serchQuery.toLowerCase())
+        this.searchQuery &&
+        !service.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
+        !description.toLowerCase().includes(this.searchQuery.toLowerCase())
       ) {
         showAsResult = false;
       }
@@ -577,7 +598,7 @@ export default {
       if (this.form.serviceName === service) {
         this.form.serviceName = "";
         Vue.prototype.$finalModel.serviceName = "";
-        this.serchQuery = "";
+        this.searchQuery = "";
         this.installStep = 1;
       } else {
         this.form.serviceName = service;
@@ -590,7 +611,7 @@ export default {
       if (this.form.serviceName === service) {
         this.form.serviceName = "";
         Vue.prototype.$finalModel.serviceName = "";
-        this.serchQuery = "";
+        this.searchQuery = "";
         this.installStep = 1;
       }
     },

@@ -148,7 +148,6 @@ export default {
     providers: Array,
     alerts: Array,
     listOfAccountsInDeletion: Array,
-    showTenant: Boolean,
   },
   data() {
     return {

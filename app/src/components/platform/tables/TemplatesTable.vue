@@ -215,12 +215,8 @@ export default {
             templateToRemove.id,
           this.get_axiosConfig()
         )
-        .then(function (response) {
-          console.info(response.data.templates_list);
-          // self.templates = response.data.templates_list
-        })
+        .then(function () {})
         .catch(function (error) {
-          console.error("Error deleting template.");
           console.log(error);
           if (error.response && error.response.status == "403") {
             self.$notify({

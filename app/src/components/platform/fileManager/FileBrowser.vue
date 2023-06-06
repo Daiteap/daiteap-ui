@@ -110,6 +110,7 @@ const fileIcons = {
 };
 
 export default {
+    name: "FileBrowser",
     components: {
         Toolbar,
         Tree,

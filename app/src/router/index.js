@@ -46,7 +46,6 @@ import ResizeYaookCluster from '@/components/platform/ResizeYaookCluster'
 import ResizeDLCMCluster from '@/components/platform/ResizeDLCMCluster'
 import AddNewBucket from '@/components/platform/storage/AddNewBucket'
 import BucketDetails from '@/components/platform/storage/BucketDetails'
-import UserQuotas from '@/components/platform/UserQuotas'
 import ResourceQuotas from '@/components/platform/ResourceQuotas'
 import Unsubscribe from '@/components/platform/email/Unsubscribe'
 import ClusterStatus from '@/components/platform/email/ClusterStatus'
@@ -312,12 +311,6 @@ const router = new Router({
           path: 'bucketdetails',
           name: 'BucketDetails',
           component: BucketDetails,
-          props: true,
-        },
-        {
-          path: 'userquotas/:userID',
-          name: 'UserQuotas',
-          component: UserQuotas,
           props: true,
         },
         {

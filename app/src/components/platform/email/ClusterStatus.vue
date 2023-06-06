@@ -334,6 +334,7 @@
 
 <script>
 export default {
+    name: "ClusterStatus",
     props: {
         ClusterID: {
             type: String,

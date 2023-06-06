@@ -96,7 +96,6 @@ export default {
   props: {
     projectsList: Array,
     tenantID: String,
-    showTenant: Boolean,
   },
   data() {
     return {

@@ -86,7 +86,11 @@ export default {
     ClusterSummary,
     CardTitle,
   },
-  props: ["clickedNext", "currentStep"],
+  props: [
+    "clickedNext",
+    "currentStep",
+    "clusterID"
+  ],
   data() {
     return {
       clusterSummary: {},
@@ -115,7 +119,7 @@ export default {
   methods: {
     getTfPlan() {
       let self = this;
-      this.$finalModel.clusterID = this.$parent.$parent.clusterID;
+      this.$finalModel.clusterID = this.clusterID;
 
       this.axios
         .post(

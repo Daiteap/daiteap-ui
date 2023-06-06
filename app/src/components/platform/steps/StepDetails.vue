@@ -7,11 +7,12 @@
         </div>
         <select
           class="custom-select d-block w-100"
-          v-model="$parent.$parent.selectedProject"
+          v-model="computed_create_cluster_settings.selected_project"
           id="selectProject"
+          @change="updateCreateClusterSetting('SelectedProject', $event.target.value)"
         >
           <option
-            v-for="item in $parent.$parent.projectsList"
+            v-for="item in computed_create_cluster_settings.projects"
             :key="item.ID"
             :value="item.ID"
           >
@@ -30,7 +31,7 @@
             ? 'is-danger'
             : '',
         ]" type="text" placeholder="Compute name" v-model="form.clusterName" @input="$v.form.clusterName.$touch"
-          @change="changeClusterName()" />
+          @change="updateCreateClusterSetting('ClusterName', form.clusterName)" />
         <p v-if="form.clusterName != '' && !$v.form.clusterName.maxLength && $v.form.clusterName.$dirty"
           class="help text-danger" style="height: 1.2rem">
           Invalid compute name
@@ -57,7 +58,7 @@
           placeholder="Description"
           v-model="form.clusterDescription"
           @input="$v.form.clusterDescription.$touch"
-          @change="changeClusterDescription()"
+          @change="updateCreateClusterSetting('ClusterDescription', form.clusterDescription)"
         ></b-form-textarea>
         <p
           v-if="
@@ -114,7 +115,7 @@
       <CreateEnvironmentFromTemplate
         v-if="showCreateEnvironmentFromTemplate"
         ref="newEnvfromTemplate"
-        :projectId="$parent.$parent.selectedProject"
+        :projectId="computed_create_cluster_settings.selected_project"
       ></CreateEnvironmentFromTemplate>
     </div>
   </div>
@@ -238,18 +239,6 @@ export default {
     this.getTemplatesList(false);
   },
   methods: {
-    changeClusterName() {
-      this.$store.commit(
-        "updateCreateClusterSettingsClusterName",
-        this.form.clusterName
-      );
-    },
-    changeClusterDescription() {
-      this.$store.commit(
-        "updateCreateClusterSettingsClusterDescription",
-        this.form.clusterDescription
-      );
-    },
     async getTemplatesList(openModal) {
       let self = this;
       let templates = await this.getTemplates();

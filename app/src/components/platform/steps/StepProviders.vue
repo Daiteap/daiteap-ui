@@ -8,8 +8,8 @@
         <!-- aws -->
         <b-card v-if="
           computed_account_settings.providers_enable_aws &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
+          this.computed_create_cluster_settings.cluster_type_number != 5 &&
+          this.computed_create_cluster_settings.cluster_type_number != 8
         " no-body @click="awsProvided ? (form.awsSelected = !form.awsSelected) : ''" class="user-select-none my-3 mr-3 ml-0"
           :class="awsProvided ? 'custom-card' : 'custom-card-disabled'">
           <div>
@@ -61,8 +61,8 @@
         <!-- azure -->
         <b-card v-if="
           computed_account_settings.providers_enable_azure &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
+          this.computed_create_cluster_settings.cluster_type_number != 5 &&
+          this.computed_create_cluster_settings.cluster_type_number != 8
         " no-body @click="
   azureProvided ? (form.azureSelected = !form.azureSelected) : ''
 " class="user-select-none m-3" :class="azureProvided ? 'custom-card' : 'custom-card-disabled'">
@@ -115,8 +115,8 @@
         <!-- google -->
         <b-card v-if="
           computed_account_settings.providers_enable_gcp &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
+          this.computed_create_cluster_settings.cluster_type_number != 5 &&
+          this.computed_create_cluster_settings.cluster_type_number != 8
         " no-body @click="
   googleProvided ? (form.googleSelected = !form.googleSelected) : ''
 " class="user-select-none m-3" :class="googleProvided ? 'custom-card' : 'custom-card-disabled'">
@@ -224,8 +224,8 @@
         <!-- onpremise -->
         <b-card v-if="
           computed_account_settings.providers_enable_onprem &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
+          this.computed_create_cluster_settings.cluster_type_number != 5 &&
+          this.computed_create_cluster_settings.cluster_type_number != 8
         " no-body @click="
   onpremiseProvided
     ? (form.onpremiseSelected = !form.onpremiseSelected)
@@ -257,7 +257,7 @@
         <!-- iotarm -->
         <b-card v-if="
           computed_account_settings.providers_enable_arm &&
-          $parent.$parent.clusterType == 'K3S'
+          clusterType == 'K3S'
         " no-body @click="
   iotarmProvided ? (form.iotarmSelected = !form.iotarmSelected) : ''
 " class="user-select-none m-3" :class="iotarmProvided ? 'custom-card' : 'custom-card-disabled'">
@@ -294,7 +294,7 @@ import Vue from "vue";
 
 export default {
   name: "StepProviders",
-  props: ["clickedNext", "currentStep"],
+  props: ["clickedNext", "currentStep", "clusterType"],
   mixins: [validationMixin],
   activated() {
     this.getAccountSettings();
@@ -302,10 +302,10 @@ export default {
   mounted() {
     let self = this;
 
-    this.$parent.$parent.$parent.showClusterDetails = false;
+    this.$emit('set-show-cluster-details', false);
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
       (function () {
-        self.$parent.$parent.$parent.showClusterDetails = true;
+        self.$emit('set-show-cluster-details', true);
         self.$destroy();
       })()
     );
@@ -433,7 +433,7 @@ export default {
           vpcCidr: "10.30.0.0/16",
         };
       } else if (provider == "openstack") {
-        if (this.$selectedType == 5 || this.$selectedType == 8) {
+        if (this.computed_create_cluster_settings.cluster_type_number == 5 || this.computed_create_cluster_settings.cluster_type_number == 8) {
           Vue.prototype.$finalModel.openstack = {
             account: this.selectedCredentials.openstack,
             region: this.selectedCredentials.openstackRegion,
@@ -784,7 +784,7 @@ export default {
             this.selectedCredentials.openstack &&
             this.selectedCredentials.openstackRegion
           ) {
-            if (this.$selectedType == 5 || this.$selectedType == 8) {
+            if (this.computed_create_cluster_settings.cluster_type_number == 5 || this.computed_create_cluster_settings.cluster_type_number == 8) {
               Vue.prototype.$finalModel.openstack = {
                 account: this.selectedCredentials.openstack,
                 region: this.selectedCredentials.openstackRegion,

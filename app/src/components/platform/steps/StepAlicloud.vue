@@ -235,7 +235,6 @@ export default {
             } else if (status == -1) {
               // failed
               self.errorMsg = response.data.alicloud.error;
-              self.$parent.openShowErrorModal(self.errorMsg)
               clearInterval(self.interval);
               self.stopAllIntervals()
               self.updating = false
@@ -244,7 +243,6 @@ export default {
             } else {
               if (status != 1) {
                 self.errorMsg = "Failed to get regions information";
-                self.$parent.openShowErrorModal(self.errorMsg)
                 clearInterval(self.interval);
                 self.stopAllIntervals()
                 self.updating = false

@@ -4,35 +4,16 @@
     <DeleteDialog v-if="showDeleteDialog"></DeleteDialog>
     <SpecificUserInfo v-if="showSpecificUserInfo" :username="specificUserUsername" @hideUserDetails="hideUserDetails" />
     <div class="card daiteap-content-card">
-      <div v-if="!isBAO" class="d-flex justify-content-between cardHeaderLight">
+      <div class="d-flex justify-content-between cardHeaderLight">
         <span class="fa-stack landing-page-icon">
           <i class="fas fa-square fa-stack-2x" style="line-height: 1.5;"></i>
           <i class="fas fa-user fas fa-stack-1x fa-inverse" style="line-height: 3;"></i>
         </span>
         <CardTitle title="Users" style="line-height: 2;" />
         <span class="text-right h4 ml-auto">
-          <AddButton v-if="!showAllUsers" text='Add User' @onClickAddButton="goToSelectNewUser()" />
+          <AddButton text='Add User' @onClickAddButton="goToSelectNewUser()" />
         </span>
       </div>
-
-      <b-container v-if="isBAO" fluid class="mx-0 px-0">
-        <b-row>
-          <b-col lg="8" md="6" sm="4" class="my-auto">
-          </b-col>
-          <b-col lg="2" md="3" sm="4" class="my-auto text-right">
-            <div v-if="users.length > 0">
-              Remove All
-              <span v-on:click.stop="deleteAllUsers()" class="btn btn-sm" data-toggle="tooltip" data-placement="bottom"
-                title="Remove all users">
-                <i class="fas fa-minus-circle" style="font-size: 1.8rem"></i>
-              </span>
-            </div>
-          </b-col>
-          <b-col lg="2" md="3" sm="4" class="my-auto text-right">
-            <AddButton text='Add User' @onClickAddButton="goToSelectNewUser()" />
-          </b-col>
-        </b-row>
-      </b-container>
 
       <hr />
       <div v-if="loading" class="d-flex justify-content-center">
@@ -42,8 +23,14 @@
       </div>
       <div v-else-if="users.length == 0"> No users currently. </div>
       <div v-else>
-        <UsersListTable class="mt-2" :users="users" @removeUser="removeUser" @showUserDetails="showUserDetails"
-          :showdelete="true" :tenantID="tenantID" :showTenant="showAllUsers" />
+        <UsersListTable
+          class="mt-2"
+          :users="users"
+          @removeUser="removeUser"
+          @showUserDetails="showUserDetails"
+          :showdelete="true"
+          :tenantID="tenantID"
+        />
       </div>
       <br />
     </div>
@@ -65,10 +52,6 @@ import AddButton from "@/components/platform/AddButton"
 export default {
   name: "UsersList",
   props: {
-    isBAO: {
-      type: Boolean,
-      default: false
-    },
     tenantID: {
       type: String,
       required: false
@@ -112,7 +95,6 @@ export default {
       showSpecificUserInfo: false,
       showDeleteDialog: false,
       showDeleteManyDialog: false,
-      showAllUsers: false,
       popupId: "userdeletewarning",
     };
   },
@@ -145,23 +127,12 @@ export default {
       this.showSpecificUserInfo = false;
     },
     goToSelectNewUser() {
-      if (this.isBAO) {
-        this.$router.push({
-          name: "SelectNewUser",
-          params: {
-            isBAO: true,
-            tenant: this.tenant
-          },
-        });
-      } else {
-        this.$router.push({
-          name: "SelectNewUser",
-          params: {
-            isBAO: false,
-            tenant: this.tenant
-          },
-        });
-      }
+      this.$router.push({
+        name: "SelectNewUser",
+        params: {
+          tenant: this.tenant
+        },
+      });
     },
     deleteAllUsers() {
       let token = this.$session.get("token");
@@ -210,11 +181,8 @@ export default {
             userToDelete,
           this.get_axiosConfig()
         )
-        .then(function (response) {
-          console.info(response.data.users_list);
-        })
+        .then(function () {})
         .catch(function (error) {
-          console.error("Error deleting user.");
           console.log(error.response);
           if (error.response && error.response.status == "403") {
             self.$notify({

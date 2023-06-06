@@ -1,11 +1,6 @@
 <template>
   <div>
     <TextPopup :textPopupParams="textPopupParams"></TextPopup>
-    <ConfirmDialog
-      v-show="showConfirmDialog"
-      :confirmDialogParams="confirmDialogParams"
-      :modalId="confirmDialogModalId"
-    ></ConfirmDialog>
     <DetailsVirtualMachine
       v-show="showDetailsVirtualMachine"
       :machineDetails="machineDetails"
@@ -43,7 +38,7 @@
           <tr>
             <th>Name</th>
             <th name="computeHidePriority2">Description</th>
-            <th name="computeHidePriority3" v-if="!projectName && !showTenant">
+            <th name="computeHidePriority3" v-if="!projectName">
               Project
             </th>
             <th name="computeHidePriority4">Provider</th>
@@ -75,7 +70,7 @@
             </td>
             <td
               name="computeHidePriority3"
-              v-if="!projectName && !showTenant"
+              v-if="!projectName"
               v-show="projectsList != 'loading'"
               class="clickForDetails"
               v-on:click="
@@ -271,7 +266,6 @@
 
 <script>
 import DetailsVirtualMachine from "@/components/platform/popup_modals/DetailsVirtualMachine";
-import ConfirmDialog from "./../popup_modals/ConfirmDialog";
 import GenericPopupWarning from "@/components/platform/popup_modals/GenericPopupWarning";
 import SaveEnvironmentTemplate from "@/components/platform/popup_modals/SaveEnvironmentTemplate";
 import TextPopup from "../popup_modals/TextPopup";
@@ -283,7 +277,6 @@ export default {
   components: {
     TextPopup,
     DetailsVirtualMachine,
-    ConfirmDialog,
     GenericPopupWarning,
     SaveEnvironmentTemplate,
     SpecificUserInfo,
@@ -292,27 +285,14 @@ export default {
   props: {
     projectName: String,
     tenantID: String,
-    showTenant: Boolean,
   },
   data() {
     return {
       loading: true,
-      showConfirmDialog: false,
       textPopupParams: {
         heading: "Error",
         text: "",
       },
-      confirmDialogParams: {
-        requestBody: {},
-        text: "",
-        endpoint: "",
-        successMessage: "",
-        failureMessage: "",
-        envName: "",
-        envId: "",
-        action: "",
-      },
-      confirmDialogModalId: "bv-modal-confirmdialogcompute",
       nodeForDeletion: {},
       machinesList: [],
       clustersList: [],

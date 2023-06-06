@@ -51,7 +51,6 @@
         v-else
         :buckets="buckets"
         :projectID="projectID"
-        :showTenant="false"
       />
     </div>
   </div>

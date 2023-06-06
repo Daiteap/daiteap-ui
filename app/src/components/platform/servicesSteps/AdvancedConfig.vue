@@ -8,7 +8,9 @@
           class="form-control"
           type="text"
           v-bind:placeholder="defaultName"
-          v-model="$parent.$parent.form.name"
+          v-model="form.name"
+          :value="form.name"
+          @input="onNameChange"
         />
       </div>
       <div class="control" id="serviceNamespace">
@@ -17,7 +19,9 @@
           class="form-control"
           type="text"
           placeholder="default"
-          v-model="$parent.$parent.form.namespace"
+          v-model="form.namespace"
+          :value="form.namespace"
+          @input="onNamespaceChange"
         />
       </div>
       <br />
@@ -52,12 +56,13 @@ import TextPopup from "../popup_modals/TextPopup";
 
 export default {
   name: 'AdvancedConfig',
-  props: ["clickedNext", "currentStep"],
+  props: [
+    "clickedNext",
+    "currentStep",
+    "clusterID"
+  ],
   mixins: [validationMixin],
-  created() {
-    // this.getValues(this);
-    // this.setDefaultName(this);
-  },
+  created() { },
   mounted() {
     let self = this;
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
@@ -72,11 +77,20 @@ export default {
       let reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = evt => {
-        this.$parent.form.valuesFile = evt.target.result;
+        this.changeValuesFile(evt.target.result);
       };
       reader.onerror = evt => {
         console.error(evt);
       };
+    },
+    onNameChange(value) {
+      this.$emit('set-form-name', value);
+    },
+    onNamespaceChange(value) {
+      this.$emit('set-form-namespace', value);
+    },
+    changeValuesFile(value) {
+      this.$emit('set-form-values-file', value);
     },
     showValues() {
       this.showTextPopup = true;
@@ -89,7 +103,7 @@ export default {
           "/server/tenants/" +
             self.computed_active_tenant_id +
             "/clusters/" +
-            self.$parent.$parent.clusterID +
+            self.clusterID +
             "/services/" +
             self.$finalModel.serviceName +
             "/default-name",

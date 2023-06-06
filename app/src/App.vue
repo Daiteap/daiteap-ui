@@ -143,6 +143,9 @@ Vue.mixin({
         }
       }
     },
+    updateCreateClusterSetting(setting, value) {
+      this.$store.commit("updateCreateClusterSettings" + setting, value);
+    },
     deleteClusterMain(cluster) {
       let endpoint;
       if (cluster.Type == 5) {
@@ -754,16 +757,11 @@ Vue.mixin({
         });
     },
     editUserInfo(request) {
-      let endpoint;
-      if (this.computed_isBusinessAccountOwner) {
-        endpoint = "/server/businessaccountowner/updateUser";
-      } else {
-        endpoint =
-          "/server/tenants/" +
-          this.computed_active_tenant_id +
-          "/users/" +
-          request.username;
-      }
+      let endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/users/" +
+        request.username;
 
       let self = this;
       while (self.updatingToken) {

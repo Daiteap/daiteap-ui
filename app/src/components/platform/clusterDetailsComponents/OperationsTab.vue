@@ -1,9 +1,22 @@
 <template>
   <div class="row">
     <ConfirmDialog
+      modalId="bv-modal-confirmdialogstart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      :modalId="confirmDialogModalId"
+      @confirm-action="startCluster()"
+    ></ConfirmDialog>
+    <ConfirmDialog
+      modalId="bv-modal-confirmdialogstop"
+      v-show="showConfirmDialog"
+      :confirmDialogParams="confirmDialogParams"
+      @confirm-action="stopCluster()"
+    ></ConfirmDialog>
+    <ConfirmDialog
+      modalId="bv-modal-confirmdialogrestart"
+      v-show="showConfirmDialog"
+      :confirmDialogParams="confirmDialogParams"
+      @confirm-action="restartCluster()"
     ></ConfirmDialog>
     <SaveEnvironmentTemplate
       ref="saveAsTemplate"
@@ -50,10 +63,7 @@
 
           <div
             class="custom-button"
-            v-if="
-              computed_account_settings.enable_templates &&
-              !computed_isBusinessAccountOwner
-            "
+            v-if="computed_account_settings.enable_templates"
             :class="[
               cluster.installstep == 1 || cluster.resizestep > 0
                 ? 'deactivated'
@@ -68,7 +78,6 @@
             class="custom-button"
             v-if="
               cluster.installstep == 0 &&
-              !computed_isBusinessAccountOwner &&
               cluster.clusterType != 2 &&
               cluster.clusterType != 6
             "
@@ -86,11 +95,7 @@
         >
           <div
             class="custom-button"
-            v-if="
-              cluster.clusterType != 5 &&
-              cluster.clusterType != 8 &&
-              !computed_isBusinessAccountOwner
-            "
+            v-if="cluster.clusterType != 5 && cluster.clusterType != 8"
             :class="[
               cluster.status != 10 || cluster.resizestep > 0
                 ? 'deactivated'
@@ -103,11 +108,7 @@
 
           <div
             class="custom-button"
-            v-if="
-              cluster.clusterType != 5 &&
-              cluster.clusterType != 8 &&
-              !computed_isBusinessAccountOwner
-            "
+            v-if="cluster.clusterType != 5 && cluster.clusterType != 8"
             :class="[
               cluster.status != 0 || cluster.resizestep > 0
                 ? 'deactivated'
@@ -120,11 +121,7 @@
 
           <div
             class="custom-button"
-            v-if="
-              cluster.clusterType != 5 &&
-              cluster.clusterType != 8 &&
-              !computed_isBusinessAccountOwner
-            "
+            v-if="cluster.clusterType != 5 && cluster.clusterType != 8"
             :class="[
               cluster.status != 0 || cluster.resizestep > 0
                 ? 'deactivated'
@@ -140,7 +137,6 @@
             v-if="
               cluster.clusterType != 5 &&
               cluster.clusterType != 8 &&
-              !computed_isBusinessAccountOwner &&
               computed_account_settings.enable_cluster_resize
             "
             :class="[
@@ -159,7 +155,6 @@
             class="custom-button"
             v-if="
               cluster.clusterType == 5 &&
-              !computed_isBusinessAccountOwner &&
               computed_account_settings.enable_cluster_resize
             "
             :class="[
@@ -178,7 +173,6 @@
             class="custom-button"
             v-if="
               cluster.clusterType == 8 &&
-              !computed_isBusinessAccountOwner &&
               computed_account_settings.enable_cluster_resize
             "
             :class="[
@@ -195,11 +189,7 @@
 
           <div
             class="custom-button"
-            v-if="
-              cluster.installstep == 0 &&
-              cluster.clusterType == 8 &&
-              !computed_isBusinessAccountOwner
-            "
+            v-if="cluster.installstep == 0 && cluster.clusterType == 8"
             @click="downloadWireguardConfig(clusterID)"
           >
             Wireguard
@@ -237,16 +227,12 @@ export default {
       templateClusterId: "",
       showConfirmDialog: false,
       confirmDialogParams: {
-        requestBody: {},
         text: "",
-        endpoint: "",
         envName: "",
         envId: "",
         action: "",
-        successMessage: "",
-        failureMessage: "",
+        payload: {},
       },
-      confirmDialogModalId: "bv-modal-confirmdialogoperations",
       clusterToRemove: {
         id: 0,
         name: "",
@@ -314,14 +300,7 @@ export default {
 
       await this.deleteClusterMain(request);
 
-      if (this.computed_isBusinessAccountOwner) {
-        this.$router.push({
-          name: "ResourcesPage",
-        });
-      } else if (
-        this.cluster.clusterType == 2 ||
-        this.cluster.clusterType == 6
-      ) {
+      if (this.cluster.clusterType == 2 || this.cluster.clusterType == 6) {
         this.$router.push({
           name: "ComputeOverviewAll",
         });
@@ -337,62 +316,224 @@ export default {
       this.clusterToRemove.type = type;
       this.$bvModal.show(this.popupId);
     },
-    stopCluster(id, name) {
-      this.confirmDialogParams.requestBody = { clusterID: id };
+    showStopClusterDialog(id, name) {
       this.confirmDialogParams.text = "Are you sure you want to stop";
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Stop";
-      this.confirmDialogParams.endpoint =
+      this.confirmDialogParams.payload = {
+        "id": id,
+        "name": name,
+      };
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialogstop");
+    },
+    stopCluster(payload) {
+      let self = this;
+      requestBody = {
+        clusterID: payload.id,
+      };
+      endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        id +
+        payload.id +
         "/stop";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
+      successMessage =
+        'You have successfully submitted stop for "' + payload.name + '".';
+      failureMessage =
+        'Error occured while you tried to submit stop of "' + 
+        payload.name + '".';
+
+      this.axios
+        .post(
+          endpoint,
+          requestBody,
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          if (successMessage) {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: successMessage,
+            });
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogstop");
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: failureMessage,
+              });
+            }
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogstop");
+        });
     },
-    startCluster(id, name) {
-      this.confirmDialogParams.requestBody = { clusterID: id };
+    showStartClusterDialog(id, name) {
       this.confirmDialogParams.text = "Are you sure you want to start";
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Start";
-      this.confirmDialogParams.endpoint =
+      this.confirmDialogParams.payload = {
+        "id": id,
+        "name": name,
+      };
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialogstart");
+    },
+    startCluster(payload) {
+      let self = this;
+      requestBody = {
+        clusterID: payload.id,
+      };
+      endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        id +
+        payload.id +
         "/start";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted start for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit start of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
+      successMessage =
+        'You have successfully submitted start for "' + payload.name + '".';
+      failureMessage =
+        'Error occured while you tried to submit start of "' + 
+        payload.name + '".';
+
+      this.axios
+        .post(
+          endpoint,
+          requestBody,
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          if (successMessage) {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: successMessage,
+            });
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogstart");
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: failureMessage,
+              });
+            }
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogstart");
+        });
     },
-    restartCluster(id, name) {
-      this.confirmDialogParams.requestBody = { clusterID: id };
+    showRestartClusterDialog(id, name) {
       this.confirmDialogParams.text = "Are you sure you want to restart";
       this.confirmDialogParams.envName = name;
       this.confirmDialogParams.envId = id;
       this.confirmDialogParams.action = "Restart";
-      this.confirmDialogParams.endpoint =
+      this.confirmDialogParams.payload = {
+        "id": id,
+        "name": name,
+      };
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialogrestart");
+    },
+    restartCluster(payload) {
+      let self = this;
+      requestBody = {
+        clusterID: payload.id,
+      };
+      endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        id +
+        payload.id +
         "/restart";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted stop for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit stop of "' + name + '".';
-      this.showConfirmDialog = true;
-      this.$bvModal.show(this.confirmDialogModalId);
+      successMessage =
+        'You have successfully submitted restart for "' + payload.name + '".';
+      failureMessage =
+        'Error occured while you tried to submit restart of "' + 
+        payload.name + '".';
+
+      this.axios
+        .post(
+          endpoint,
+          requestBody,
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          if (successMessage) {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: successMessage,
+            });
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: failureMessage,
+              });
+            }
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+        });
     },
     downloadKubeconfig(id) {
       let self = this;

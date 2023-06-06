@@ -5,11 +5,15 @@
       :exceededResources="exceededResources"
     ></QuotaExceededModal>
     <horizontal-stepper
-        :steps="clusterSteps"
-        @completed-step="completeStep"
-        :top-buttons="true"
-        @active-step="isStepActive"
-        @stepper-finished="submitCluster"
+      :steps="clusterSteps"
+      @completed-step="completeStep"
+      :top-buttons="true"
+      @active-step="isStepActive"
+      @stepper-finished="submitCluster"
+      @installation-type-change="$emit('installation-type-change')"
+      @template-change="$emit('template-change')"
+      @set-show-cluster-details="$emit('set-show-cluster-details')"
+      :cluster-type="clusterType"
     />
   </div>
 </template>
@@ -240,7 +244,7 @@ export default {
     },
     submitCluster() {
       var request = this.$finalModel;
-      request.projectId = this.$parent.selectedProject
+      request.projectId = this.computed_create_cluster_settings.selected_project;
 
       let self = this;
 

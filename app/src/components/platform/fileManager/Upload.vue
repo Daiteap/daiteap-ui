@@ -87,6 +87,7 @@ import { formatBytes } from "./util";
 const imageMimeTypes = ["image/png", "image/jpeg"];
 
 export default {
+    name: "Upload",
     props: {
         path: String,
         storage: String,

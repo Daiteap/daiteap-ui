@@ -32,7 +32,7 @@
             v-model="$finalModel.selectedCluster"
             id="selectCluster"
             @change="
-              $parent.$parent.clusterID = $event.target.value;
+              setClusterID($event.target.value);
               setServiceOptions(this);
               setDefaultName(this);
             "
@@ -56,7 +56,9 @@
                 class="form-control"
                 type="text"
                 v-bind:placeholder="defaultName"
-                v-model="$parent.$parent.form.name"
+                v-model="form.name"
+                :value="form.name"
+                @input="setFormName"
                 autocomplete="off"
                 @keyup="formExtraFieldsCheck"
               />
@@ -96,12 +98,12 @@
                   @keyup="
                     formExtraFieldsCheck();
                     serviceOptionsCheck();
-                    $parent.$parent.form.namespace = formExtraFields.namespace;
+                    setFormNamespace(formExtraFields.namespace);
                   "
                   @keydown="
                     formExtraFieldsCheck();
                     serviceOptionsCheck();
-                    $parent.$parent.form.namespace = formExtraFields.namespace;
+                    setFormNamespace(formExtraFields.namespace);
                   "
                 />
               </div>
@@ -121,7 +123,7 @@
                     formExtraFieldsCheck();
                     addNewNamespace();
                     serviceOptionsCheck();
-                    $parent.$parent.form.namespace = formExtraFields.namespace;
+                    setFormNamespace(formExtraFields.namespace);
                   "
                   class="custom-select d-block w-100"
                   id="namespace"
@@ -137,7 +139,7 @@
                 </select>
               </div>
               <p
-                v-if="$parent.$parent.form.namespace == ''"
+                v-if="getFormNamespace() == ''"
                 class="help text-danger text-start"
                 style="margin: 0rem"
               >
@@ -447,7 +449,11 @@
             </div>
           </b-collapse>
           <b-collapse :visible="showCustom">
-            <YAMLUpload ref="YAMLUpload" :key="YAMLUploadKey"></YAMLUpload>
+            <YAMLUpload
+              ref="YAMLUpload"
+              :key="YAMLUploadKey"
+              @yaml-upload-update-form="yamlUploadUpdateForm"
+            ></YAMLUpload>
           </b-collapse>
         </div>
 
@@ -721,11 +727,13 @@ import { validationMixin } from "vuelidate";
 import Vue from "vue";
 import axios from "axios";
 import YAMLUpload from "./YAMLUpload";
-import WarningAlert from "@/components/platform/WarningAlert";
 
 export default {
   name: "SimpleConfig",
-  props: ["clickedNext", "currentStep"],
+  props: [
+    "clickedNext",
+    "currentStep"
+  ],
   mixins: [validationMixin],
   mounted() {
     let self = this;
@@ -740,6 +748,30 @@ export default {
     this.$finalModel = {};
   },
   methods: {
+    setFormName(value) {
+      this.$emit('set-form-name', value);
+    },
+    setFormNamespace(value) {
+      this.$emit('set-form-namespace', value);
+    },
+    setClusterID(value) {
+      this.$emit('set-cluster-id', value);
+    },
+    setFormValuesFile(value) {
+      this.$emit('set-form-values-file', value);
+    },
+    setFormConfigurationType(value) {
+      this.$emit('set-form-configuration-type', value);
+    },
+    getFormName() {
+      return this.$emit('get-form-name');
+    },
+    getFormNamespace() {
+      return this.$emit('get-form-namespace');
+    },
+    getFormConfigurationType() {
+      return this.$emit('get-form-configuration-type');
+    },
     async getUsersClustersList() {
       let self = this;
       let clusters = await this.getAllClusters();
@@ -800,7 +832,7 @@ export default {
       self.loading = false;
       if (self.clustersList.length > 0) {
         self.$finalModel.selectedCluster = self.clustersList[0].ID;
-        self.$parent.$parent.clusterID = self.$finalModel.selectedCluster;
+        self.setClusterID(self.$finalModel.selectedCluster);
         self.setServiceOptions(self);
         self.setDefaultName(self);
       }
@@ -860,6 +892,17 @@ export default {
         } else if (singleCloudProviderSelected == "iotarm") {
           this.form.cloud_providers.iotarmSelected = true;
         }
+      }
+    },
+    yamlUploadUpdateForm(fileUploaded) {
+      this.setFormValuesFile(this.valuesFile);
+      if (fileUploaded){
+        this.setFormConfigurationType("yamlConfig");
+        this.$finalModel.configurationType = "yamlConfig";
+        this.$finalModel.valuesFile = this.valuesFile;
+      } else {
+        this.setFormConfigurationType("simpleConfig");
+        this.$finalModel.configurationType = "simpleConfig";
       }
     },
     setServiceOptions() {
@@ -951,8 +994,7 @@ export default {
             if (response.data.options["namespace"].default) {
               self.formExtraFields["namespace"] =
                 response.data.options["namespace"].default;
-              self.$parent.$parent.form.namespace =
-                response.data.options["namespace"].default;
+              self.setFormNamespace(response.data.options["namespace"].default);
               if (
                 !self.listNamespaces.includes(
                   response.data.options["namespace"].default
@@ -1033,7 +1075,7 @@ export default {
         )
         .then(function (response) {
           self.defaultName = response.data.defaultName;
-          self.$parent.$parent.form.name = response.data.defaultName;
+          self.setFormName(response.data.defaultName);
         })
         .catch(function (error) {
           console.log(error);
@@ -1169,9 +1211,9 @@ export default {
     },
     toggleCustomConfig() {
       if (this.showCustom) {
-        this.$parent.$parent.form.configurationType = "yamlConfig";
+        this.setFormConfigurationType("yamlConfig");
       } else {
-        this.$parent.$parent.form.configurationType = "simpleConfig";
+        this.setFormConfigurationType("simpleConfig");
       }
     },
     resetForm() {
@@ -1193,10 +1235,10 @@ export default {
       this.$bvModal.hide("bv-modal-custom");
       this.showUploadYAML = false;
       this.$bvModal.hide("bv-modal-uploadyaml");
-      this.$parent.$parent.form.namespace = "";
+      this.setFormNamespace("");
       this.showAddNewNamespace = false;
       this.$bvModal.hide("bv-modal-addnewnamespace");
-      this.$parent.$parent.form.valuesFile = "";
+      this.setFormValuesFile("");
       this.YAMLUploadKey += 1;
       Vue.prototype.$finalModel = {};
       this.serviceOptions = {};
@@ -1312,14 +1354,15 @@ export default {
     formExtraFieldsCheck() {
       this.emptyExtraFields = false;
 
+      formName = this.getFormName();
       if (
         !(
-          this.$parent.$parent.form.name &&
-          this.$parent.$parent.form.name.length > 0 &&
-          this.$parent.$parent.form.name.length < 31 &&
-          this.$parent.$parent.form.name.match(/^[a-z0-9-]+$/) &&
-          !this.$parent.$parent.form.name.startsWith("-") &&
-          !this.$parent.$parent.form.name.endsWith("-")
+          formName &&
+          formName.length > 0 &&
+          formName.length < 31 &&
+          formName.match(/^[a-z0-9-]+$/) &&
+          !formName.startsWith("-") &&
+          !formName.endsWith("-")
         )
       ) {
         this.emptyExtraFields = true;
@@ -1329,7 +1372,7 @@ export default {
       }
 
       if (
-        this.reservedServiceNames.indexOf(this.$parent.$parent.form.name) > -1
+        this.reservedServiceNames.indexOf(formName) > -1
       ) {
         this.emptyExtraFields = true;
         this.existingServiceName = true;
@@ -1371,10 +1414,12 @@ export default {
     },
     serviceOptionsCheck() {
       let emptyFields = false;
+      formName = this.getFormName();
+
       if (this.checkIfObjectIsEmpty(this.formExtraFields)) {
         if (
-          !this.$parent.$parent.form.name ||
-          !this.$parent.$parent.form.configurationType
+          !formName ||
+          !this.getFormConfigurationType()
         ) {
           emptyFields == true;
         }
@@ -1434,7 +1479,6 @@ export default {
   },
   components: {
     YAMLUpload,
-    WarningAlert,
   },
   validations: {
     form: {},

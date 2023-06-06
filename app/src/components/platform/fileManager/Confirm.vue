@@ -37,6 +37,7 @@
  * }
  */
 export default {
+    name: "Confirm",
     data: () => ({
         dialog: false,
         resolve: null,

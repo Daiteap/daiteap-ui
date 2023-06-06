@@ -119,7 +119,6 @@ export default {
     },
     isNameFree(value) {
       var self = this;
-      console.info("isNameFree(value)");
       if (value.length > 0) {
         if (this.projectParams) {
           if (value == this.projectParams.Name) {

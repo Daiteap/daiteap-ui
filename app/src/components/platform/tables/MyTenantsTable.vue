@@ -1,9 +1,10 @@
 <template>
   <div>
-    <ConfirmAndRedirectDialog
+    <ConfirmDialog
       v-show="showConfirmDialog"
-      :confirmAndRedirectDialogParams="confirmAndRedirectDialogParams"
-    ></ConfirmAndRedirectDialog>
+      :confirmDialogParams="confirmDialogParams"
+      @confirm-action="changeTenant()"
+    ></ConfirmDialog>
     <table
       class="table table-bordered"
       id="tenantsDataTable"
@@ -49,7 +50,7 @@
             <toggle-button
               :value="item.selected"
               data-test-id="compute-option-button"
-              @input="changeTenant(item)"
+              @input="showChangeTenantDialog(item)"
               :disabled="item.selected"
               sync
             />
@@ -61,7 +62,7 @@
 </template>
 
 <script>
-import ConfirmAndRedirectDialog from "../popup_modals/ConfirmAndRedirectDialog";
+import ConfirmDialog from "../popup_modals/ConfirmDialog";
 
 export default {
   props: {
@@ -69,22 +70,19 @@ export default {
     selectedTenant: String,
   },
   components: {
-    ConfirmAndRedirectDialog,
+    ConfirmDialog,
   },
   data() {
     return {
       showConfirmDialog: false,
-      confirmAndRedirectDialogParams: {
-        requestBody: {},
+      confirmDialogParams: {
         text: "",
-        endpoint: "",
-        successMessage: "",
-        failureMessage: "",
         envName: "",
         envId: "",
         action: "",
-        columnsEvent: "",
+        payload: {},
       },
+      columnsEvent: "",
     };
   },
   created() {
@@ -101,22 +99,72 @@ export default {
     window.removeEventListener("resize", this.columnsEvent);
   },
   methods: {
-    changeTenant(tenant) {
-      this.confirmAndRedirectDialogParams.requestBody = {
-        "selectedTenant": tenant.id
+    showChangeTenantDialog(tenant) {
+      this.confirmDialogParams.text = "Are you sure you want to change current workspace:";
+      this.confirmDialogParams.action = "Change";
+      this.confirmDialogParams.envId = "";
+      this.confirmDialogParams.envName = tenant.name;
+      this.confirmDialogParams.payload = {
+        "id": id,
       };
-      this.confirmAndRedirectDialogParams.text = "Are you sure you want to change current workspace:";
-      this.confirmAndRedirectDialogParams.action = "Change";
-      this.confirmAndRedirectDialogParams.envId = "";
-      this.confirmAndRedirectDialogParams.envName = tenant.name;
-      this.confirmAndRedirectDialogParams.endpoint = "/server/user/select-tenant";
-      this.confirmAndRedirectDialogParams.redirect = "DaiteapWebLandingPage";
-      this.confirmAndRedirectDialogParams.successMessage =
-        'You have successfully submitted tenant change.';
-      this.confirmAndRedirectDialogParams.failureMessage =
-        'Error occured while you tried to submit tenant change.';
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialog");
+    },
+    changeTenant(payload) {
+      let self = this;
+      endpoint = "/server/user/select-tenant";
+      requestBody = {
+        "selectedTenant": payload.id
+      };
+      successMessage = 'You have successfully submitted tenant change.';
+      failureMessage = 'Error occured while you tried to submit tenant change.';
+
+      this.axios
+        .post(
+          endpoint,
+          requestBody,
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          if (successMessage) {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: self.confirmDialogParams.successMessage,
+            });
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialog");
+          self.$router.push({
+            name: "DaiteapWebLandingPage"
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: failureMessage,
+              });
+            }
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialog");
+        });
     },
   },
 };

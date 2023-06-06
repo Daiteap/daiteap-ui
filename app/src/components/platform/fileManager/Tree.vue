@@ -69,6 +69,7 @@
 
 <script>
 export default {
+  name: "Tree",
   props: {
     icons: Object,
     storage: String,

@@ -92,7 +92,6 @@ export default {
           )
           .then(function () {})
           .catch(function (error) {
-            console.error("Error on get_project_userlist occurred.");
             console.log(error);
             if (error.response && error.response.status == "403") {
               self.$notify({
@@ -158,7 +157,6 @@ export default {
           );
         })
         .catch(function (error) {
-          console.error("Error on get_project_userlist occurred.");
           console.log(error);
           if (error.response && error.response.status == "403") {
             self.$notify({
