@@ -10,17 +10,17 @@ This repo contains the Daiteap Cloud Console, which is a browser application use
 
 # Start UI
 
-- Clone the repo:
+  - Clone the repo:
 ```
 git clone https://github.com/Daiteap/daiteap-ui.git
 ```
 
-- Enter `app` directory:
+  - Enter `app` directory:
 ```
 cd ./daiteap-ui/app
 ```
 
-- Install requirements:
+  - Install requirements:
 ```
 sudo rm -r -f node_modules/
 sudo rm package-lock.json
@@ -30,24 +30,24 @@ sudo npm uninstall node-sass -g && npm cache clean --force && npm install node-s
 npm install
 ```
 
-- Build UI:
+  - Build UI:
 ```
 export VUE_APP_THEME=daiteap
 export VUE_APP_SINGLE_USER_MODE=False
 npm run build -- --modern
 ```
 
-- Change the adresses in `app/nginx/dev.conf`
+  - Change the adresses in `app/nginx/dev.conf`
 
-- Setup Nginx config and restart Nginx service:
+  - Setup Nginx config and restart Nginx service:
 ```
 sudo cp ./nginx/dev.conf etc/nginx/sites-enabled/cloudcluster.conf
 sudo service nginx restart
 ```
 
-- Edit `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
+  - Edit `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
 
-- Run UI:
+  - Run UI:
 ```
 export VUE_APP_THEME=daiteap
 export VUE_APP_SINGLE_USER_MODE=False
