@@ -16,22 +16,19 @@ Vue.use(Notifications);
 describe('Add Cloud Credentials - Openstack', () => {
     const mocked_get_response = {
         data: {
-            credentials: [
-                {
-                    id: 1,
-                    label: "openstack-1",
-                    provider: "openstack",
-                    type: "openstack",
-                    contact: "admin@mail.mail",
-                    valid: true,
-                    description: "desc",
-                    created_at: "4/1/2022",
-                    has_associated_environments: false,
-                },
-            ]
+            credentials: [{
+                id: 1,
+                label: "openstack-1",
+                provider: "openstack",
+                type: "openstack",
+                contact: "admin@mail.mail",
+                valid: true,
+                description: "desc",
+                created_at: "4/1/2022",
+                has_associated_environments: false,
+            }, ]
         },
     };
-    jest.spyOn(axios, 'get').mockResolvedValue(mocked_get_response);
 
     let credential = {
         label: "openstack-0",
@@ -45,11 +42,11 @@ describe('Add Cloud Credentials - Openstack', () => {
 
     jest.spyOn(AddOpenstackAccount.methods, 'suggestParams')
         .mockImplementation(() => {
-                return;
+            return;
         });
 
     let wrapper, openstack;
-    beforeEach(async () => {
+    beforeEach(async() => {
         wrapper = mount(AddCloudCredentials, {
             data() {
                 return {
@@ -62,6 +59,9 @@ describe('Add Cloud Credentials - Openstack', () => {
                 }
             },
             mocks: {
+                getCredentials: function() {
+                    return mocked_get_response.data.credentials;
+                },
                 $router: [],
             },
         });
@@ -94,7 +94,7 @@ describe('Add Cloud Credentials - Openstack', () => {
         await input.setValue(credential.external_network_id);
     });
 
-    afterEach(async () => {
+    afterEach(async() => {
         jest.clearAllMocks();
     });
 
@@ -120,18 +120,18 @@ describe('Add Cloud Credentials - Openstack', () => {
             }
         });
 
-    test('checks if label is taken', async () => {
+    test('checks if label is taken', async() => {
         let input = openstack.find('[data-test-id="input-label"]');
         let saveButton = openstack.find('[data-test-id="input-save"]');
-        
+
         await input.setValue('openstack-1');
-        expect(saveButton.attributes().disabled).toBe("disabled");
+        expect(saveButton.classes().includes("deactivated")).toBe(true);
 
         await input.setValue('openstack-2');
-        expect(saveButton.attributes().disabled).toBe(undefined);
+        expect(saveButton.classes().includes("deactivated")).toBe(false);
     });
 
-    test('adds valid openstack credentials', async () => {
+    test('adds valid openstack credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -144,7 +144,8 @@ describe('Add Cloud Credentials - Openstack', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-        
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
+
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
         await Vue.nextTick();
@@ -155,20 +156,27 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add invalid openstack credentials', async () => {
+    test('does not add invalid openstack credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    error: "",
-                },
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -180,22 +188,27 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(true);
 
         expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add openstack credentials without dlcmv2 images', async () => {
+    test('does not add openstack credentials without capi images when capi is on', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    capiImages: true,
-                    dlcmV2Images: false,
-                    externalNetwork: true,
-                },
-            },
-        };
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": false,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
+            }
+        }
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -207,22 +220,27 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(true);
 
         expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add openstack credentials without capi images when capi is on', async () => {
+    test('does not add openstack credentials without external network', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: true,
-                },
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": false
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -234,37 +252,11 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(true);
 
         expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add openstack credentials without external network', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    capiImages: true,
-                    dlcmV2Images: true,
-                    externalNetwork: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = openstack.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(openstack.vm.newOpenstack).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    test('adds openstack credentials without capi images when capi is off', async () => {
+    test('adds openstack credentials without capi images when capi is off', async() => {
         wrapper.setData({ computed_account_settings: { enable_kubernetes_capi: false } })
         await Vue.nextTick();
 
@@ -272,14 +264,18 @@ describe('Add Cloud Credentials - Openstack', () => {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: true,
-                },
+                error: false,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": false,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -291,10 +287,11 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('shared credentials checkbox works', async () => {
+    test('shared credentials checkbox works', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -307,12 +304,14 @@ describe('Add Cloud Credentials - Openstack', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         expect(openstack.vm.sharedCredentials).toBe(false);
         let input = openstack.find('[data-test-id="shared-credential"]');
-        await input.setChecked();
+        input.trigger('click');
+        await Vue.nextTick();
         expect(openstack.vm.sharedCredentials).toBe(true);
-        
+
         let saveButton = openstack.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
         await Vue.nextTick();
@@ -323,10 +322,11 @@ describe('Add Cloud Credentials - Openstack', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-        
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+
         expect(axios.post).toHaveBeenLastCalledWith(
-            "/server/createCloudCredentials", {
+            "/server/tenants/undefined/cloud-credentials", {
                 "account_params": credential,
                 "provider": "openstack",
                 "sharedCredentials": true

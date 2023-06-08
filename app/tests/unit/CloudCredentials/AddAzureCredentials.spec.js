@@ -16,22 +16,19 @@ Vue.use(Notifications);
 describe('Add Cloud Credentials - Azure', () => {
     const mocked_get_response = {
         data: {
-            credentials: [
-                {
-                    id: 1,
-                    label: "azure-1",
-                    provider: "azure",
-                    type: "azure",
-                    contact: "admin@mail.mail",
-                    valid: true,
-                    description: "desc",
-                    created_at: "4/1/2022",
-                    has_associated_environments: false,
-                },
-            ]
+            credentials: [{
+                id: 1,
+                label: "azure-1",
+                provider: "azure",
+                type: "azure",
+                contact: "admin@mail.mail",
+                valid: true,
+                description: "desc",
+                created_at: "4/1/2022",
+                has_associated_environments: false,
+            }, ]
         },
     };
-    jest.spyOn(axios, 'get').mockResolvedValue(mocked_get_response);
 
     let credential = {
         label: "azure-0",
@@ -43,7 +40,7 @@ describe('Add Cloud Credentials - Azure', () => {
     };
 
     let wrapper, azure;
-    beforeEach(async () => {
+    beforeEach(async() => {
         wrapper = mount(AddCloudCredentials, {
             data() {
                 return {
@@ -56,6 +53,9 @@ describe('Add Cloud Credentials - Azure', () => {
                 }
             },
             mocks: {
+                getCredentials: function() {
+                    return mocked_get_response.data.credentials;
+                },
                 $router: [],
             },
         });
@@ -85,7 +85,7 @@ describe('Add Cloud Credentials - Azure', () => {
         await input.setValue(credential.azure_client_secret);
     });
 
-    afterEach(async () => {
+    afterEach(async() => {
         jest.clearAllMocks();
     });
 
@@ -109,18 +109,18 @@ describe('Add Cloud Credentials - Azure', () => {
             }
         });
 
-    test('checks if label is taken', async () => {
+    test('checks if label is taken', async() => {
         let input = azure.find('[data-test-id="input-label"]');
         let saveButton = azure.find('[data-test-id="input-save"]');
 
         await input.setValue('azure-1');
-        expect(saveButton.attributes().disabled).toBe("disabled");
+        expect(saveButton.classes().includes("deactivated")).toBe(true);
 
         await input.setValue('azure-2');
-        expect(saveButton.attributes().disabled).toBe(undefined);
+        expect(saveButton.classes().includes("deactivated")).toBe(false);
     });
 
-    test('adds valid azure credentials', async () => {
+    test('adds valid azure credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -131,6 +131,7 @@ describe('Add Cloud Credentials - Azure', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = azure.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -142,20 +143,27 @@ describe('Add Cloud Credentials - Azure', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add invalid azure credentials', async () => {
+    test('does not add invalid azure credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    error: "",
-                },
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = azure.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -167,47 +175,27 @@ describe('Add Cloud Credentials - Azure', () => {
         expect(alert.exists()).toBe(true);
 
         expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add azure credentials without dlcmv2 images', async () => {
+    test('adds azure credentials without capi images or external network', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    dlcmV2Images: false,
-                },
+                error: false,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": false,
+                    "yaookCapiImages": true,
+                    "externalNetwork": false
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = azure.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(azure.vm.newAzure).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    test('adds azure credentials without capi images or external network', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = azure.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -219,10 +207,11 @@ describe('Add Cloud Credentials - Azure', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('shared credentials checkbox works', async () => {
+    test('shared credentials checkbox works', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -233,12 +222,14 @@ describe('Add Cloud Credentials - Azure', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         expect(azure.vm.sharedCredentials).toBe(false);
         let input = azure.find('[data-test-id="shared-credential"]');
-        await input.setChecked();
+        input.trigger('click');
+        await Vue.nextTick();
         expect(azure.vm.sharedCredentials).toBe(true);
-        
+
         let saveButton = azure.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
         await Vue.nextTick();
@@ -249,10 +240,11 @@ describe('Add Cloud Credentials - Azure', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-        
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+
         expect(axios.post).toHaveBeenLastCalledWith(
-            "/server/createCloudCredentials", {
+            "/server/tenants/undefined/cloud-credentials", {
                 "account_params": credential,
                 "provider": "azure",
                 "sharedCredentials": true

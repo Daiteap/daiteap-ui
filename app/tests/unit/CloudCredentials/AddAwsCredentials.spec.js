@@ -16,22 +16,19 @@ Vue.use(Notifications);
 describe('Add Cloud Credentials - Amazon', () => {
     const mocked_get_response = {
         data: {
-            credentials: [
-                {
-                    id: 1,
-                    label: "aws-1",
-                    provider: "aws",
-                    type: "aws",
-                    contact: "admin@mail.mail",
-                    valid: true,
-                    description: "desc",
-                    created_at: "4/1/2022",
-                    has_associated_environments: false,
-                },
-            ]
+            credentials: [{
+                id: 1,
+                label: "aws-1",
+                provider: "aws",
+                type: "aws",
+                contact: "admin@mail.mail",
+                valid: true,
+                description: "desc",
+                created_at: "4/1/2022",
+                has_associated_environments: false,
+            }, ]
         },
     };
-    jest.spyOn(axios, 'get').mockResolvedValue(mocked_get_response);
 
     let credential = {
         label: "aws-0",
@@ -41,7 +38,7 @@ describe('Add Cloud Credentials - Amazon', () => {
     };
 
     let wrapper, amazon;
-    beforeEach(async () => {
+    beforeEach(async() => {
         wrapper = mount(AddCloudCredentials, {
             data() {
                 return {
@@ -54,6 +51,9 @@ describe('Add Cloud Credentials - Amazon', () => {
                 }
             },
             mocks: {
+                getCredentials: function() {
+                    return mocked_get_response.data.credentials;
+                },
                 $router: [],
             },
         });
@@ -77,7 +77,7 @@ describe('Add Cloud Credentials - Amazon', () => {
         await input.setValue(credential.aws_secret_access_key);
     });
 
-    afterEach(async () => {
+    afterEach(async() => {
         jest.clearAllMocks();
     });
 
@@ -97,105 +97,33 @@ describe('Add Cloud Credentials - Amazon', () => {
             }
         });
 
-    test('checks if label is taken', async () => {
+    test('checks if label is taken', async() => {
         let input = amazon.find('[data-test-id="input-label"]');
         let saveButton = amazon.find('[data-test-id="input-save"]');
-        
+
         await input.setValue('aws-1');
-        expect(saveButton.attributes().disabled).toBe("disabled");
+        expect(saveButton.classes().includes("deactivated")).toBe(true);
 
         await input.setValue('aws-2');
-        expect(saveButton.attributes().disabled).toBe(undefined);
+        expect(saveButton.classes().includes("deactivated")).toBe(false);
     });
 
-    test('adds valid aws credentials', async () => {
+    test('adds valid aws credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    dlcmV2Images: true,
-                },
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-        
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(false);
-
-        expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-    });
-
-    test('does not add invalid aws credentials', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    error: "",
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    test('does not add aws credentials without dlcmv2 images', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    dlcmV2Images: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
- 
-    test('adds aws credentials without capi images or external network', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = amazon.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -207,10 +135,75 @@ describe('Add Cloud Credentials - Amazon', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('shared credentials checkbox works', async () => {
+    test('does not add invalid aws credentials', async() => {
+        const mocked_post_response = {
+            data: {
+                taskId: 0,
+                status: "ok",
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
+            },
+        };
+        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
+
+        let saveButton = amazon.find('[data-test-id="input-save"]');
+        saveButton.trigger('click');
+        await Vue.nextTick();
+        expect(amazon.vm.newAws).toEqual(credential);
+        await Vue.nextTick();
+
+        let alert = wrapper.findComponent(WarningAlert);
+        expect(alert.exists()).toBe(true);
+
+        expect(wrapper.vm.$router[0]).toBe(undefined);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+    });
+
+    test('adds aws credentials without capi images or external network', async() => {
+        const mocked_post_response = {
+            data: {
+                taskId: 0,
+                status: "ok",
+                error: false,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": false,
+                    "yaookCapiImages": true,
+                    "externalNetwork": false
+                }
+            },
+        };
+        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
+
+        let saveButton = amazon.find('[data-test-id="input-save"]');
+        saveButton.trigger('click');
+        await Vue.nextTick();
+        expect(amazon.vm.newAws).toEqual(credential);
+        await Vue.nextTick();
+
+        let alert = wrapper.findComponent(WarningAlert);
+        expect(alert.exists()).toBe(false);
+
+        expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+    });
+
+    test('shared credentials checkbox works', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -221,12 +214,14 @@ describe('Add Cloud Credentials - Amazon', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         expect(amazon.vm.sharedCredentials).toBe(false);
         let input = amazon.find('[data-test-id="shared-credential"]');
-        await input.setChecked();
+        input.trigger('click');
+        await Vue.nextTick();
         expect(amazon.vm.sharedCredentials).toBe(true);
-        
+
         let saveButton = amazon.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
         await Vue.nextTick();
@@ -237,10 +232,11 @@ describe('Add Cloud Credentials - Amazon', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-        
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+
         expect(axios.post).toHaveBeenLastCalledWith(
-            "/server/createCloudCredentials", {
+            "/server/tenants/undefined/cloud-credentials", {
                 "account_params": credential,
                 "provider": "aws",
                 "sharedCredentials": true

@@ -16,22 +16,19 @@ Vue.use(Notifications);
 describe('Add Cloud Credentials - On Premise', () => {
     const mocked_get_response = {
         data: {
-            credentials: [
-                {
-                    id: 1,
-                    label: "onpremise-1",
-                    provider: "onpremise",
-                    type: "onpremise",
-                    contact: "admin@mail.mail",
-                    valid: true,
-                    description: "desc",
-                    created_at: "4/1/2022",
-                    has_associated_environments: false,
-                },
-            ]
+            credentials: [{
+                id: 1,
+                label: "onpremise-1",
+                provider: "onpremise",
+                type: "onpremise",
+                contact: "admin@mail.mail",
+                valid: true,
+                description: "desc",
+                created_at: "4/1/2022",
+                has_associated_environments: false,
+            }, ]
         },
     };
-    jest.spyOn(axios, 'get').mockResolvedValue(mocked_get_response);
 
     let credential = {
         label: "onpremise-0",
@@ -44,7 +41,7 @@ describe('Add Cloud Credentials - On Premise', () => {
     };
 
     let wrapper, onpremise;
-    beforeEach(async () => {
+    beforeEach(async() => {
         wrapper = mount(AddCloudCredentials, {
             data() {
                 return {
@@ -57,6 +54,9 @@ describe('Add Cloud Credentials - On Premise', () => {
                 }
             },
             mocks: {
+                getCredentials: function() {
+                    return mocked_get_response.data.credentials;
+                },
                 $router: [],
             },
         });
@@ -83,20 +83,20 @@ describe('Add Cloud Credentials - On Premise', () => {
         await input.setValue(credential.admin_username);
 
         jest.spyOn(FileReader.prototype, 'readAsText')
-        .mockImplementation(() => {
+            .mockImplementation(() => {
                 return;
-        });
+            });
         input = onpremise.find('[data-test-id="input-key"]');
         input.trigger('change')
         expect(FileReader.prototype.readAsText).toHaveBeenCalledTimes(1);
         onpremise.vm.onpremise.admin_private_key = credential.admin_private_key;
         onpremise.vm.newOnpremise.admin_private_key = credential.admin_private_key;
-        
+
         input = onpremise.find('[data-test-id="input-password"]');
         await input.setValue(credential.admin_private_key_password);
     });
 
-    afterEach(async () => {
+    afterEach(async() => {
         jest.clearAllMocks();
     });
 
@@ -120,18 +120,18 @@ describe('Add Cloud Credentials - On Premise', () => {
             }
         });
 
-    test('checks if label is taken', async () => {
+    test('checks if label is taken', async() => {
         let input = onpremise.find('[data-test-id="input-label"]');
         let saveButton = onpremise.find('[data-test-id="input-save"]');
 
         await input.setValue('onpremise-1');
-        expect(saveButton.attributes().disabled).toBe("disabled");
+        expect(saveButton.classes().includes("deactivated")).toBe(true);
 
         await input.setValue('onpremise-2');
-        expect(saveButton.attributes().disabled).toBe(undefined);
+        expect(saveButton.classes().includes("deactivated")).toBe(false);
     });
 
-    test('adds valid on-premise credentials', async () => {
+    test('adds valid on-premise credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -142,6 +142,7 @@ describe('Add Cloud Credentials - On Premise', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = onpremise.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -153,20 +154,27 @@ describe('Add Cloud Credentials - On Premise', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add invalid on-premise credentials', async () => {
+    test('does not add invalid on-premise credentials', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    error: "",
-                },
+                error: true,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": true,
+                    "yaookCapiImages": true,
+                    "externalNetwork": true
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = onpremise.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -178,47 +186,27 @@ describe('Add Cloud Credentials - On Premise', () => {
         expect(alert.exists()).toBe(true);
 
         expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.post).toHaveBeenCalledTimes(1);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('does not add on-premise credentials without dlcmv2 images', async () => {
+    test('adds on-premise credentials without capi images or external network', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
                 status: "ok",
-                msg: {
-                    dlcmV2Images: false,
-                },
+                error: false,
+                errorMessage: "",
+                lcmStatuses: {
+                    "dlcmV2Images": true,
+                    "capiImages": false,
+                    "yaookCapiImages": true,
+                    "externalNetwork": false
+                }
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = onpremise.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(onpremise.vm.newOnpremise).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    test('adds on-premise credentials without capi images or external network', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         let saveButton = onpremise.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
@@ -230,10 +218,11 @@ describe('Add Cloud Credentials - On Premise', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    test('shared credentials checkbox works', async () => {
+    test('shared credentials checkbox works', async() => {
         const mocked_post_response = {
             data: {
                 taskId: 0,
@@ -244,12 +233,14 @@ describe('Add Cloud Credentials - On Premise', () => {
             },
         };
         jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+        jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
         expect(onpremise.vm.sharedCredentials).toBe(false);
         let input = onpremise.find('[data-test-id="shared-credential"]');
-        await input.setChecked();
+        input.trigger('click');
+        await Vue.nextTick();
         expect(onpremise.vm.sharedCredentials).toBe(true);
-        
+
         let saveButton = onpremise.find('[data-test-id="input-save"]');
         saveButton.trigger('click');
         await Vue.nextTick();
@@ -260,10 +251,11 @@ describe('Add Cloud Credentials - On Premise', () => {
         expect(alert.exists()).toBe(false);
 
         expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-        
+        expect(axios.post).toHaveBeenCalledTimes(2);
+        expect(axios.get).toHaveBeenCalledTimes(1);
+
         expect(axios.post).toHaveBeenLastCalledWith(
-            "/server/createCloudCredentials", {
+            "/server/tenants/undefined/cloud-credentials", {
                 "account_params": credential,
                 "provider": "onpremise",
                 "sharedCredentials": true
