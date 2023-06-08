@@ -4,16 +4,15 @@ import Vue from 'vue';
 Vue.config.silent = true;
 
 describe('WarningAlert.vue', () => {
-    let wrapper;
-    let bAlert;
+    let wrapper, bAlert;
 
     beforeEach(() => {
         wrapper = mount(WarningAlert);
-        bAlert = wrapper.find('b-alert')
+        bAlert = wrapper.find("b-alert");
     })
 
     test('renders props.msg when passed', async() => {
-        const message = "Message"
+        let message = "Message";
 
         await wrapper.setProps({ msg: message })
 
@@ -21,7 +20,7 @@ describe('WarningAlert.vue', () => {
     })
 
     test('sets props.color when passed', async() => {
-        const colour = "info"
+        let colour = "info";
 
         await wrapper.setProps({ color: colour })
 
@@ -29,13 +28,13 @@ describe('WarningAlert.vue', () => {
     })
 
     test('sets props.dismissible when passed', async() => {
-        await wrapper.setProps({ closeOption: false })
-        expect(bAlert.attributes().dismissible).toBe(undefined)
+        await wrapper.setProps({ closeOption: false });
+        expect(bAlert.attributes().dismissible).toBe(undefined);
 
-        await wrapper.setProps({ closeOption: true })
-        expect(bAlert.attributes().dismissible).toBe("true")
+        await wrapper.setProps({ closeOption: true });
+        expect(bAlert.attributes().dismissible).toBe("true");
 
-        await wrapper.setProps({ closeOption: undefined })
-        expect(bAlert.attributes().dismissible).toBe("true")
+        await wrapper.setProps({ closeOption: undefined });
+        expect(bAlert.attributes().dismissible).toBe("true");
     })
 })
