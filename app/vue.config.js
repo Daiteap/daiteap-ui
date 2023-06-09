@@ -14,3 +14,4 @@ module.exports = {
     lintOnSave: true,
     filenameHashing: true
 };
+
