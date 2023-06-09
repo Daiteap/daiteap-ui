@@ -757,7 +757,7 @@ Vue.mixin({
         });
     },
     editUserInfo(request) {
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/users/" +

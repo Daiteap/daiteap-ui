@@ -112,12 +112,12 @@ export default {
     },
     changeTenant(payload) {
       let self = this;
-      let endpoint = "/server/user/select-tenant";
-      let requestBody = {
+      const endpoint = "/server/user/select-tenant";
+      const requestBody = {
         "selectedTenant": payload.id
       };
-      let successMessage = 'You have successfully submitted tenant change.';
-      let failureMessage = 'Error occured while you tried to submit tenant change.';
+      const successMessage = 'You have successfully submitted tenant change.';
+      const failureMessage = 'Error occured while you tried to submit tenant change.';
 
       this.axios
         .post(

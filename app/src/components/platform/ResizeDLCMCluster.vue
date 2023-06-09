@@ -224,7 +224,7 @@ export default {
 
       let resizeDLCMClusterRequestBody = this.$finalModel
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
 
       this.axios
         .post(endpoint, resizeDLCMClusterRequestBody, this.get_axiosConfig())

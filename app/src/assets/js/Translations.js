@@ -4,4 +4,4 @@ export default {
         back: 'Back',
         finish: 'Submit'
     }
-}
+};

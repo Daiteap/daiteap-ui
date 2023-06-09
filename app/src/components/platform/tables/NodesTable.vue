@@ -417,12 +417,12 @@ export default {
     },
     stopMachine(payload) {
       let self = this;
-      let requestBody = {
+      const requestBody = {
         clusterID: payload.id,
         machineName: payload.name,
         machineProvider: payload.provider,
       };
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
@@ -430,9 +430,9 @@ export default {
         "/machines/" +
         payload.name +
         "/stop";
-      let successMessage =
+      const successMessage =
         'You have successfully submitted stop for "' + payload.name + '".';
-      let failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit stop of "' + 
         payload.name + '".';
 
@@ -495,12 +495,12 @@ export default {
     },
     startMachine(payload) {
       let self = this;
-      let requestBody = {
+      const requestBody = {
         clusterID: payload.id,
         machineName: payload.name,
         machineProvider: payload.provider,
       };
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
@@ -508,9 +508,9 @@ export default {
         "/machines/" +
         payload.name +
         "/start";
-      let successMessage =
+      const successMessage =
         'You have successfully submitted start for "' + payload.name + '".';
-      let failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit start of "' + 
         payload.name + '".';
 
@@ -574,12 +574,12 @@ export default {
     },
     restartMachine(payload) {
       let self = this;
-      let requestBody = {
+      const requestBody = {
         clusterID: payload.id,
         machineName: payload.name,
         machineProvider: payload.provider,
       };
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
@@ -587,9 +587,9 @@ export default {
         "/machines/" +
         payload.name +
         "/restart";
-      let successMessage =
+      const successMessage =
         'You have successfully submitted restart for "' + payload.name + '".';
-      let failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit restart of "' + 
         payload.name + '".';
 

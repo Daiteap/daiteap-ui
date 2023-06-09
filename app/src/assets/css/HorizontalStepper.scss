@@ -143,7 +143,7 @@
           }
 
           .step-title {
-            opacity: .35;
+            opacity: 0.35;
           }
         }
 
@@ -170,7 +170,7 @@
           h3,
           h4,
           h5 {
-            margin: 0 0 .2rem 0;
+            margin: 0 0 0.2rem 0;
             color: #333;
             font-weight: bold;
           }
@@ -200,7 +200,7 @@
     justify-content: flex-end;
 
     .stepper-button {
-      padding: .5rem 1rem;
+      padding: 0.5rem 1rem;
       cursor: pointer;
       display: flex;
       align-items: center;

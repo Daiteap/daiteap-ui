@@ -339,7 +339,7 @@ const router = new Router({
       redirect: '/app/login',
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   if (!process.env.VUE_APP_SINGLE_USER_MODE === 'False') {

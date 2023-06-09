@@ -511,7 +511,7 @@ if (singleUserMode) {
     store,
     vuetify,
     render: (h) => h(App),
-  }).$mount('#app')
+  }).$mount('#app');
 } else {
   Vue.$keycloak = Keycloak("./keycloak.json");
 
@@ -538,7 +538,7 @@ if (singleUserMode) {
           .updateToken(70)
           .then(() => {})
           .catch(() => {
-            console.log('Failed to refresh token')
+            console.log('Failed to refresh token');
           });
       }, 6000);
     })

@@ -226,9 +226,9 @@ export default {
       let self = this;
       this.$finalModel.clusterID = this.clusterID;
 
-      let resizeCapiClusterRequestBody = this.$finalModel
+      const resizeCapiClusterRequestBody = this.$finalModel
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/capi-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/capi-resize";
 
       this.axios
         .post(endpoint, resizeCapiClusterRequestBody, this.get_axiosConfig())

@@ -12,4 +12,4 @@ export function formatBytes(bytes, decimals = 2) {
 
 export default {
     formatBytes
-}
+};

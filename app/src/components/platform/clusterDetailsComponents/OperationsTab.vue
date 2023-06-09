@@ -330,18 +330,18 @@ export default {
     },
     stopCluster(payload) {
       let self = this;
-      let requestBody = {
+      const requestBody = {
         clusterID: payload.id,
       };
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/stop";
-      let successMessage =
+      const successMessage =
         'You have successfully submitted stop for "' + payload.name + '".';
-      let failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit stop of "' + 
         payload.name + '".';
 
@@ -403,18 +403,18 @@ export default {
     },
     startCluster(payload) {
       let self = this;
-      let requestBody = {
+      const requestBody = {
         clusterID: payload.id,
       };
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/start";
-      let successMessage =
+      const successMessage =
         'You have successfully submitted start for "' + payload.name + '".';
-      let failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit start of "' + 
         payload.name + '".';
 
