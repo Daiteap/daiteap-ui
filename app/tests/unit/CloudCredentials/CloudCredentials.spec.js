@@ -337,7 +337,6 @@ describe('Cloud Credentials', () => {
 					username: "testUser"
 				},
 				getCredentials: function () {
-					console.log("hahahahahah");
 					return mocked_get_response.data.credentials;
 				}
 			},
