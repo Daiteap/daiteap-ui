@@ -1,31 +1,29 @@
-import { mount } from '@vue/test-utils'
-import WarningAlert from '@/components/platform/WarningAlert.vue'
+import { mount } from '@vue/test-utils';
+import WarningAlert from '@/components/platform/WarningAlert.vue';
 import Vue from 'vue';
 Vue.config.silent = true;
 
 describe('WarningAlert.vue', () => {
 	let wrapper, bAlert;
+	const message = "Message";
+	const colour = "info";
 
 	beforeEach(() => {
 		wrapper = mount(WarningAlert);
 		bAlert = wrapper.find("b-alert");
-	})
+	});
 
 	test('renders props.msg when passed', async () => {
-		let message = "Message";
+		await wrapper.setProps({ msg: message });
 
-		await wrapper.setProps({ msg: message })
-
-		expect(wrapper.text()).toMatch(message)
-	})
+		expect(wrapper.text()).toMatch(message);
+	});
 
 	test('sets props.color when passed', async () => {
-		let colour = "info";
+		await wrapper.setProps({ color: colour });
 
-		await wrapper.setProps({ color: colour })
-
-		expect(bAlert.attributes().variant).toMatch(colour)
-	})
+		expect(bAlert.attributes().variant).toMatch(colour);
+	});
 
 	test('sets props.dismissible when passed', async () => {
 		await wrapper.setProps({ closeOption: false });
@@ -36,5 +34,5 @@ describe('WarningAlert.vue', () => {
 
 		await wrapper.setProps({ closeOption: undefined });
 		expect(bAlert.attributes().dismissible).toBe("true");
-	})
-})
+	});
+});
