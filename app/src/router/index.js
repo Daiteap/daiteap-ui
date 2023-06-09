@@ -52,8 +52,8 @@ import ClusterStatus from '@/components/platform/email/ClusterStatus';
 
 const Layout = () => import('@/views/Layout');
 
-Vue.use(DropdownPlugin)
-Vue.use(Router)
+Vue.use(DropdownPlugin);
+Vue.use(Router);
 const router = new Router({
   routes: [
     {
@@ -345,25 +345,25 @@ router.beforeEach((to, from, next) => {
   if (!process.env.VUE_APP_SINGLE_USER_MODE === 'False') {
     if (to.meta.isAuthenticated) {
       // Get the actual url of the app, it's needed for Keycloak
-      const basePath = window.location.toString()
+      const basePath = window.location.toString();
       if (!Vue.$keycloak.authenticated) {
         // The page is protected and the user is not authenticated. Force a login.
-        Vue.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path })
+        Vue.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path });
       } else if (Vue.$keycloak.hasResourceRole('vue-demo-user')) {
         // The user was authenticated, and has the app role (is authorized). Update the token.
-        next()
+        next();
       } else {
         // The user was authenticated, but did not have the correct role (is not authorized)
         // Redirect the user to an error page
-        next({ name: 'Unauthorized' })
+        next({ name: 'Unauthorized' });
       }
     } else {
       // This page did not require authentication
-      next()
+      next();
     }
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

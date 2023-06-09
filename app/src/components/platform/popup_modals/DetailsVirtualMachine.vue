@@ -80,7 +80,7 @@
                 style="border: solid 2px gray; border-radius: 5px;"
                 class="p-0 m-0 start"
                 :class="machineDetails.status == 10 ? 'baseBlock':'disabledOperation'"
-                @click="showStartMachineDialog(machineDetails.id, machineDetails.name, machineDetails.provider); "
+                @click="showStartMachineDialog(machineDetails.id, machineDetails.name); "
               >
                 <span style="font-size: 25px">
                   <i class="fas fa-play"></i>
@@ -95,7 +95,7 @@
                 style="border: solid 2px gray; border-radius: 5px;"
                 class="p-0 m-0 stop"
                 :class="machineDetails.status == 0 ? 'baseBlock':'disabledOperation'"
-                @click="showStopMachineDialog(machineDetails.id, machineDetails.name, machineDetails.provider); "
+                @click="showStopMachineDialog(machineDetails.id, machineDetails.name); "
               >
                 <span style="font-size: 25px">
                   <i class="fas fa-stop"></i>
@@ -110,7 +110,7 @@
                 style="border: solid 2px gray; border-radius: 5px;"
                 class="p-0 m-0 restart"
                 :class="machineDetails.status == 0 ? 'baseBlock':'disabledOperation'"
-                @click="showRestartMachineDialog(machineDetails.id, machineDetails.name, machineDetails.provider); "
+                @click="showRestartMachineDialog(machineDetails.id, machineDetails.name); "
               >
                 <span style="font-size: 25px">
                   <i class="fas fa-sync-alt"></i>
@@ -240,7 +240,7 @@ export default {
           self.closeModal();
         });
     },
-    showStopMachineDialog(id, name, provider) {
+    showStopMachineDialog(id, name) {
       if (this.machineDetails.status == 0){
         this.showConfirmation=true
         this.confirmDialogParams.text =
@@ -317,7 +317,7 @@ export default {
           self.$bvModal.hide("bv-modal-confirmdialogstop");
         });
     },
-    showStartMachineDialog(id, name, provider) {
+    showStartMachineDialog(id, name) {
       if (this.machineDetails.status == 1){
         this.showConfirmation=true
         this.confirmDialogParams.text =
@@ -394,7 +394,7 @@ export default {
           self.$bvModal.hide("bv-modal-confirmdialogstart");
         });
     },
-    showRestartMachineDialog(id, name, provider) {
+    showRestartMachineDialog(id, name) {
       if (this.machineDetails.status == 0){
         this.showConfirmation=true
         this.confirmDialogParams.text =

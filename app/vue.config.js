@@ -13,4 +13,4 @@ module.exports = {
     // disable cache
     lintOnSave: true,
     filenameHashing: true
-}
+};

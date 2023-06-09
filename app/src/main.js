@@ -34,7 +34,7 @@ Vue.use(AlertPlugin);
 Vue.use(VueAxios, axios);
 Vue.use(VueSession, {
     "persist": true
-})
+});
 Vue.use(Notifications);
 
 Vue.prototype.$finalModel = {};
@@ -495,14 +495,14 @@ const store = new Vuex.Store({
     }
 });
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 let singleUserMode = false;
 
 if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
-    singleUserMode = false
+    singleUserMode = false;
 } else {
-    singleUserMode = true
+    singleUserMode = true;
 }
 
 if (singleUserMode) {
@@ -519,9 +519,9 @@ if (singleUserMode) {
     .init({ onLoad: 'login-required' })
     .then((auth) => {
       if (!auth) {
-        window.location.reload()
+        window.location.reload();
       } else {
-        console.log('Authenticated')
+        console.log('Authenticated');
 
         new Vue({
           router,
@@ -529,7 +529,7 @@ if (singleUserMode) {
           vuetify,
           el: '#app',
           render: (h) => h(App, { props: { keycloak: Vue.$keycloak } }),
-        })
+        });
       }
 
       //Token Refresh
@@ -539,10 +539,10 @@ if (singleUserMode) {
           .then(() => {})
           .catch(() => {
             console.log('Failed to refresh token')
-          })
-      }, 6000)
+          });
+      }, 6000);
     })
     .catch(() => {
-      console.log('Authenticated Failed')
-    })
+      console.log('Authenticated Failed');
+    });
 }

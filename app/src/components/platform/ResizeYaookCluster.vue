@@ -305,6 +305,6 @@ i.top-left {
   justify-content: space-around;
 }
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>
