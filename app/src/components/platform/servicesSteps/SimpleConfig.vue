@@ -57,7 +57,6 @@
                 type="text"
                 v-bind:placeholder="defaultName"
                 v-model="form.name"
-                :value="form.name"
                 @input="setFormName"
                 autocomplete="off"
                 @keyup="formExtraFieldsCheck"
@@ -1354,7 +1353,7 @@ export default {
     formExtraFieldsCheck() {
       this.emptyExtraFields = false;
 
-      formName = this.getFormName();
+      let formName = this.getFormName();
       if (
         !(
           formName &&
@@ -1414,7 +1413,7 @@ export default {
     },
     serviceOptionsCheck() {
       let emptyFields = false;
-      formName = this.getFormName();
+      let formName = this.getFormName();
 
       if (this.checkIfObjectIsEmpty(this.formExtraFields)) {
         if (

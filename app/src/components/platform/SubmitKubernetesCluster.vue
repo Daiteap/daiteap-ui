@@ -420,15 +420,15 @@ export default {
     },
     cancelInstallation(payload) {
       let self = this;
-      endpoint = 
+      let endpoint = 
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/cancel-creation";
-      requestBody = {}
-      successMessage = 'You have successfully submitted deletion for "' + payload.name + '".';
-      failureMessage = 'Error occured while you tried to submit deletion of "' + payload.name + '".';
+      let requestBody = {}
+      let successMessage = 'You have successfully submitted deletion for "' + payload.name + '".';
+      let failureMessage = 'Error occured while you tried to submit deletion of "' + payload.name + '".';
 
       this.axios
         .post(

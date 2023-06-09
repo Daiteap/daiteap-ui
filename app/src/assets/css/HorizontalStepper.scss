@@ -68,12 +68,12 @@
       justify-content: space-between;
 
       &.next {
-        border: 0px solid #333;
+        border: 0 solid #333;
         color: #333;
         right: 1%;
 
         &.deactivated {
-          border: 0px solid #333 !important;
+          border: 0 solid #333 !important;
           color: #333;
           cursor: not-allowed !important;
         }
@@ -84,7 +84,7 @@
         left: 1%;
 
         &.deactivated {
-          border: 0px solid #333 !important;
+          border: 0 solid #333 !important;
           color: #333;
           cursor: not-allowed !important;
         }
@@ -113,7 +113,7 @@
       position: relative;
       width: 100%;
       left: 0;
-      padding: 2rem 0rem;
+      padding: 2rem 0;
 
       @include breakpoint(xs) {
         width: 90%;
@@ -196,7 +196,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 2rem;
-    border-top: 0px solid #ccc;
+    border-top: 0 solid #ccc;
     justify-content: flex-end;
 
     .stepper-button {
@@ -207,7 +207,7 @@
       justify-content: center;
 
       &.next {
-        border: 0px solid #000;
+        border: 0 solid #000;
         border-radius: 100rem;
         background-color: #fff;
         color: #000;
@@ -215,7 +215,7 @@
 
         &.deactivated {
           background-color: #fff !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #bcbcbc;
           cursor: not-allowed !important;
           border-radius: 100rem;
@@ -223,7 +223,7 @@
 
         &.deactivated:hover {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #fff;
           cursor: not-allowed !important;
           border-radius: 100rem;
@@ -231,7 +231,7 @@
       }
 
       &.next:hover {
-        border: 0px solid #000;
+        border: 0 solid #000;
         border-radius: 100rem;
         background-color: #000;
         color: #fff;
@@ -239,14 +239,14 @@
 
         &.deactivated {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           cursor: not-allowed !important;
           border-radius: 100rem;
         }
 
         &.deactivated:hover {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #fff;
           cursor: not-allowed !important;
           border-radius: 100rem;
@@ -254,7 +254,7 @@
       }
 
       &.previous {
-        border: 0px solid #000;
+        border: 0 solid #000;
         border-radius: 100rem;
         background-color: #fff;
         color: #000;
@@ -262,7 +262,7 @@
 
         &.deactivated {
           background-color: #fff !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #bcbcbc;
           cursor: not-allowed !important;
           border-radius: 100rem;
@@ -270,7 +270,7 @@
 
         &.deactivated:hover {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #fff;
           cursor: not-allowed !important;
           border-radius: 100rem;
@@ -278,7 +278,7 @@
       }
 
       &.previous:hover {
-        border: 0px solid #000;
+        border: 0 solid #000;
         border-radius: 100rem;
         background-color: #000;
         color: #fff;
@@ -286,14 +286,14 @@
 
         &.deactivated {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           cursor: not-allowed !important;
           border-radius: 100rem;
         }
 
         &.deactivated:hover {
           background-color: #bcbcbc !important;
-          border: 0px solid #000;
+          border: 0 solid #000;
           color: #fff;
           cursor: not-allowed !important;
           border-radius: 100rem;
