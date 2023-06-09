@@ -601,19 +601,7 @@ export default {
           self.clustersList[i].ID
         );
         cluster_machines.forEach(addTenant);
-        function addTenant(item) {
-          item.tenant = self.clustersList[i].Tenant;
-          let errorMsg = self.clustersList[i].ErrorMsg;
-
-          try {
-            item.error_msg = Buffer.from(
-              JSON.parse(errorMsg).message,
-              "base64"
-            ).toString();
-          } catch (e) {
-            item.error_msg = errorMsg;
-          }
-        }
+        self.addTenant(item);
 
         allMachines = allMachines.concat(cluster_machines);
       }
@@ -621,6 +609,19 @@ export default {
       self.machinesList = allMachines;
 
       self.loading = false;
+    },
+    addTenant(item) {
+      item.tenant = this.clustersList[i].Tenant;
+      let errorMsg = this.clustersList[i].ErrorMsg;
+
+      try {
+        item.error_msg = Buffer.from(
+          JSON.parse(errorMsg).message,
+          "base64"
+        ).toString();
+      } catch (e) {
+        item.error_msg = errorMsg;
+      }
     },
     updateSelectedMachineDetails(machine) {
       this.machineDetails = machine;

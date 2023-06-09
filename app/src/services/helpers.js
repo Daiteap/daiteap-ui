@@ -21,7 +21,7 @@ const CLUSTER_CREATE_TEMPLATE = {
     "name": "",
     "description": "",
     "projectId": "697a1ee4-8469-48e9-99d5-b17fbbebb273"
-}
+};
 
 export default {
   
@@ -38,32 +38,32 @@ export default {
         request.projectId = template_details.projectId;
 
         let key = '';
-        if (template_details.hasOwnProperty('aws')) {
-            request.awsSelected = true
-            key = 'aws'
-        } else if (template_details.hasOwnProperty('google')) {
-            request.googleSelected = true
-            key = 'google'
-        } else if  (template_details.hasOwnProperty('azure')) {
-            request.azureSelected = true
-            key = 'azure'
-        } else if  (template_details.hasOwnProperty('onpremise')) {
-            request.onpremiseSelected = true
-            key = 'onpremise'
-        } else if  (template_details.hasOwnProperty('iotarm')) {
-            request.iotarmSelected = true
-            key = 'iotarm'
-        } else if  (template_details.hasOwnProperty('openstack')) {
-            request.openstackSelected = true
-            key = 'openstack'
+        if (Object.prototype.hasOwnProperty.call(template_details, "aws")) {
+            request.awsSelected = true;
+            key = 'aws';
+        } else if (Object.prototype.hasOwnProperty.call(template_details, "google")) {
+            request.googleSelected = true;
+            key = 'google';
+        } else if (Object.prototype.hasOwnProperty.call(template_details, "azure")) {
+            request.azureSelected = true;
+            key = 'azure';
+        } else if (Object.prototype.hasOwnProperty.call(template_details, "onpremise")) {
+            request.onpremiseSelected = true;
+            key = 'onpremise';
+        } else if (Object.prototype.hasOwnProperty.call(template_details, "iotarm")) {
+            request.iotarmSelected = true;
+            key = 'iotarm';
+        } else if (Object.prototype.hasOwnProperty.call(template_details, "openstack")) {
+            request.openstackSelected = true;
+            key = 'openstack';
         }
         
-        let data = template_details[key]
-        request[key] = {}
-        request[key]['account'] = data['account']
-        request[key]['region'] = data['region']
-        request[key]['nodes'] = data['nodes']
-        request[key]['vpcCidr'] = data['vpcCidr']
+        let data = template_details[key];
+        request[key] = {};
+        request[key]['account'] = data['account'];
+        request[key]['region'] = data['region'];
+        request[key]['nodes'] = data['nodes'];
+        request[key]['vpcCidr'] = data['vpcCidr'];
 
         return request;
     },

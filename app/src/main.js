@@ -19,7 +19,7 @@ import Vuex from "vuex";
 import VueSlider from 'vue-slider-component';
 import moment from 'moment';
 import vuetify from "./vuetify";
-import Keycloak from 'keycloak-js'
+import Keycloak from 'keycloak-js';
 import { ToggleButton } from 'vue-js-toggle-button';
 
 Vue.component('VueSlider', VueSlider);

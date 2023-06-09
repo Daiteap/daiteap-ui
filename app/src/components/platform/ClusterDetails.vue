@@ -1161,7 +1161,7 @@ export default {
           connectionInfo = {};
         }
 
-        if (!connectionInfo.hasOwnProperty("addresses")) {
+        if (!Object.prototype.hasOwnProperty.call(connectionInfo, "addresses")) {
           connectionInfo["addresses"] = [];
         }
 

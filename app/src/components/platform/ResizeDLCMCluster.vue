@@ -87,7 +87,7 @@ export default {
 
       for (const key in Vue.prototype.$finalModel) {
         if (Object.hasOwnProperty.call(Vue.prototype.$finalModel, key)) {
-          if (Vue.prototype.$finalModel[key].hasOwnProperty('nodes')) {
+          if (Object.hasOwnProperty.call(Vue.prototype.$finalModel[key], "nodes")) {
             Vue.prototype.$existingNodesCount += Vue.prototype.$finalModel[key].nodes.length;
           }
         }
