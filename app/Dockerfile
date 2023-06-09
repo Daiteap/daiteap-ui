@@ -7,7 +7,7 @@ COPY package-lock.json ./
 
 RUN apk add python3 python2 make g++
 RUN apk add --update py-pip
-RUN pip3 install markdown==3.4.3 mkdocs==1.4.3 jinja2==3.0.3
+RUN pip3 install markdown==3.3.4 mkdocs==1.3.0 jinja2==3.0.3
 
 RUN npm uninstall node-sass -g && npm cache clean --force && npm install node-sass
 RUN npm install
