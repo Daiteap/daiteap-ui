@@ -9,7 +9,6 @@
           type="text"
           v-bind:placeholder="defaultName"
           v-model="form.name"
-          :value="form.name"
           @input="onNameChange"
         />
       </div>
@@ -20,7 +19,6 @@
           type="text"
           placeholder="default"
           v-model="form.namespace"
-          :value="form.namespace"
           @input="onNamespaceChange"
         />
       </div>
