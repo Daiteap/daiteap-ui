@@ -600,8 +600,7 @@ export default {
         let cluster_machines = await self.getClusterDetails(
           self.clustersList[i].ID
         );
-        cluster_machines.forEach(addTenant);
-        self.addTenant(item);
+        cluster_machines.forEach(item => self.addTenant(item));
 
         allMachines = allMachines.concat(cluster_machines);
       }

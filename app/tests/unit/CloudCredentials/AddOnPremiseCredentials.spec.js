@@ -46,12 +46,12 @@ describe('Add Cloud Credentials - On Premise', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -61,10 +61,10 @@ describe('Add Cloud Credentials - On Premise', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "onpremise" })
+		wrapper.setData({ selectedProvider: "onpremise" });
 		await Vue.nextTick();
 		onpremise = wrapper.findComponent(AddOnpremiseAccount);
-		onpremise.setData({ get_axiosConfig: () => { return {} } });
+		onpremise.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = onpremise.find('[data-test-id="input-label"]');
@@ -87,7 +87,7 @@ describe('Add Cloud Credentials - On Premise', () => {
 				return;
 			});
 		input = onpremise.find('[data-test-id="input-key"]');
-		input.trigger('change')
+		input.trigger('change');
 		expect(FileReader.prototype.readAsText).toHaveBeenCalledTimes(1);
 		onpremise.vm.onpremise.admin_private_key = credential.admin_private_key;
 		onpremise.vm.newOnpremise.admin_private_key = credential.admin_private_key;

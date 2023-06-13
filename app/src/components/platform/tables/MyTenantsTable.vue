@@ -105,7 +105,7 @@ export default {
       this.confirmDialogParams.envId = "";
       this.confirmDialogParams.envName = tenant.name;
       this.confirmDialogParams.payload = {
-        "id": id,
+        "id": tenant.id,
       };
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialog");

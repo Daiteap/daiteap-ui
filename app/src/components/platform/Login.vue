@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     login_keycloak () {
-      Vue.$keycloak.login()
+      Vue.$keycloak.login();
     },
     forgotPassword_keycloak () {
       window.open("https://localhost:8090/auth/realms/Daiteap/login-actions/reset-credentials", "_blank");

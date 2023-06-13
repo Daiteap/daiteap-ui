@@ -43,12 +43,12 @@ describe('Add Cloud Credentials - Amazon', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -58,10 +58,10 @@ describe('Add Cloud Credentials - Amazon', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "aws" })
+		wrapper.setData({ selectedProvider: "aws" });
 		await Vue.nextTick();
 		amazon = wrapper.findComponent(AddAwsAccount);
-		amazon.setData({ get_axiosConfig: () => { return {} } });
+		amazon.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = amazon.find('[data-test-id="input-label"]');

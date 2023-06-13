@@ -42,12 +42,12 @@ describe('Add Cloud Credentials - Google', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -57,10 +57,10 @@ describe('Add Cloud Credentials - Google', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "google" })
+		wrapper.setData({ selectedProvider: "google" });
 		await Vue.nextTick();
 		google = wrapper.findComponent(AddGoogleAccount);
-		google.setData({ get_axiosConfig: () => { return {} } });
+		google.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = google.find('[data-test-id="input-label"]');
@@ -69,7 +69,7 @@ describe('Add Cloud Credentials - Google', () => {
 		input = google.find('[data-test-id="input-description"]');
 		await input.setValue(credential.description);
 
-		wrapper.setData({ selectedProvider: "google" })
+		wrapper.setData({ selectedProvider: "google" });
 		await Vue.nextTick();
 
 		jest.spyOn(FileReader.prototype, 'readAsText')
@@ -77,7 +77,7 @@ describe('Add Cloud Credentials - Google', () => {
 				return;
 			});
 		input = google.find('[data-test-id="input-key"]');
-		input.trigger('change')
+		input.trigger('change');
 		expect(FileReader.prototype.readAsText).toHaveBeenCalledTimes(1);
 		google.vm.google.google_key = credential.google_key;
 		google.vm.newGoogle.google_key = credential.google_key;

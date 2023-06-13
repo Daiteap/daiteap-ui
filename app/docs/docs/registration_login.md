@@ -24,7 +24,7 @@ We just need the minimal nesseccary data to identify you in the platform.
 
 ![Screenshot](img/register.png)
 
-After you click on ** Register New Account ** you agree and accept our Terms & Conditions and we will send you an Email to your given Email-Address with a confirmation link.
+After you click on **Register New Account** you agree and accept our Terms & Conditions and we will send you an Email to your given Email-Address with a confirmation link.
 Click the confimation link in your received Email and you will be looged in and re-directed to the Web Console Dashboard.  
 
 ## Sign In

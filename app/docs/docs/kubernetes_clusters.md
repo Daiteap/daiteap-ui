@@ -124,7 +124,8 @@ By downloading the kubeconfig the user can use `kubectl` or other tools to conne
 
 ![Screenshot](img/Cluster_Operations.png)
 
-Clicking on `Operations` button, a list of features is shown:  
+Clicking on `Operations` button, a list of features is shown:
+
 - `start` - starting a stopped cluster  
 - `stop` - stop running cluster  
 - `restart` - restart cluster  

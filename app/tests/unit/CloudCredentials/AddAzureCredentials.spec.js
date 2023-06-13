@@ -45,12 +45,12 @@ describe('Add Cloud Credentials - Azure', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -60,10 +60,10 @@ describe('Add Cloud Credentials - Azure', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "azure" })
+		wrapper.setData({ selectedProvider: "azure" });
 		await Vue.nextTick();
 		azure = wrapper.findComponent(AddAzureAccount);
-		azure.setData({ get_axiosConfig: () => { return {} } });
+		azure.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = azure.find('[data-test-id="input-label"]');

@@ -104,11 +104,11 @@ describe('Cloud Credentials', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				computed_userInfo: {
@@ -323,11 +323,11 @@ describe('Cloud Credentials', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					computed_account_settings: {
 						enable_kubernetes_capi: false,
 					},
-				}
+				};
 			},
 			mocks: {
 				computed_userInfo: {

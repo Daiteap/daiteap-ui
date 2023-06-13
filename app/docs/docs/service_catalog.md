@@ -45,11 +45,14 @@ To access a service, installed via Kubeapps:
     * `<cluster-id>` - the first 10 symbols of your cluster's ID, excluding the '-'
     * `<service-port>` - the port of the service
 * Create the resources:
+
 ```
 kubectl create -f ./certificate.yaml
 kubectl create -f ./ingress.yaml
 ```
+
 * Once both are ready, you can access the service at:
+
 ```
 <service-name>.<cluster-id>.app.daiteap.com
 ```

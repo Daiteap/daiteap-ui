@@ -47,12 +47,12 @@ describe('Add Cloud Credentials - IOT ARM', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -62,10 +62,10 @@ describe('Add Cloud Credentials - IOT ARM', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "iotarm" })
+		wrapper.setData({ selectedProvider: "iotarm" });
 		await Vue.nextTick();
 		iotarm = wrapper.findComponent(AddIotArmAccount);
-		iotarm.setData({ get_axiosConfig: () => { return {} } });
+		iotarm.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = iotarm.find('[data-test-id="input-label"]');
@@ -91,7 +91,7 @@ describe('Add Cloud Credentials - IOT ARM', () => {
 				return;
 			});
 		input = iotarm.find('[data-test-id="input-key"]');
-		input.trigger('change')
+		input.trigger('change');
 		expect(FileReader.prototype.readAsText).toHaveBeenCalledTimes(1);
 		iotarm.vm.iotarm.admin_private_key = credential.admin_private_key;
 		iotarm.vm.newIotArme.admin_private_key = credential.admin_private_key;

@@ -51,12 +51,12 @@ describe('Add Cloud Credentials - Openstack', () => {
 			data() {
 				return {
 					computed_theme: "daiteap",
-					get_axiosConfig: () => { return {} },
+					get_axiosConfig: () => { return {}; },
 					selectedProvider: " ",
 					computed_account_settings: {
 						enable_kubernetes_capi: true,
 					},
-				}
+				};
 			},
 			mocks: {
 				getCredentials: function () {
@@ -66,10 +66,10 @@ describe('Add Cloud Credentials - Openstack', () => {
 			},
 		});
 
-		wrapper.setData({ selectedProvider: "openstack" })
+		wrapper.setData({ selectedProvider: "openstack" });
 		await Vue.nextTick();
 		openstack = wrapper.findComponent(AddOpenstackAccount);
-		openstack.setData({ get_axiosConfig: () => { return {} } });
+		openstack.setData({ get_axiosConfig: () => { return {}; } });
 
 		// Add Credential
 		let input = openstack.find('[data-test-id="input-label"]');
@@ -206,7 +206,7 @@ describe('Add Cloud Credentials - Openstack', () => {
 					"externalNetwork": true
 				}
 			}
-		}
+		};
 		jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
 		jest.spyOn(axios, 'get').mockResolvedValue(mocked_post_response);
 
@@ -257,7 +257,7 @@ describe('Add Cloud Credentials - Openstack', () => {
 	});
 
 	test('adds openstack credentials without capi images when capi is off', async () => {
-		wrapper.setData({ computed_account_settings: { enable_kubernetes_capi: false } })
+		wrapper.setData({ computed_account_settings: { enable_kubernetes_capi: false } });
 		await Vue.nextTick();
 
 		const mocked_post_response = {
