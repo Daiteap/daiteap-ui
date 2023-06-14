@@ -3,9 +3,8 @@ import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import CloudProfile from "@/components/platform/CloudProfile.vue";
-import {
-  CloudProfileTable,
-} from "@/components/platform/tables/CloudProfileTable.vue";
+import CloudProfileTable
+  from "@/components/platform/tables/CloudProfileTable.vue";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
 import {BootstrapVue} from "bootstrap-vue";

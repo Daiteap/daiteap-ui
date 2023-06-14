@@ -5,9 +5,8 @@ import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
 import Notifications from "vue-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
-import {
-  AddOpenstackAccount,
-} from "@/components/platform/addProviderCredentials/AddOpenstackAccount.vue";
+import AddOpenstackAccount
+  from "@/components/platform/addProviderCredentials/AddOpenstackAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 Vue.config.silent = true;

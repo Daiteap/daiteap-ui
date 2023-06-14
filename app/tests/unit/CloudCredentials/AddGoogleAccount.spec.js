@@ -5,9 +5,8 @@ import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
 import Notifications from "vue-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
-import {
-  AddGoogleAccount,
-} from "@/components/platform/addProviderCredentials/AddGoogleAccount.vue";
+import AddGoogleAccount
+  from "@/components/platform/addProviderCredentials/AddGoogleAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 Vue.config.silent = true;

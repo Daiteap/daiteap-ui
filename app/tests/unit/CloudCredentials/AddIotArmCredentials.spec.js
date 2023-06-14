@@ -5,9 +5,8 @@ import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
 import Notifications from "vue-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
-import {
-  AddIotArmAccount,
-} from "@/components/platform/addProviderCredentials/AddIotArmAccount.vue";
+import AddIotArmAccount
+  from "@/components/platform/addProviderCredentials/AddIotArmAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 Vue.config.silent = true;
