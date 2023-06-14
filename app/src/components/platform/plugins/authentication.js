@@ -6,17 +6,17 @@ const _keycloak = Keycloak("./keycloak.json");
 const Plugin = {
   install(Vue) {
     Vue.$keycloak = _keycloak;
-  }
+  },
 };
 
-Plugin.install = Vue => {
+Plugin.install = (Vue) => {
   Vue.$keycloak = _keycloak;
   Object.defineProperties(Vue.prototype, {
     $keycloak: {
       get() {
         return _keycloak;
-      }
-    }
+      },
+    },
   });
 };
 

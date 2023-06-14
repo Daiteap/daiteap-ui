@@ -1,17 +1,17 @@
 module.exports = {
-    chainWebpack: config => {
-        config.entryPoints.delete('app');
-    },
+  chainWebpack: (config) => {
+    config.entryPoints.delete("app");
+  },
 
-    // Overriding webpack config
-    configureWebpack: {
-        entry: {
-            app: './src/main.js'
-        }
+  // Overriding webpack config
+  configureWebpack: {
+    entry: {
+      app: "./src/main.js",
     },
+  },
 
-    // disable cache
-    lintOnSave: true,
-    filenameHashing: true
+  // disable cache
+  lintOnSave: true,
+  filenameHashing: true,
 };
 
