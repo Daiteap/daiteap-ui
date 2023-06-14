@@ -1,59 +1,59 @@
-import { DropdownPlugin } from 'bootstrap-vue'
-import Vue from 'vue'
-import Router from 'vue-router'
+import { DropdownPlugin } from "bootstrap-vue";
+import Vue from "vue";
+import Router from "vue-router";
 
-import Login from '@/components/platform/Login'
-import DaiteapWebLandingPage from '@/components/platform/DaiteapWebLandingPage'
-import ChangePassword from '@/components/platform/ChangePassword'
-import ChangeTenant from '@/components/platform/ChangeTenant'
-import CloudProfile from '@/components/platform/CloudProfile'
-import ProjectDetails from '@/components/platform/ProjectDetails'
-import TemplateDetails from '@/components/platform/TemplateDetails'
-import ClusterDetails from '@/components/platform/ClusterDetails'
-import ComputeDetails from '@/components/platform/ComputeDetails'
-import ProjectList from '@/components/platform/ProjectList'
-import Templates from '@/components/platform/Templates'
-import CreateCluster from '@/components/platform/CreateCluster'
-import CreateCAPI from '@/components/platform/CreateCAPI'
-import CreateK3s from '@/components/platform/CreateK3s'
-import CreateVMs from '@/components/platform/CreateVMs'
-import AzureAdminConsent from '@/components/platform/oauth/AzureAdminConsent'
-import AzureGrantAdminConsent from '@/components/platform/oauth/AzureGrantAdminConsent'
-import AzureAuthorize from '@/components/platform/oauth/AzureAuthorize'
-import AzureCreateApp from '@/components/platform/oauth/AzureCreateApp'
-import GoogleProjects from '@/components/platform/oauth/GoogleProjects'
-import AddNewProject from '@/components/platform/AddNewProject'
-import ComputeOverviewAll from '@/components/platform/ComputeOverviewAll'
-import StorageOverall from '@/components/platform/StorageOverall'
-import AddNewUser from '@/components/platform/AddNewUser'
-import SelectNewUser from '@/components/platform/SelectNewUser'
-import UsersList from '@/components/platform/UsersList'
-import KubernetesClusterList from '@/components/platform/KubernetesClusterList'
-import Profile from '@/components/platform/Profile'
-import ReleaseNotes from '@/components/platform/ReleaseNotes'
-import SubmitCAPICluster from '@/components/platform/SubmitCAPICluster'
-import SubmitYaookCluster from '@/components/platform/SubmitYaookCluster'
-import SubmitKubernetesCluster from '@/components/platform/SubmitKubernetesCluster'
-import SubmitK3sCluster from '@/components/platform/SubmitK3sCluster'
-import AddCloudCredentials from '@/components/platform/AddCloudCredentials'
-import SubmitVMs from '@/components/platform/SubmitVMs'
-import ServiceDetails from '@/components/platform/ServiceDetails'
-import ServiceCatalog from '@/components/platform/ServiceCatalog'
-import EmptyPlaceholderPage from '@/components/platform/EmptyPlaceholderPage'
-import AddNewProjectUser from '@/components/platform/AddNewProjectUser'
-import ResizeCapiCluster from '@/components/platform/ResizeCapiCluster'
-import ResizeYaookCluster from '@/components/platform/ResizeYaookCluster'
-import ResizeDLCMCluster from '@/components/platform/ResizeDLCMCluster'
-import AddNewBucket from '@/components/platform/storage/AddNewBucket'
-import BucketDetails from '@/components/platform/storage/BucketDetails'
-import ResourceQuotas from '@/components/platform/ResourceQuotas'
-import Unsubscribe from '@/components/platform/email/Unsubscribe'
-import ClusterStatus from '@/components/platform/email/ClusterStatus'
+import Login from "@/components/platform/Login";
+import DaiteapWebLandingPage from "@/components/platform/DaiteapWebLandingPage";
+import ChangePassword from "@/components/platform/ChangePassword";
+import ChangeTenant from "@/components/platform/ChangeTenant";
+import CloudProfile from "@/components/platform/CloudProfile";
+import ProjectDetails from "@/components/platform/ProjectDetails";
+import TemplateDetails from "@/components/platform/TemplateDetails";
+import ClusterDetails from "@/components/platform/ClusterDetails";
+import ComputeDetails from "@/components/platform/ComputeDetails";
+import ProjectList from "@/components/platform/ProjectList";
+import Templates from "@/components/platform/Templates";
+import CreateCluster from "@/components/platform/CreateCluster";
+import CreateCAPI from "@/components/platform/CreateCAPI";
+import CreateK3s from "@/components/platform/CreateK3s";
+import CreateVMs from "@/components/platform/CreateVMs";
+import AzureAdminConsent from "@/components/platform/oauth/AzureAdminConsent";
+import AzureGrantAdminConsent from "@/components/platform/oauth/AzureGrantAdminConsent";
+import AzureAuthorize from "@/components/platform/oauth/AzureAuthorize";
+import AzureCreateApp from "@/components/platform/oauth/AzureCreateApp";
+import GoogleProjects from "@/components/platform/oauth/GoogleProjects";
+import AddNewProject from "@/components/platform/AddNewProject";
+import ComputeOverviewAll from "@/components/platform/ComputeOverviewAll";
+import StorageOverall from "@/components/platform/StorageOverall";
+import AddNewUser from "@/components/platform/AddNewUser";
+import SelectNewUser from "@/components/platform/SelectNewUser";
+import UsersList from "@/components/platform/UsersList";
+import KubernetesClusterList from "@/components/platform/KubernetesClusterList";
+import Profile from "@/components/platform/Profile";
+import ReleaseNotes from "@/components/platform/ReleaseNotes";
+import SubmitCAPICluster from "@/components/platform/SubmitCAPICluster";
+import SubmitYaookCluster from "@/components/platform/SubmitYaookCluster";
+import SubmitKubernetesCluster from "@/components/platform/SubmitKubernetesCluster";
+import SubmitK3sCluster from "@/components/platform/SubmitK3sCluster";
+import AddCloudCredentials from "@/components/platform/AddCloudCredentials";
+import SubmitVMs from "@/components/platform/SubmitVMs";
+import ServiceDetails from "@/components/platform/ServiceDetails";
+import ServiceCatalog from "@/components/platform/ServiceCatalog";
+import EmptyPlaceholderPage from "@/components/platform/EmptyPlaceholderPage";
+import AddNewProjectUser from "@/components/platform/AddNewProjectUser";
+import ResizeCapiCluster from "@/components/platform/ResizeCapiCluster";
+import ResizeYaookCluster from "@/components/platform/ResizeYaookCluster";
+import ResizeDLCMCluster from "@/components/platform/ResizeDLCMCluster";
+import AddNewBucket from "@/components/platform/storage/AddNewBucket";
+import BucketDetails from "@/components/platform/storage/BucketDetails";
+import ResourceQuotas from "@/components/platform/ResourceQuotas";
+import Unsubscribe from "@/components/platform/email/Unsubscribe";
+import ClusterStatus from "@/components/platform/email/ClusterStatus";
 
-const Layout = () => import('@/views/Layout')
+const Layout = () => import('@/views/Layout');
 
-Vue.use(DropdownPlugin)
-Vue.use(Router)
+Vue.use(DropdownPlugin);
+Vue.use(Router);
 const router = new Router({
   routes: [
     {
@@ -339,31 +339,31 @@ const router = new Router({
       redirect: '/app/login',
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   if (!process.env.VUE_APP_SINGLE_USER_MODE === 'False') {
     if (to.meta.isAuthenticated) {
       // Get the actual url of the app, it's needed for Keycloak
-      const basePath = window.location.toString()
+      const basePath = window.location.toString();
       if (!Vue.$keycloak.authenticated) {
         // The page is protected and the user is not authenticated. Force a login.
-        Vue.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path })
+        Vue.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path });
       } else if (Vue.$keycloak.hasResourceRole('vue-demo-user')) {
         // The user was authenticated, and has the app role (is authorized). Update the token.
-        next()
+        next();
       } else {
         // The user was authenticated, but did not have the correct role (is not authorized)
         // Redirect the user to an error page
-        next({ name: 'Unauthorized' })
+        next({ name: 'Unauthorized' });
       }
     } else {
       // This page did not require authentication
-      next()
+      next();
     }
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

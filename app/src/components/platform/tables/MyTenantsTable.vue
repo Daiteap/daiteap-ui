@@ -105,19 +105,19 @@ export default {
       this.confirmDialogParams.envId = "";
       this.confirmDialogParams.envName = tenant.name;
       this.confirmDialogParams.payload = {
-        "id": id,
+        "id": tenant.id,
       };
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialog");
     },
     changeTenant(payload) {
       let self = this;
-      endpoint = "/server/user/select-tenant";
-      requestBody = {
+      const endpoint = "/server/user/select-tenant";
+      const requestBody = {
         "selectedTenant": payload.id
       };
-      successMessage = 'You have successfully submitted tenant change.';
-      failureMessage = 'Error occured while you tried to submit tenant change.';
+      const successMessage = 'You have successfully submitted tenant change.';
+      const failureMessage = 'Error occured while you tried to submit tenant change.';
 
       this.axios
         .post(

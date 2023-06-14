@@ -757,7 +757,7 @@ Vue.mixin({
         });
     },
     editUserInfo(request) {
-      let endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/users/" +
@@ -992,7 +992,7 @@ Vue.mixin({
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  border: 0px solid #000;
+  border: 0 solid #000;
   border-radius: 100rem;
   background-color: #fff;
   color: #000;
@@ -1007,7 +1007,7 @@ Vue.mixin({
 
 .custom-button.deactivated {
   background-color: #fff !important;
-  border: 0px solid #000;
+  border: 0 solid #000;
   color: #bcbcbc;
   cursor: not-allowed !important;
   pointer-events: none;

@@ -1,13 +1,13 @@
 ## Introduction
 
-** Multi-Cloud but Simple **
+**Multi-Cloud but Simple**
 
 Reduce 100% complexity with quick automated setup of multi-provider Kubernetes Cluster, Virtual Machines and Storage.
 Additionally you have a Tenant/Workspace Adminstration, Project and User Management as well as an integrated Service Catalog 
 for seamless multi-provider integration and service deployment. 
 
 The Daiteap Cloud Solution Platform offers a lightweight solution to essential cloud infrastructure ressources. <br>
-You can choose between our ** Web Console **, our ** Command Line Interface (CLI) ** or use our unified ** APIs ** to connect and manage your IaaS ressources.<br>
+You can choose between our **Web Console**, our **Command Line Interface (CLI)** or use our unified **APIs** to connect and manage your IaaS ressources.<br>
 You can use our purpose build dev-ops self-service Web Console or CLI to easily set up, operate and manage cloud infrastructure ressources like 
 
 -  Kubernetes Cluster, 
@@ -34,7 +34,7 @@ Currently we support infrastructure services of the following Platforms
 
 
 
-** Functional Overview **
+**Functional Overview**
 
 ![Screenshot](img/daiteap_building_blocks.png)
 

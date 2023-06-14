@@ -199,7 +199,7 @@ function isValidGoogleKey(str) {
     return false;
   }
 
-  if (JSON.parse(str).hasOwnProperty("project_id")) {
+  if (Object.hasOwnProperty.call(JSON.parse(str), "project_id")) {
     return true;
   } else {
     return false;

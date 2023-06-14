@@ -690,20 +690,20 @@ export default {
     },
     deleteUserFromCluster(payload) {
       let self = this;
-      requestBody = {
+      const requestBody = {
         username: payload.username,
         clusterID: this.clusterID,
       };
-      endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         this.clusterID +
         "/users/" +
         payload.username;
-      successMessage =
+      const successMessage =
         'You have successfully submitted deletion for user "' + payload.name + '".';
-      failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit deletion of user "' +
         payload.name +
         '".';
@@ -879,18 +879,18 @@ export default {
     },
     stopCluster(payload) {
       let self = this;
-      requestBody = {
+      const requestBody = {
         clusterID: payload.id,
       };
-      endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/stop";
-      successMessage =
+      const successMessage =
         'You have successfully submitted stop for "' + payload.name + '".';
-      failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit stop of "' + 
         payload.name + '".';
 
@@ -952,18 +952,18 @@ export default {
     },
     startCluster(payload) {
       let self = this;
-      requestBody = {
+      const requestBody = {
         clusterID: payload.id,
       };
-      endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/start";
-      successMessage =
+      const successMessage =
         'You have successfully submitted start for "' + payload.name + '".';
-      failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit start of "' + 
         payload.name + '".';
 
@@ -1025,18 +1025,18 @@ export default {
     },
     restartCluster(payload) {
       let self = this;
-      requestBody = {
+      const requestBody = {
         clusterID: payload.id,
       };
-      endpoint =
+      const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
         payload.id +
         "/restart";
-      successMessage =
+      const successMessage =
         'You have successfully submitted restart for "' + payload.name + '".';
-      failureMessage =
+      const failureMessage =
         'Error occured while you tried to submit restart of "' + 
         payload.name + '".';
 
@@ -1161,7 +1161,7 @@ export default {
           connectionInfo = {};
         }
 
-        if (!connectionInfo.hasOwnProperty("addresses")) {
+        if (!Object.prototype.hasOwnProperty.call(connectionInfo, "addresses")) {
           connectionInfo["addresses"] = [];
         }
 

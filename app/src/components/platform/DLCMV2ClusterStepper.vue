@@ -31,7 +31,6 @@ import StepOpenstack from "./steps/StepDLCMV2Openstack.vue";
 import StepOnpremise from "./steps/StepOnpremise.vue";
 import StepKubernetesSubmit from "./steps/StepKubernetesSubmit.vue";
 import QuotaExceededModal from "@/components/platform/popup_modals/QuotaExceededModal";
-import Vue from "vue";
 
 export default {
   name: 'DLCMV2ClusterStepper',
@@ -386,6 +385,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

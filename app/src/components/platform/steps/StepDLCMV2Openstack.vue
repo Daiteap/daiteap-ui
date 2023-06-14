@@ -119,7 +119,9 @@ export default {
 
       for (const key in this.$finalModel) {
         if (Object.hasOwnProperty.call(this.$finalModel, key)) {
-          if (this.$finalModel[key] != null && this.$finalModel[key].hasOwnProperty('nodes') && key != "openstack") {
+          if (this.$finalModel[key] != null && 
+              Object.hasOwnProperty.call(this.$finalModel[key], "nodes") &&
+              key != "openstack") {
             nodesCount += this.$finalModel[key].nodes.length;
           }
         }

@@ -49,7 +49,7 @@ import axios from "axios";
 import CardTitle from "@/components/platform/CardTitle";
 
 export default {
-  name: 'AddNewProjectUser',
+  name: "AddNewProjectUser",
   components: {
     UsersListTable,
     CardTitle,

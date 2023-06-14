@@ -11,7 +11,7 @@ In the full version of the Daiteap Cloud Managment Platform you will find three 
 The Business Account Owner is only available in our Team and Enterprise Versions.<br>
 In our free SaaS offering we will manage the business account for oyu and will setup the workspace once your registered yourself.
 
-** Team / Enterprise Version ** <br>
+**Team / Enterprise Version** <br>
 The Business Account Owner is able to login in to the tenant workspace dashboard to setup a new tenant workspace, to configure the tenant workspace, and to manage usres of that tenant wrokspace. The Business Account Owner is set the first time you start the Daiteap Cloud Management Platform. Our business account wizzard will guide you through that process. 
 
 ### Register
@@ -20,13 +20,13 @@ As a user you can register yourself via the regiser page where you need to enter
 
 ### Login
 
-Login as ** Business Account Owner **<br> 
-Enter your credentials and login to get access to the ** Tenant Workspace Management Dashboard **.<br>
+Login as **Business Account Owner**<br> 
+Enter your credentials and login to get access to the **Tenant Workspace Management Dashboard**.<br>
 
 ![Screenshot](img/bao_dashboard.png)
 
 Login as ** User ** <br>
-Enter your credentails and login to the ** Cloud Managment Dashboard ** 
+Enter your credentails and login to the **Cloud Managment Dashboard** 
 
 ![Screenshot](img/web_console_dashboard.png)
 
@@ -34,7 +34,7 @@ Enter your credentails and login to the ** Cloud Managment Dashboard **
 ### Projects
 
 Projects are our main organisation unit for all activities across your cloud managment.
-Please see our section about ** Projects ** to all the details about setting up a project and respective cloud credentials and users.  
+Please see our section about **Projects** to all the details about setting up a project and respective cloud credentials and users.  
 
 ![Screenshot](img/daiteap_structure.png)
 
@@ -48,13 +48,13 @@ Kubernetes Cluster can be setup using two ways
 
 Please see the section [Kubernetes Clusters](/documentation/kubernetes_clusters/) for a detail explanation of working with Kubernetes Clusters. 
 
-** Console for pre-configured Kubernetes Cluster sizes **
+**Console for pre-configured Kubernetes Cluster sizes**
 
 ![Screenshot](img/kubernetes_pre-configured_sizes.png)
 
 ### Compute (Virtual Machines)
 
-** Console for configuring Virtual Machines **
+**Console for configuring Virtual Machines**
 
 ![Screenshot](img/VM_details.png)
 
@@ -62,7 +62,7 @@ Please see the section [Kubernetes Clusters](/documentation/kubernetes_clusters/
 
 We enable the setup of S3 Stroage wihcih you can attach to your project. You can setup and choose S3 Storage and configure the location and 
 
-** Console for configuring S3 Buckets or S3 Containers **
+**Console for configuring S3 Buckets or S3 Containers**
 
 ![Screenshot](img/S3_storage_select_provider.png)
 

@@ -47,9 +47,11 @@ The last step shows the submit function and also the ability to save the currect
 ## Access Compute VMs via SSH
 
 Users can use SSH to access Compute (VM) resources with this command:
+
 ```
 ssh -i <path-to-private-key-file> '<username>'@<vm-public-ip>
 ```
+
 * `<path-to-private-key-file>` - path to the private key file, that's paired with the public key you have set in your profile
 * `<username>` - your username on the platform; make sure to enclose the username with '' as it may contain the **@** character
 * `<vm-public-ip>` - the public IP of the VM you want to access, which can be seen on the Compute (VMs) page

@@ -87,7 +87,7 @@ export default {
 
       for (const key in Vue.prototype.$finalModel) {
         if (Object.hasOwnProperty.call(Vue.prototype.$finalModel, key)) {
-          if (Vue.prototype.$finalModel[key].hasOwnProperty('nodes')) {
+          if (Object.hasOwnProperty.call(Vue.prototype.$finalModel[key], "nodes")) {
             Vue.prototype.$existingNodesCount += Vue.prototype.$finalModel[key].nodes.length;
           }
         }
@@ -224,7 +224,7 @@ export default {
 
       let resizeDLCMClusterRequestBody = this.$finalModel
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
 
       this.axios
         .post(endpoint, resizeDLCMClusterRequestBody, this.get_axiosConfig())
@@ -341,6 +341,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>
