@@ -197,108 +197,114 @@ describe("Add Cloud Credentials - Openstack", () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  test("does not add openstack credentials without capi images when capi is on", async () => {
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        error: true,
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": false,
-          "yaookCapiImages": true,
-          "externalNetwork": true,
+  test(
+    "does not add openstack credentials without capi images when capi is on",
+    async () => {
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          error: true,
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": false,
+            "yaookCapiImages": true,
+            "externalNetwork": true,
+          },
         },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+      jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    const saveButton = openstack.find("[data-test-id=\"input-save\"]");
-    saveButton.trigger("click");
-    await Vue.nextTick();
-    expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
+      const saveButton = openstack.find("[data-test-id=\"input-save\"]");
+      saveButton.trigger("click");
+      await Vue.nextTick();
+      expect(openstack.vm.newOpenstack).toEqual(credential);
+      await Vue.nextTick();
 
-    const alert = wrapper.findComponent(WarningAlert);
-    expect(alert.exists()).toBe(true);
+      const alert = wrapper.findComponent(WarningAlert);
+      expect(alert.exists()).toBe(true);
 
-    expect(wrapper.vm.$router[0]).toBe(undefined);
-    expect(axios.post).toHaveBeenCalledTimes(1);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
-
-  test("does not add openstack credentials without external network", async () => {
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        error: true,
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": true,
-          "yaookCapiImages": true,
-          "externalNetwork": false,
-        },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
-
-    const saveButton = openstack.find("[data-test-id=\"input-save\"]");
-    saveButton.trigger("click");
-    await Vue.nextTick();
-    expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
-
-    const alert = wrapper.findComponent(WarningAlert);
-    expect(alert.exists()).toBe(true);
-
-    expect(wrapper.vm.$router[0]).toBe(undefined);
-    expect(axios.post).toHaveBeenCalledTimes(1);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
-
-  test("adds openstack credentials without capi images when capi is off", async () => {
-    wrapper.setData({
-      computed_account_settings: {
-        enable_kubernetes_capi: false,
-      },
+      expect(wrapper.vm.$router[0]).toBe(undefined);
+      expect(axios.post).toHaveBeenCalledTimes(1);
+      expect(axios.get).toHaveBeenCalledTimes(1);
     });
-    await Vue.nextTick();
 
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        error: false,
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": false,
-          "yaookCapiImages": true,
-          "externalNetwork": true,
+  test(
+    "does not add openstack credentials without external network",
+    async () => {
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          error: true,
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": true,
+            "yaookCapiImages": true,
+            "externalNetwork": false,
+          },
         },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+      jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    const saveButton = openstack.find("[data-test-id=\"input-save\"]");
-    saveButton.trigger("click");
-    await Vue.nextTick();
-    expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
+      const saveButton = openstack.find("[data-test-id=\"input-save\"]");
+      saveButton.trigger("click");
+      await Vue.nextTick();
+      expect(openstack.vm.newOpenstack).toEqual(credential);
+      await Vue.nextTick();
 
-    const alert = wrapper.findComponent(WarningAlert);
-    expect(alert.exists()).toBe(false);
+      const alert = wrapper.findComponent(WarningAlert);
+      expect(alert.exists()).toBe(true);
 
-    expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
+      expect(wrapper.vm.$router[0]).toBe(undefined);
+      expect(axios.post).toHaveBeenCalledTimes(1);
+      expect(axios.get).toHaveBeenCalledTimes(1);
+    });
+
+  test(
+    "adds openstack credentials without capi images when capi is off",
+    async () => {
+      wrapper.setData({
+        computed_account_settings: {
+          enable_kubernetes_capi: false,
+        },
+      });
+      await Vue.nextTick();
+
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          error: false,
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": false,
+            "yaookCapiImages": true,
+            "externalNetwork": true,
+          },
+        },
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+      jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
+
+      const saveButton = openstack.find("[data-test-id=\"input-save\"]");
+      saveButton.trigger("click");
+      await Vue.nextTick();
+      expect(openstack.vm.newOpenstack).toEqual(credential);
+      await Vue.nextTick();
+
+      const alert = wrapper.findComponent(WarningAlert);
+      expect(alert.exists()).toBe(false);
+
+      expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+      expect(axios.post).toHaveBeenCalledTimes(2);
+      expect(axios.get).toHaveBeenCalledTimes(1);
+    });
 
   test("shared credentials checkbox works", async () => {
     const mockedPostResponse = {

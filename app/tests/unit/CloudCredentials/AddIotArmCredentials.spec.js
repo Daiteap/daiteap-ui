@@ -201,37 +201,39 @@ describe("Add Cloud Credentials - IOT ARM", () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  test("adds iot arm credentials without capi images or external network", async () => {
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        error: false,
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": false,
-          "yaookCapiImages": true,
-          "externalNetwork": false,
+  test(
+    "adds iot arm credentials without capi images or external network",
+    async () => {
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          error: false,
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": false,
+            "yaookCapiImages": true,
+            "externalNetwork": false,
+          },
         },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+      jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
-    saveButton.trigger("click");
-    await Vue.nextTick();
-    expect(iotarm.vm.newIotArme).toEqual(credential);
-    await Vue.nextTick();
+      const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
+      saveButton.trigger("click");
+      await Vue.nextTick();
+      expect(iotarm.vm.newIotArme).toEqual(credential);
+      await Vue.nextTick();
 
-    const alert = wrapper.findComponent(WarningAlert);
-    expect(alert.exists()).toBe(false);
+      const alert = wrapper.findComponent(WarningAlert);
+      expect(alert.exists()).toBe(false);
 
-    expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-    expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(axios.get).toHaveBeenCalledTimes(1);
-  });
+      expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+      expect(axios.post).toHaveBeenCalledTimes(2);
+      expect(axios.get).toHaveBeenCalledTimes(1);
+    });
 
   test("shared credentials checkbox works", async () => {
     const mockedPostResponse = {
