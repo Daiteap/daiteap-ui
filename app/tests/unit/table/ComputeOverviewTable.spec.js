@@ -2,18 +2,12 @@ import {shallowMount} from "@vue/test-utils";
 import ComputeOverviewTable from
   "@/components/platform/tables/ComputeOverviewTable.vue";
 import Vue from "vue";
-import moment from "moment";
 import BootstrapVue from "bootstrap-vue";
 
 Vue.use(BootstrapVue);
 Vue.filter("formatDate", function(value) {
   if (value) {
-    const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
-    if (date.startsWith("0")) {
-      const newDate = date.substring(1);
-      return newDate;
-    }
-    return date;
+    return value;
   }
 });
 
