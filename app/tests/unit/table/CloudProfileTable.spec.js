@@ -1,9 +1,22 @@
 import {mount} from "@vue/test-utils";
-import CloudProfileTable from
-  "@/components/platform/tables/CloudProfileTable.vue";
+import CloudProfileTable from "@/components/platform/tables/CloudProfileTable.vue";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
-import SpecificUserInfo from
-  "@/components/platform/popup_modals/SpecificUserInfo";
+import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
+import Vue from "vue";
+import moment from "moment";
+import BootstrapVue from "bootstrap-vue";
+
+Vue.use(BootstrapVue);
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
+    if (date.startsWith("0")) {
+      const newDate = date.substring(1);
+      return newDate;
+    }
+    return date;
+  }
+});
 
 describe("CloudProfileTable", () => {
   let wrapper;
@@ -117,13 +130,12 @@ describe("CloudProfileTable", () => {
     expect(wrapper.emitted("openEditPopup")[0][0]).toBe(allAccounts[0]);
   });
 
-  it("emits the 'removeAccount' event when the remove button is clicked",
-    () => {
-      const removeButton = wrapper.findComponent(RemoveAccountButton);
-      removeButton.vm.$emit("removeAccount", allAccounts[1]);
-      expect(wrapper.emitted("removeAccount")).toBeTruthy();
-      expect(wrapper.emitted("removeAccount")[0][0]).toBe(allAccounts[1]);
-    });
+  it("emits the 'removeAccount' event when the remove button is clicked", () => {
+    const removeButton = wrapper.findComponent(RemoveAccountButton);
+    removeButton.vm.$emit("removeAccount", allAccounts[1]);
+    expect(wrapper.emitted("removeAccount")).toBeTruthy();
+    expect(wrapper.emitted("removeAccount")[0][0]).toBe(allAccounts[1]);
+  });
 
   it("displays the SpecificUserInfo component when the 'showUserDetails' method is called", async () => {
     await wrapper.vm.showUserDetails(allAccounts[0].contact);

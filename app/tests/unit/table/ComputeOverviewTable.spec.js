@@ -1,6 +1,21 @@
 import {shallowMount} from "@vue/test-utils";
 import ComputeOverviewTable from
   "@/components/platform/tables/ComputeOverviewTable.vue";
+import Vue from "vue";
+import moment from "moment";
+import BootstrapVue from "bootstrap-vue";
+
+Vue.use(BootstrapVue);
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
+    if (date.startsWith("0")) {
+      const newDate = date.substring(1);
+      return newDate;
+    }
+    return date;
+  }
+});
 
 describe("ComputeOverviewTable", () => {
   let wrapper;
@@ -12,6 +27,7 @@ describe("ComputeOverviewTable", () => {
       },
       data() {
         return {
+          computed_theme: "daiteap",
           clustersList: [
             {
               ID: 1,
@@ -96,12 +112,12 @@ describe("ComputeOverviewTable", () => {
     expect(cluster1Name).toBe("Cluster 1");
     expect(cluster1Description).toBe("This is the first cluster");
     expect(cluster1Project).toBe("Project A");
-    expect(cluster1CreatedAt).toBe("2021-08-01T12:00:00Z");
+    expect(cluster1CreatedAt).toBe("1 Aug 2021, 15:00");
     expect(cluster1CreatedBy).toBe("John Doe");
     expect(cluster2Name).toBe("Cluster 2");
     expect(cluster2Description).toBe("This is the second cluster");
     expect(cluster2Project).toBe("Project B");
-    expect(cluster2CreatedAt).toBe("2021-08-02T12:00:00Z");
+    expect(cluster2CreatedAt).toBe("2 Aug 2021, 15:00");
     expect(cluster2CreatedBy).toBe("Jane Smith");
   });
 

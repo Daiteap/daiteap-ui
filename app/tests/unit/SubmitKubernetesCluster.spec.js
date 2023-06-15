@@ -1,6 +1,13 @@
 import {shallowMount, mount} from "@vue/test-utils";
 import SubmitKubernetesCluster from "@/components/platform/SubmitKubernetesCluster.vue";
 import axios from "axios";
+import {
+  BootstrapVue,
+} from "bootstrap-vue";
+
+import Vue from "vue";
+
+Vue.use(BootstrapVue);
 
 const mockedGetResponse = {
   data: {
@@ -43,6 +50,9 @@ describe("SubmitKubernetesCluster.vue", () => {
               enable_kubernetes_capi: true,
             },
           };
+        },
+        propsData: {
+          ID: "1",
         },
         mocks: {
           getCredentials: function() {
@@ -134,7 +144,12 @@ describe("SubmitKubernetesCluster.vue", () => {
       const mockFailureMessage = `Error occured while you tried to submit retry of "${mockName}".`;
       const mockShowRetryDialog = true;
       const mockBvModalShow = jest.fn();
-      wrapper.setMethods({$bvModal: {show: mockBvModalShow}});
+
+      wrapper.setData({
+        $bvModal: {
+          show: mockBvModalShow,
+        },
+      });
 
       await wrapper.vm.retryCluster(mockId, mockName);
 
@@ -170,6 +185,9 @@ describe("SubmitKubernetesCluster.vue", () => {
               enable_kubernetes_capi: true,
             },
           };
+        },
+        propsData: {
+          ID: "1",
         },
         mocks: {
           getCredentials: function() {
@@ -295,6 +313,9 @@ describe("SubmitKubernetesCluster.vue", () => {
             computed_active_tenant_id: 1,
           };
         },
+        propsData: {
+          ID: "1",
+        },
         mocks: {
           $bvModal: {
             show: jest.fn(),
@@ -337,10 +358,15 @@ describe("SubmitKubernetesCluster.vue", () => {
       );
     });
 
-    it("shows delete dialog", () => {
-      wrapper.vm.deleteCluster(123, "Test Cluster");
+    it("shows delete dialog", async () => {
+      const bvModalShowSpy = jest.spyOn(wrapper.vm.$bvModal, "show");
+
+      await wrapper.vm.deleteCluster(123, "Test Cluster");
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.vm.showDeleteDialog).toBe(true);
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith(
+
+      expect(bvModalShowSpy).toHaveBeenCalledWith(
         "bv-modal-deletedialog",
       );
     });
@@ -365,6 +391,9 @@ describe("SubmitKubernetesCluster.vue", () => {
             },
             computed_active_tenant_id: 1,
           };
+        },
+        propsData: {
+          ID: "1",
         },
         mocks: {
           $bvModal: {
@@ -438,7 +467,7 @@ describe("SubmitKubernetesCluster.vue", () => {
           };
         },
         propsData: {
-          ID: 1,
+          ID: "1",
         },
         mocks: {
           $bvModal: {
@@ -504,7 +533,7 @@ describe("SubmitKubernetesCluster.vue", () => {
           };
         },
         propsData: {
-          ID: 1,
+          ID: "1",
         },
         mocks: {
           $bvModal: {
@@ -579,6 +608,9 @@ describe("SubmitKubernetesCluster.vue", () => {
             },
           };
         },
+        propsData: {
+          ID: "1",
+        },
         mocks: {
           $router: {
             push: jest.fn(),
@@ -610,7 +642,7 @@ describe("SubmitKubernetesCluster.vue", () => {
       });
 
       expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-        name: "ProjectList",
+        name: "KubernetesClusterList",
       });
     });
 

@@ -1,5 +1,9 @@
 import {shallowMount} from "@vue/test-utils";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
+import BootstrapVue from "bootstrap-vue";
+import Vue from "vue";
+
+Vue.use(BootstrapVue);
 
 describe("ValidateButton", () => {
   let wrapper;

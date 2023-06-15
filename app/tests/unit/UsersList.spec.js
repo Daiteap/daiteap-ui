@@ -3,7 +3,9 @@ import UsersList from "@/components/platform/UsersList.vue";
 import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
+import BootstrapVue from "bootstrap-vue";
 
+Vue.use(BootstrapVue);
 Vue.use(VueAxios, axios);
 
 describe("UsersList", () => {

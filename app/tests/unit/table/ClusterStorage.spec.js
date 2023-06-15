@@ -1,5 +1,11 @@
 import {shallowMount} from "@vue/test-utils";
 import ClusterStorage from "@/components/platform/tables/ClusterStorage.vue";
+import {
+  BootstrapVue,
+} from "bootstrap-vue";
+import Vue from "vue";
+
+Vue.use(BootstrapVue);
 
 describe("ClusterStorage", () => {
   let wrapper;
