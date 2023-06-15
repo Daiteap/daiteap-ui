@@ -106,12 +106,12 @@ describe("ComputeOverviewTable", () => {
     expect(cluster1Name).toBe("Cluster 1");
     expect(cluster1Description).toBe("This is the first cluster");
     expect(cluster1Project).toBe("Project A");
-    expect(cluster1CreatedAt).toBe("1 Aug 2021, 15:00");
+    expect(cluster1CreatedAt).toBe("2021-08-01T12:00:00Z",)
     expect(cluster1CreatedBy).toBe("John Doe");
     expect(cluster2Name).toBe("Cluster 2");
     expect(cluster2Description).toBe("This is the second cluster");
     expect(cluster2Project).toBe("Project B");
-    expect(cluster2CreatedAt).toBe("2 Aug 2021, 15:00");
+    expect(cluster2CreatedAt).toBe("2021-08-02T12:00:00Z",)
     expect(cluster2CreatedBy).toBe("Jane Smith");
   });
 
