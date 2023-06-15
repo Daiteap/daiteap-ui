@@ -27,8 +27,8 @@
         </tr>
       </thead>
     <tbody>
-      <tr v-for="user in users" :key="user.username">
-        <td v-if="clickableRows" class="text-center py-2 pt-3">
+      <tr v-for="user in users" :key="user.username" class="users-list-table-row">
+        <td v-if="clickableRows" class="text-center py-2 pt-3 users-list-table-row">
           <input
             @change="$emit('onUserSelected', selectedUsers);"
             type="checkbox"
