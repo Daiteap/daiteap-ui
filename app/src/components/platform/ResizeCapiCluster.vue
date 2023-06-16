@@ -18,6 +18,7 @@
           @active-step="isStepActive"
           @stepper-finished="submitResizeCapiCluster"
           :isInResize="true"
+          :clusterID="clusterID"
         ></horizontal-stepper>
       </div>
     </div>
@@ -194,9 +195,6 @@ export default {
         }
       });
     },
-    // submitResizeCapiCluster(){
-    //   console.log(this.$finalModel)
-    // },
     // submitCluster() {
     //   var request = this.$finalModel;
 
@@ -228,9 +226,9 @@ export default {
       let self = this;
       this.$finalModel.clusterID = this.clusterID;
 
-      let resizeCapiClusterRequestBody = this.$finalModel
+      const resizeCapiClusterRequestBody = this.$finalModel
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/capi-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/capi-resize";
 
       this.axios
         .post(endpoint, resizeCapiClusterRequestBody, this.get_axiosConfig())
@@ -247,9 +245,6 @@ export default {
         })
         .catch(function (error) {
           if (error.response.data.authorized == false) {
-            self.$parent.exceededResources =
-              error.response.data.exceededResources;
-            self.$parent.showQuotaExceeded = true;
             self.$bvModal.show("bv-modal-quotaexceeded");
           } else {
             console.log(error);
@@ -350,6 +345,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

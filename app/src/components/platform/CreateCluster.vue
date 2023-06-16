@@ -9,22 +9,54 @@
 
     <div class="columns">
       <div
-        v-if="installationType == 'manually'"
+        v-if="computed_create_cluster_settings.installation_type == 'manually'"
         class="column is-11 is-offset-0"
       >
-        <K3sClusterStepper v-if="selectedType == 'K3S'" />
-        <KubernetesClusterStepper
-          v-else-if="selectedType == 'Kubernetes Cluster (DLCM)'"
-          >test</KubernetesClusterStepper
-        >
-        <DLCMV2ClusterStepper
-          v-else-if="selectedType == 'Kubernetes Cluster (DLCM v2)'"
+        <K3sClusterStepper
+          v-if="computed_create_cluster_settings.cluster_type == 'K3S'"
+          @installation-type-change="onChangeInstallationType()"
+          @template-change="openModalCreateEnvironmentFromTemplate()"
+          @set-show-cluster-details="setShowClusterDetails()"
         />
-        <CAPIStepper v-else-if="selectedType == 'Kubernetes Cluster (CAPI)'" />
-        <YaookStepper v-else-if="selectedType == 'Kubernetes Cluster (YaookCAPI)'" />
+        <KubernetesClusterStepper
+          v-else-if="
+            computed_create_cluster_settings.cluster_type ==
+            'Kubernetes Cluster (DLCM)'
+          "
+          @installation-type-change="onChangeInstallationType()"
+          @template-change="openModalCreateEnvironmentFromTemplate()"
+          @set-show-cluster-details="setShowClusterDetails()"
+        ></KubernetesClusterStepper>
+        <DLCMV2ClusterStepper
+          v-else-if="
+            computed_create_cluster_settings.cluster_type ==
+            'Kubernetes Cluster (DLCM v2)'
+          "
+          @installation-type-change="onChangeInstallationType()"
+          @template-change="openModalCreateEnvironmentFromTemplate()"
+          @set-show-cluster-details="setShowClusterDetails()"
+        />
+        <CAPIStepper
+          v-else-if="
+            computed_create_cluster_settings.cluster_type ==
+            'Kubernetes Cluster (CAPI)'
+          "
+          @installation-type-change="onChangeInstallationType()"
+          @template-change="openModalCreateEnvironmentFromTemplate()"
+          @set-show-cluster-details="setShowClusterDetails()"
+        />
+        <YaookStepper
+          v-else-if="
+            computed_create_cluster_settings.cluster_type ==
+            'Kubernetes Cluster (YaookCAPI)'
+          "
+          @installation-type-change="onChangeInstallationType()"
+          @template-change="openModalCreateEnvironmentFromTemplate()"
+          @set-show-cluster-details="setShowClusterDetails()"
+        />
       </div>
       <div
-        v-else-if="installationType == 'from template'"
+        v-else-if="computed_create_cluster_settings.installation_type == 'from template'"
         class="column is-11 is-offset-0"
       >
         <div v-if="showClusterDetails">
@@ -34,8 +66,9 @@
             </div>
             <select
               class="custom-select d-block w-100"
-              v-model="selectedProject"
+              v-model="computed_create_cluster_settings.selected_project"
               id="selectProject"
+              @change="updateCreateClusterSetting('SelectedProject', $event.target.value)"
             >
               <option
                 v-for="item in projectsList"
@@ -52,7 +85,7 @@
             </div>
             <select
               class="custom-select d-block w-100"
-              v-model="installationType"
+              v-model="computed_create_cluster_settings.installation_type"
               id="selectType"
               @change="onChangeInstallationType()"
             >
@@ -61,7 +94,7 @@
             </select>
           </div>
           <div
-            v-if="installationType == 'manually'"
+            v-if="computed_create_cluster_settings.installation_type == 'manually'"
             class="control my-3"
             id="clusterType"
           >
@@ -70,9 +103,11 @@
             </div>
             <select
               class="custom-select d-block w-100"
-              v-model="selectedType"
+              v-model="computed_create_cluster_settings.cluster_type"
               id="selectType"
-              @change="onTypeChange()"
+              @change="
+                updateCreateClusterSetting('ClusterType', $event.target.value);
+              "
             >
               <option
                 v-for="item in kubernetesClusterType"
@@ -89,9 +124,12 @@
             </div>
             <select
               class="custom-select d-block w-100"
-              v-model="selectedTemplateId"
+              v-model="computed_create_cluster_settings.selected_template_id"
               id="selectTemplate"
-              @change="openModalCreateEnvironmentFromTemplate()"
+              @change="
+                updateCreateClusterSetting('SelectedTemplateID', $event.target.value);
+                openModalCreateEnvironmentFromTemplate();
+              "
             >
               <option
                 v-for="item in templateNamesList"
@@ -105,7 +143,7 @@
         </div>
 
         <CreateEnvironmentFromTemplate
-          ref="newEnvfromTemplate" :projectId=selectedProject
+          ref="newEnvfromTemplate" :projectId="computed_create_cluster_settings.selected_project"
         ></CreateEnvironmentFromTemplate>
       </div>
     </div>
@@ -139,7 +177,6 @@ export default {
   data() {
     return {
       templateNamesList: [],
-      installationType: "manually",
       showClusterDetails: true,
       form: {
         name: "",
@@ -151,9 +188,6 @@ export default {
       showQuotaExceeded: false,
       errorMsg: "",
       exceededResources: [],
-      selectedTemplateId: "",
-      selectedProject: {},
-      selectedType: "Kubernetes Cluster (DLCM v2)",
     };
   },
   props: {
@@ -163,6 +197,8 @@ export default {
     this.$store.commit("updateCreateClusterSettingsShowAdvanced", false);
     this.$store.commit("updateCreateClusterSettingsClusterName", "");
     this.$store.commit("updateCreateClusterSettingsClusterDescription", "");
+    this.updateCreateClusterSetting("ClusterType", "Kubernetes Cluster (DLCM v2)");
+    this.updateCreateClusterSetting("InstallationType", "manually");
   },
   mounted() {
     Vue.prototype.$existingNodesCount = 0;
@@ -189,14 +225,15 @@ export default {
         }
 
         if (this.computed_account_settings.advanced_cluster_configuration) {
-          this.selectedType = "Kubernetes Cluster (YaookCAPI)";
+          this.updateCreateClusterSetting("ClusterType", "Kubernetes Cluster (YaookCAPI)");
         }
       }
+
+      this.updateCreateClusterSetting("Types", this.kubernetesClusterType);
     }, 100);
     
     let self = this;
     this.$bvModal.show("bv-modal-createenvironmentfromtemplate");
-    this.onTypeChange();
     this.getUsersProjectsList();
     this.getTemplatesList(false);
 
@@ -301,6 +338,9 @@ export default {
     },
   },
   methods: {
+    setShowClusterDetails(value) {
+      this.showClusterDetails = value;
+    },
     arrContains(arr, el) {
       for (var i=0;i<arr.length;i++) {
         if (arr[i] == el) {
@@ -309,34 +349,19 @@ export default {
       }
       return false;
     },
-    onTypeChange() {
-      if (this.selectedType == "Kubernetes Cluster (DLCM)") {
-        Vue.prototype.$selectedType = 1;
-      } else if (this.selectedType == "Kubernetes Cluster (CAPI)") {
-        Vue.prototype.$selectedType = 5;
-      } else if (this.selectedType == "K3S") {
-        Vue.prototype.$selectedType = 3;
-      } else if (this.selectedType == "Kubernetes Cluster (DLCM v2)") {
-        Vue.prototype.$selectedType = 7;
-      } else if (this.selectedType == "Kubernetes Cluster (YaookCAPI)") {
-        Vue.prototype.$selectedType = 8;
-      } else {
-        Vue.prototype.$selectedType = 6;
-      }
-    },
     openModalCreateEnvironmentFromTemplate() {
       let self = this;
       let selectedTemplate = self.templateNamesList.filter(
-        (el) => el.id == self.selectedTemplateId
+        (el) => el.id == self.computed_create_cluster_settings.selected_template_id
       )[0];
       this.$refs.newEnvfromTemplate.initiateCreateEnvFromTemplate(
         selectedTemplate.name,
-        self.selectedProject,
+        self.computed_create_cluster_settings.selected_project,
         selectedTemplate.id
       );
     },
     onChangeInstallationType() {
-      if (this.installationType == "from template") {
+      if (this.computed_create_cluster_settings.installation_type == "from template") {
         this.getTemplatesList(true);
       }
       if (this.$refs.newEnvfromTemplate) {
@@ -349,11 +374,12 @@ export default {
 
       self.templateNamesList = templates;
       if (self.templateNamesList.length > 0) {
-        self.selectedTemplateId = self.templateNamesList[0].id;
+        self.updateCreateClusterSetting("SelectedTemplateID", self.templateNamesList[0].id);
         if (openModal) {
           self.openModalCreateEnvironmentFromTemplate();
         }
       }
+      self.updateCreateClusterSetting("Templates", self.templateNamesList);
     },
     async getUsersProjectsList() {
       let self = this;
@@ -395,10 +421,12 @@ export default {
       if (
         self.projectsList.filter((el) => el.ID == self.projectID).length > 0
       ) {
-        self.selectedProject = self.projectID;
+        self.updateCreateClusterSetting("SelectedProject", self.projectID);
       } else {
-        self.selectedProject = self.projectsList[0].ID;
+        self.updateCreateClusterSetting("SelectedProject", self.projectsList[0].ID);
       }
+
+      self.updateCreateClusterSetting("Projects", self.projectsList);
     },
   },
 };

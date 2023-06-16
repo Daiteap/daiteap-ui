@@ -19,6 +19,7 @@
           @active-step="isStepActive"
           @stepper-finished="submitResizeDLCMCluster"
           :isInResize="true"
+          :clusterID="clusterID"
         ></horizontal-stepper>
       </div>
     </div>
@@ -78,8 +79,6 @@ export default {
   beforeMount() {
     let self = this;
     this.getClusterConfig().then(function (cluster) {
-      console.log("Cluster.config", cluster.config);
-
       Vue.prototype.$finalModel = cluster.config;
       Vue.prototype.$finalModel.projectId = cluster.projectId;
       Vue.prototype.$finalModel.gatewayCloud = cluster.gatewayCloud;
@@ -88,7 +87,7 @@ export default {
 
       for (const key in Vue.prototype.$finalModel) {
         if (Object.hasOwnProperty.call(Vue.prototype.$finalModel, key)) {
-          if (Vue.prototype.$finalModel[key].hasOwnProperty('nodes')) {
+          if (Object.hasOwnProperty.call(Vue.prototype.$finalModel[key], "nodes")) {
             Vue.prototype.$existingNodesCount += Vue.prototype.$finalModel[key].nodes.length;
           }
         }
@@ -225,7 +224,7 @@ export default {
 
       let resizeDLCMClusterRequestBody = this.$finalModel
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/dlcmv2-resize";
 
       this.axios
         .post(endpoint, resizeDLCMClusterRequestBody, this.get_axiosConfig())
@@ -242,9 +241,6 @@ export default {
         })
         .catch(function (error) {
           if (error.response.data.authorized == false) {
-            self.$parent.exceededResources =
-              error.response.data.exceededResources;
-            self.$parent.showQuotaExceeded = true;
             self.$bvModal.show("bv-modal-quotaexceeded");
           } else {
             console.log(error);
@@ -345,6 +341,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

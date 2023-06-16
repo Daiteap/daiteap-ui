@@ -22,8 +22,10 @@
           </div>
         </div>
         <div v-else-if="projectsList.length > 0">
-          <MyProjectsTable class="mt-2" :projectsList="projectsList" :tenantID="tenantID"
-            :showTenant="false"
+          <MyProjectsTable
+            class="mt-2"
+            :projectsList="projectsList"
+            :tenantID="tenantID"
           />
         </div>
         <div v-else>

@@ -54,7 +54,6 @@
           @validateAllCredentials="validateCredentialsList"
           @openEditPopup="openEditAccountNameModal"
           @validateCredential="validateCredentials"
-          :showTenant="false"
         />
       </div>
       <br />
@@ -618,21 +617,21 @@ export default {
                         if (key == "dlcmV2Images") {
                           alert.msg += ", Check the DLCMV2 images.";
                         } else if (
-                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          account_credentials.type == "openstack" &&
                           self.computed_account_settings
                             .enable_kubernetes_capi &&
                           key == "capiImages"
                         ) {
                           alert.msg += ", Check the CAPI images.";
                         } else if (
-                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          account_credentials.type == "openstack" &&
                           self.computed_account_settings
                             .enable_kubernetes_yaookcapi &&
                           key == "yaookCapiImages"
                         ) {
                           alert.msg += ", Check the YaookCAPI images.";
                         } else if (
-                          checkIfAccountCanBeValidated.type == "openstack" &&
+                          account_credentials.type == "openstack" &&
                           key == "externalNetwork"
                         ) {
                           alert.msg += ", Check the external network.";
@@ -777,7 +776,6 @@ export default {
       }
     },
     goToRemoveAccountWarning(accountToRemove) {
-      // console.log(accountToRemove);
       this.showRemoveAccountWarning = true;
       this.$bvModal.show("bv-modal-removeaccountwarning");
       this.accountToRemove = accountToRemove;

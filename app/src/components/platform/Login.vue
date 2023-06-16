@@ -1,12 +1,12 @@
 <template>
+  <div></div>
 </template>
 
 <script>
-import Vue from 'vue'
-import Button from "./Button.vue";
+import Vue from "vue";
 
 export default {
-  components: { Button },
+  name: "Login",
   data() {
     return {
       username: "",
@@ -30,10 +30,9 @@ export default {
       self.login_keycloak();
     }
   },
-  name: "Login",
   methods: {
     login_keycloak () {
-      Vue.$keycloak.login()
+      Vue.$keycloak.login();
     },
     forgotPassword_keycloak () {
       window.open("https://localhost:8090/auth/realms/Daiteap/login-actions/reset-credentials", "_blank");

@@ -48,7 +48,6 @@
             :clustersList="clustersList" 
             :projectsList="projectsList" 
             @showUserDetails="showUserDetails"
-            :showTenant="false"
           />
         </div>
         <div v-else>

@@ -443,7 +443,6 @@ export default {
         submitEl.disabled = false;
       } else {
         submitEl.disabled = true;
-        console.log("stuff went wrong")
       }
     },
     getRegionZonesList() {

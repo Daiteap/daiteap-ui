@@ -10,6 +10,9 @@
       :top-buttons="true"
       @active-step="isStepActive"
       @stepper-finished="submitCluster"
+      @installation-type-change="$emit('installation-type-change')"
+      @template-change="$emit('template-change')"
+      @set-show-cluster-details="$emit('set-show-cluster-details')"
     ></horizontal-stepper>
   </div>
 </template>
@@ -213,7 +216,7 @@ export default {
     },
     submitCluster() {
       var request = this.$finalModel;
-      request.projectId = this.$parent.selectedProject
+      request.projectId = this.computed_create_cluster_settings.selected_project;
 
       let self = this;
 
@@ -325,6 +328,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

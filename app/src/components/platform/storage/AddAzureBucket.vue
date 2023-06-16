@@ -100,8 +100,6 @@
 </template>
 
 <script>
-import CardTitle from "@/components/platform/CardTitle";
-import WarningAlert from "@/components/platform/WarningAlert";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -137,10 +135,6 @@ const nameSymbolsValidation = helpers.regex(
 
 export default {
   name: "AddAzureBucket",
-  components: {
-    CardTitle,
-    WarningAlert,
-  },
   data() {
     return {
       credentials: [],

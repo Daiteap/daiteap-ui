@@ -127,6 +127,7 @@ import Confirm from "./Confirm.vue";
 import GenericPopupWarning from "../popup_modals/GenericPopupWarning";
 
 export default {
+  name: "List",
   props: {
     icons: Object,
     storage: String,

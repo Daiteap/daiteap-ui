@@ -41,7 +41,7 @@
           <tr>
             <th>Name</th>
             <th name="bucketsHidePriority2">Description</th>
-            <th name="bucketsHidePriority4" v-if="!projectID && !showTenant">
+            <th name="bucketsHidePriority4" v-if="!projectID">
               Project
             </th>
             <th name="bucketsHidePriority5">Provider</th>
@@ -81,7 +81,7 @@
                   },
                 })
               "
-              v-if="!projectID && !showTenant"
+              v-if="!projectID"
               :title="item.project.name"
             >
               {{ item.project.name }}
@@ -162,7 +162,6 @@ export default {
   props: {
     buckets: Array,
     projectID: String,
-    showTenant: Boolean,
   },
   data() {
     return {

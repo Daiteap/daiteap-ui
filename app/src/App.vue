@@ -143,6 +143,9 @@ Vue.mixin({
         }
       }
     },
+    updateCreateClusterSetting(setting, value) {
+      this.$store.commit("updateCreateClusterSettings" + setting, value);
+    },
     deleteClusterMain(cluster) {
       let endpoint;
       if (cluster.Type == 5) {
@@ -754,16 +757,11 @@ Vue.mixin({
         });
     },
     editUserInfo(request) {
-      let endpoint;
-      if (this.computed_isBusinessAccountOwner) {
-        endpoint = "/server/businessaccountowner/updateUser";
-      } else {
-        endpoint =
-          "/server/tenants/" +
-          this.computed_active_tenant_id +
-          "/users/" +
-          request.username;
-      }
+      const endpoint =
+        "/server/tenants/" +
+        this.computed_active_tenant_id +
+        "/users/" +
+        request.username;
 
       let self = this;
       while (self.updatingToken) {
@@ -994,7 +992,7 @@ Vue.mixin({
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  border: 0px solid #000;
+  border: 0 solid #000;
   border-radius: 100rem;
   background-color: #fff;
   color: #000;
@@ -1009,7 +1007,7 @@ Vue.mixin({
 
 .custom-button.deactivated {
   background-color: #fff !important;
-  border: 0px solid #000;
+  border: 0 solid #000;
   color: #bcbcbc;
   cursor: not-allowed !important;
   pointer-events: none;

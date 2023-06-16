@@ -200,7 +200,7 @@ export default {
 
       let resizeYaookClusterRequestBody = this.$finalModel;
 
-      let endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/yaook-resize";
+      const endpoint = "/server/tenants/" + this.computed_active_tenant_id + "/clusters/" + this.clusterID + "/yaook-resize";
 
       this.axios
         .post(endpoint, resizeYaookClusterRequestBody, this.get_axiosConfig())
@@ -305,6 +305,6 @@ i.top-left {
   justify-content: space-around;
 }
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

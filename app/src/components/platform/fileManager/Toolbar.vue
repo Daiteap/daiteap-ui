@@ -102,6 +102,7 @@
 
 <script>
 export default {
+  name: "Toolbar",
   props: {
     storages: Array,
     storage: String,

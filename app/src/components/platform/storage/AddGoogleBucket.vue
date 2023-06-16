@@ -178,7 +178,6 @@
 </template>
 
 <script>
-import WarningAlert from "@/components/platform/WarningAlert";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -249,9 +248,6 @@ function notIPAddress(value) {
 
 export default {
   name: "AddGoogleBucket",
-  components: {
-    WarningAlert,
-  },
   data() {
     return {
       credentials: [],

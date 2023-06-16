@@ -3,229 +3,229 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap");
 
 * {
-    font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* Fix fonts that render as bold in Firefox */
 
 html {
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-    font-weight: 400;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  font-weight: 400;
 }
 
 @-moz-document url-prefix() {
-    body {
-        font-weight: lighter !important;
-    }
+  body {
+    font-weight: lighter !important;
+  }
 }
 
 /* Background color top navigation */
 
 #daiteap-top-navbar {
-    background-color: #eaebed !important;
+  background-color: #eaebed !important;
 }
 
 #daiteap-top-navbar-img {
-    background-image: url("../img/logo_wo.png");
-    background-repeat: no-repeat;
-    width: 60px;
-    height: 0px !important;
-    height: 42px;
-    padding: 42px 0 0 0;
-    background-size: 60px 42px;
-    z-index: 99999;
-    position: fixed;
-    top: 15px;
-    left: 50px;
+  background-image: url("../img/logo_wo.png");
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 0 !important;
+  height: 42px;
+  padding: 42px 0 0;
+  background-size: 60px 42px;
+  z-index: 99999;
+  position: fixed;
+  top: 15px;
+  left: 50px;
 }
 
 #login-img-logo {
-    content: url("../img/logo_wo.png");
+  content: url("../img/logo_wo.png");
 }
 
 .custom-sidebar {
-    padding-left: 250px;
-    transition: 0.3s ease;
+  padding-left: 250px;
+  transition: 0.3s ease;
 }
 
 .custom-sidebar.collapsed {
-    padding-left: 50px;
+  padding-left: 50px;
 }
 
 .custom-sidebar.onmobile {
-    padding-left: 50px;
+  padding-left: 50px;
 }
 
 .sidebar-overlay {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: #1d1e22;
-    opacity: 0.5;
-    z-index: 900;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #1d1e22;
+  opacity: 0.5;
+  z-index: 900;
 }
 
 .daiteap-avatar-img {
-    background-image: url("../../assets/img/daiteap-blank-profile.png");
-    background-repeat: no-repeat;
-    width: 30px;
-    height: 0px !important;
-    height: 30px;
-    padding: 30px 0 0 0;
-    background-size: 30px 30px;
+  background-image: url("../../assets/img/daiteap-blank-profile.png");
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 0 !important;
+  height: 30px;
+  padding: 30px 0 0;
+  background-size: 30px 30px;
 }
 
 .daiteap-avatar-img-dropdown {
-    background-image: url("../../assets/img/blank-profile.png");
-    background-repeat: no-repeat;
-    width: 20px;
-    height: 0px !important;
-    height: 20px;
-    padding: 20px 0 0 0;
-    background-size: 20px 20px;
+  background-image: url("../../assets/img/blank-profile.png");
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 0 !important;
+  height: 20px;
+  padding: 20px 0 0;
+  background-size: 20px 20px;
 }
 
 .v-sidebar-menu {
-    background-color: #ffffff;
+  background-color: #fff;
 }
 
 .vsm--mobile-item .vsm--item {
-    background-color: #ffffff;
-    color: #000000 !important;
+  background-color: #fff;
+  color: #000 !important;
 }
 
 .vsm--mobile-item .vsm--item .vsm--icon {
-    background-color: #ffffff !important;
-    color: #ffffff !important;
+  background-color: #fff !important;
+  color: #fff !important;
 }
 
 .v-sidebar-menu .vsm--link_mobile {
-    background-color: #ffffff !important;
-    color: #000000 !important;
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
 .v-sidebar-menu .vsm--item .vsm--icon {
-    color: #ffffff !important;
+  color: #fff !important;
 }
 
 .v-sidebar-menu .vsm--link:hover {
-    background-color: #ffffff;
-    border-bottom: solid 1px black;
-    margin-left: 5px;
-    font-weight: bold;
+  background-color: #fff;
+  border-bottom: solid 1px black;
+  margin-left: 5px;
+  font-weight: bold;
 }
 
 .v-sidebar-menu .vsm--link {
-    border-bottom: solid 1px #ffffff;
-    margin-left: 5px;
+  border-bottom: solid 1px #fff;
+  margin-left: 5px;
 }
 
 .v-sidebar-menu .vsm--link:hover .vsm--title {
-    color: #000000;
+  color: #000;
 }
 
 .v-sidebar-menu .vsm--title {
-    font-size: 1.2rem;
-    color: #000000;
+  font-size: 1.2rem;
+  color: #000;
 }
 
 .v-sidebar-menu.vsm_collapsed .vsm--title {
-    font-size: 1.2rem;
-    color: #000000;
+  font-size: 1.2rem;
+  color: #000;
 }
 
 .v-sidebar-menu .vsm--icon {
-    color: #ffffff;
-    background-color: #ED7D31 !important;
+  color: #fff;
+  background-color: #ED7D31 !important;
 }
 
 .v-sidebar-menu .vsm--header {
-    font-size: 1.4rem;
-    margin-top: 2rem;
-    color: #000000;
+  font-size: 1.4rem;
+  margin-top: 2rem;
+  color: #000;
 }
 
 .vsm--list {
-    margin-top: 9rem;
+  margin-top: 9rem;
 }
 
 .v-sidebar-menu .vsm--toggle-btn {
-    color: #000000;
-    background-color: #ffffff;
+  color: #000;
+  background-color: #fff;
 }
 
 .v-sidebar-menu .vsm--toggle-btn:hover {
-    color: #000000;
-    background-color: #ffffff;
+  color: #000;
+  background-color: #fff;
 }
 
 .v-sidebar-menu .vsm--link.vsm--link_active {
-    box-shadow: 3px 0px 0px 0px #fff inset;
+  box-shadow: 3px 0 0 0 #fff inset;
 }
 
 .v-sidebar-menu .vsm--mobile-bg {
-    background-color: #ffffff;
-    color: #000000;
+  background-color: #fff;
+  color: #000;
 }
 
 .v-sidebar-menu .vsm--mobile-bg:hover {
-    background-color: #ffffff !important;
-    color: #000000 !important;
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
 .daiteap-content-card {
-    border: 0px;
-    margin-top: 5rem;
-    margin-left: 2rem;
+  border: 0;
+  margin-top: 5rem;
+  margin-left: 2rem;
 }
 
 .card-header {
-    border: 0px;
+  border: 0;
 }
 
 .machineoperationsbutton {
-    width: 2rem;
+  width: 2rem;
 }
 
 .modal-md {
-    max-width: 50rem !important;
+  max-width: 50rem !important;
 }
 
 .container-daiteap {
-    max-width: 1032px;
+  max-width: 1032px;
 }
 
 .btn-outline-success {
-    border-radius: 20px !important;
+  border-radius: 20px !important;
 }
 
 .bg-current {
-    background-color: #000000 !important;
+  background-color: #000 !important;
 }
 
 .bg-success,
 .bg-secondary {
-    background-color: #ED7D31 !important;
+  background-color: #ED7D31 !important;
 }
 
 .fa-minus-circle {
-    color: #ea0020 !important;
+  color: #ea0020 !important;
 }
 
 .waring-modal-icon {
-    color: #ea0020 !important;
+  color: #ea0020 !important;
 }
 
 .landing-page-icon {
-    color: #ED7D31 !important;
+  color: #ED7D31 !important;
 }
 
 .daiteap-title-left-bar {
-    border-left: 2px solid #ED7D31
+  border-left: 2px solid #ED7D31
 }
 
 .daiteap-btn-plus-project,
@@ -233,73 +233,73 @@ html {
 .daiteap-btn-plus-project:active,
 .daiteap-btn-plus-project:focus,
 .btn-circle {
-    background-color: #00E721 !important;
-    color: #fff;
-    border: 0px;
+  background-color: #00E721 !important;
+  color: #fff;
+  border: 0;
 }
 
 .fa-angle-double-right {
-    color: #ED7D31;
+  color: #ED7D31;
 }
 
 .daiteap-active-cluster-creation-icon {
-    background-color: #ED7D31 !important;
+  background-color: #ED7D31 !important;
 }
 
 .clickForDetails {
-    cursor: pointer;
-    font-weight: bold;
-    color: #4e73df;
+  cursor: pointer;
+  font-weight: bold;
+  color: #4e73df;
 }
 
 .daiteap-progress-bar {
-    background-color: #ED7D31 !important;
+  background-color: #ED7D31 !important;
 }
 
 .daiteap-progress-bar-2 {
-    background-color: #ED7D31 !important;
+  background-color: #ED7D31 !important;
 }
 
 .daiteap-progress {
-    background-color: #00FF21 !important;
+  background-color: #00FF21 !important;
 }
 
 .custom-card {
-    border-radius: 0.6rem;
+  border-radius: 0.6rem;
 }
 
 .custom-card:hover {
-    cursor: pointer;
-    box-shadow: 0 1px 6px 0 #a3a3a3;
-    transition: 0.3s;
+  cursor: pointer;
+  box-shadow: 0 1px 6px 0 #a3a3a3;
+  transition: 0.3s;
 }
 
 .daiteap-custom-border {
-    border: 1px solid #bcbcbc !important;
+  border: 1px solid #bcbcbc !important;
 }
 
 .vue-slider-process {
-    background-color: #ED7D31 !important;
+  background-color: #ED7D31 !important;
 }
 
 .vue-slider-dot-tooltip {
-    display: none
+  display: none
 }
 
 .custom-card-disabled {
-    border-radius: 0px;
-    background-color: #e6e6e6;
-    cursor: not-allowed;
+  border-radius: 0;
+  background-color: #e6e6e6;
+  cursor: not-allowed;
 }
 
 .stepper-box .top .steps-wrapper .step.deactivated .circle i {
-    background-color: #D5D5D5 !important;
+  background-color: #D5D5D5 !important;
 }
 
 .dropdown-toggle::after {
-    display: none;
+  display: none;
 }
 
 .openstack-text::before {
-    content: "OpenStack";
+  content: "OpenStack";
 }

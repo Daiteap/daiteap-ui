@@ -28,6 +28,7 @@
           class="mt-4"
           :users="filteredUsers"
           :clickableRows="true"
+          @canContinue="changeSelectedUser"
         />
       </div>
 			<b-row class="my-1">
@@ -60,10 +61,6 @@ import UnregisteredUsersListTable from "@/components/platform/tables/Unregistere
 export default {
   name: "SelectNewUser",
   props: {
-    isBAO: {
-      type: Boolean,
-      required: true
-    },
     tenant: {
       type: Object,
       required: false
@@ -106,7 +103,6 @@ export default {
           self.loading = false;
         })
         .catch(function (error) {
-          console.error("Error on getting unregistered users occurred.");
           console.log(error);
           if (error.response && error.response.status == "403") {
             self.$notify({
@@ -133,14 +129,7 @@ export default {
 			}
     },
     onCancel() {
-      if (!this.isBAO) {
-        this.$router.push("UsersList");
-      } else {
-        this.$router.push({
-          name: "WorkspaceDetails",
-          params: { tenant: this.tenant },
-        });
-      }
+      this.$router.push("UsersList");
     },
 		createUser() {
 			let email = "";
@@ -155,31 +144,20 @@ export default {
 				}
 			}
 
-      if (this.isBAO){
-        this.$router.push({ 
-          name: "AddNewUser",
-          params: {
-            isBAO: true,
-            tenant: this.tenant,
-            username: this.selectedUser, 
-            email: email,
-            firstName: firstName,
-            lastName: lastName
-          }
-        });
-      } else {
-        this.$router.push({ 
-          name: "AddNewUser",
-          params: {
-            isBAO: false,
-            username: this.selectedUser, 
-            email: email,
-            firstName: firstName,
-            lastName: lastName
-          }
-        });
-      }
-		}
+      this.$router.push({ 
+        name: "AddNewUser",
+        params: {
+          username: this.selectedUser, 
+          email: email,
+          firstName: firstName,
+          lastName: lastName
+        }
+      });
+		},
+    changeSelectedUser(user) {
+      this.canContinue = true;
+      this.selectedUser = user;
+    },
   },
 };
 </script>

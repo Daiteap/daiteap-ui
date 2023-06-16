@@ -42,6 +42,7 @@
 
 <script>
 export default {
+  name: "UnregisteredUsersListTable",
   props: {
     users: Array,
     providers: Array,
@@ -59,8 +60,7 @@ export default {
   },
   methods: {
     changeSelectedUser() {
-      this.$parent.canContinue = true;
-      this.$parent.selectedUser = this.selectedUser;
+      this.$emit('canContinue', this.selectedUser);
     },
   },
 };

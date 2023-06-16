@@ -60,48 +60,7 @@ export default {
       this.$bvModal.hide(this.modalId);
     },
     confirmAction() {
-      let self = this;
-      this.axios
-        .post(
-          self.confirmDialogParams.endpoint,
-          self.confirmDialogParams.requestBody,
-          this.get_axiosConfig()
-        )
-        .then(function () {
-          if (self.confirmDialogParams.successMessage) {
-            self.$notify({
-              group: "msg",
-              type: "success",
-              title: "Notification:",
-              text: self.confirmDialogParams.successMessage,
-            });
-          }
-          self.closeModal();
-        })
-        .catch(function (error) {
-          console.log(error);
-          if (error.response) {
-            console.log(error.response.data);
-          }
-          if (error.response && error.response.status == "403") {
-            self.$notify({
-              group: "msg",
-              type: "error",
-              title: "Notification:",
-              text: "Access Denied",
-            });
-          } else {
-            if (self.confirmDialogParams.failureMessage) {
-              self.$notify({
-                group: "msg",
-                type: "error",
-                title: "Notification:",
-                text: self.confirmDialogParams.failureMessage,
-              });
-            }
-          }
-          self.closeModal();
-        });
+      this.$emit("confirm-action", this.confirmDialogParams.payload);
     },
   },
 };

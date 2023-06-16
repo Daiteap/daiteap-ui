@@ -1,9 +1,5 @@
 <template>
   <div>
-    <ConfirmDialog
-      v-show="showConfirmDialog"
-      :confirmDialogParams="confirmDialogParams"
-    ></ConfirmDialog>
     <DetailsVirtualMachine
       v-show="showDetailsVirtualMachine"
       :machineDetails="machineDetails"
@@ -34,7 +30,7 @@
           <div class="spinner-border" role="status"></div>
         </div>
         <div v-else>
-          <ComputeOverviewTable :tenantID="tenantID" :showTenant="false"/>
+          <ComputeOverviewTable :tenantID="tenantID" />
         </div>
       </div>
     </div>
@@ -46,7 +42,6 @@
 import CardTitle from "@/components/platform/CardTitle";
 import ComputeOverviewTable from "@/components/platform/tables/ComputeOverviewTable";
 import AddButton from "@/components/platform/AddButton";
-import ConfirmDialog from "./popup_modals/ConfirmDialog";
 import DetailsVirtualMachine from "@/components/platform/popup_modals/DetailsVirtualMachine";
 
 export default {
@@ -55,22 +50,10 @@ export default {
     CardTitle,
     ComputeOverviewTable,
     AddButton,
-    ConfirmDialog,
     DetailsVirtualMachine,
   },
   data() {
     return {
-      showConfirmDialog: false,
-      confirmDialogParams: {
-        requestBody: {},
-        text: "",
-        endpoint: "",
-        successMessage: "",
-        failureMessage: "",
-        envName: "",
-        envId: "",
-        action: "",
-      },
       machinesList: [],
       clusterID: "",
       cluster: {},

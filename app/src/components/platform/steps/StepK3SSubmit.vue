@@ -132,7 +132,7 @@ export default {
       var request = this.$finalModel;
       self.templateSaved = "Saved";
 
-      request.type = this.$selectedType;
+      request.type = this.computed_create_cluster_settings.cluster_type_number;
       request.name = this.form.name;
       request.description = this.form.description
 
@@ -258,7 +258,7 @@ export default {
     self.$finalModel.internal_dns_zone = "daiteap.internal";
 
     this.clusterSummary = this.$finalModel;
-    this.clusterSummary.type = this.$selectedType;
+    this.clusterSummary.type = this.computed_create_cluster_settings.cluster_type_number;
     this.clusterSummary.resize = false;
   },
   destroyed() {

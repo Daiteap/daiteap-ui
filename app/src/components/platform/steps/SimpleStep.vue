@@ -10,12 +10,13 @@
           border-radius: 10px;
         ">
         <!-- aws -->
-        <b-card v-if="
-          computed_account_settings.providers_enable_aws &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
-        " no-body @click="selectCloud('aws')" class="user-select-none m-3"
-          :class="awsProvided ? 'custom-card' : 'custom-card-disabled'">
+        <b-card
+          v-if="computed_account_settings.providers_enable_aws"
+          no-body
+          @click="selectCloud('aws')"
+          class="user-select-none m-3"
+          :class="awsProvided ? 'custom-card' : 'custom-card-disabled'"
+        >
           <div>
             <img src="../../../assets/img/aws_logo_small.png" height="60rem" alt="Image" class="p-2 m-2" />
             <div class="my-3 ml-5 float-right m-3 customCheckbox"
@@ -63,12 +64,13 @@
         </b-card>
 
         <!-- azure -->
-        <b-card v-if="
-          computed_account_settings.providers_enable_azure &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
-        " no-body @click="selectCloud('azure')" class="user-select-none m-3"
-          :class="azureProvided ? 'custom-card' : 'custom-card-disabled'">
+        <b-card
+          v-if="computed_account_settings.providers_enable_azure"
+          no-body
+          @click="selectCloud('azure')"
+          class="user-select-none m-3"
+          :class="azureProvided ? 'custom-card' : 'custom-card-disabled'"
+        >
           <div>
             <img src="../../../assets/img/azure_logo_small.png" height="60rem" alt="Image" class="p-2 m-2" />
             <div class="my-3 ml-5 float-right m-3 customCheckbox"
@@ -116,12 +118,13 @@
         </b-card>
 
         <!-- google -->
-        <b-card v-if="
-          computed_account_settings.providers_enable_gcp &&
-          this.$selectedType != 5 &&
-          this.$selectedType != 8
-        " no-body @click="selectCloud('google')" class="user-select-none m-3"
-          :class="googleProvided ? 'custom-card' : 'custom-card-disabled'">
+        <b-card
+          v-if="computed_account_settings.providers_enable_gcp"
+          no-body
+          @click="selectCloud('google')"
+          class="user-select-none m-3"
+          :class="googleProvided ? 'custom-card' : 'custom-card-disabled'"
+        >
           <div>
             <img src="../../../assets/img/googleCloud_logo_small.png" height="60rem" alt="Image" class="p-2 m-2" />
             <div class="my-3 ml-5 float-right m-3 customCheckbox" :class="{
@@ -298,13 +301,6 @@ export default {
   mounted() {
     let self = this;
 
-    this.$parent.$parent.$parent.showClusterDetails = false;
-    self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
-      (function () {
-        self.$parent.$parent.$parent.showClusterDetails = true;
-        self.$destroy();
-      })()
-    );
     this.axios
       .get(
         "/server/tenants/" +
@@ -1087,7 +1083,7 @@ export default {
               "/regions/" +
               region +
               "/environment-type/" +
-              this.$selectedType +
+              this.computed_create_cluster_settings.cluster_type_number +
               "/operating-systems",
             this.get_axiosConfig()
           )

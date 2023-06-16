@@ -2,10 +2,6 @@
   <div class="row m-0 p-0">
     <div class="col mt-5 w-100">
       <div class="container-fluid pr-0 mr-0">
-        <ConfirmDialog
-          v-show="showConfirmDialog"
-          :confirmDialogParams="confirmDialogParams"
-        ></ConfirmDialog>
         <DeleteDialog
           v-show="showDeleteDialog"
           :deleteDialogParams="deleteDialogParams"
@@ -230,12 +226,9 @@
 
 <script>
 import QuotaExceededModal from "@/components/platform/popup_modals/QuotaExceededModal";
-import axios from "axios";
-import ConfirmDialog from "./popup_modals/ConfirmDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import ClusterProviderAccounts from "./clusterDetailsComponents/ClusterProviderAccounts";
 import ProviderNodesCard from "./ProviderNodesCard";
-import WarningAlert from "@/components/platform/WarningAlert";
 import NodesTable from "@/components/platform/tables/NodesTable";
 import OperationsTab from "@/components/platform/clusterDetailsComponents/OperationsTab";
 
@@ -274,22 +267,11 @@ export default {
       showAddClusterAccount: false,
       showUpgradeKubernetesCluster: false,
       showUpgradeK3sCluster: false,
-      showConfirmDialog: false,
       showQuotaExceeded: false,
       exceededResources: {},
       accountsList: [],
       providersWithoutAccounts: [],
       serviceStoreList: [],
-      confirmDialogParams: {
-        requestBody: {},
-        text: "",
-        endpoint: "",
-        successMessage: "",
-        failureMessage: "",
-        envName: "",
-        envId: "",
-        action: "",
-      },
       showDeleteDialog: false,
       deleteDialogParams: {
         requestBody: {},
@@ -318,11 +300,9 @@ export default {
   },
   components: {
     ProviderNodesCard,
-    ConfirmDialog,
     DeleteDialog,
     QuotaExceededModal,
     ClusterProviderAccounts,
-    WarningAlert,
     NodesTable,
     OperationsTab,
   },
@@ -371,7 +351,7 @@ export default {
           connectionInfo = {};
         }
 
-        if (!connectionInfo.hasOwnProperty("addresses")) {
+        if (!Object.hasOwnProperty.call(connectionInfo, "addresses")) {
           connectionInfo["addresses"] = [];
         }
 

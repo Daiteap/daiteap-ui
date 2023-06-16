@@ -7,11 +7,12 @@
         </div>
         <select
           class="custom-select d-block w-100"
-          v-model="$parent.$parent.$parent.selectedProject"
+          v-model="computed_create_cluster_settings.selected_project"
           id="selectProject"
+          @change="updateCreateClusterSetting('SelectedProject', $event.target.value)"
         >
           <option
-            v-for="item in $parent.$parent.$parent.projectsList"
+            v-for="item in computed_create_cluster_settings.projects"
             :key="item.ID"
             :value="item.ID"
           >
@@ -29,19 +30,22 @@
         </div>
         <select
           class="custom-select d-block w-100"
-          v-model="$parent.$parent.$parent.installationType"
+          v-model="computed_create_cluster_settings.installation_type"
           id="selectType"
-          @change="$parent.$parent.$parent.onChangeInstallationType()"
+          @change="
+            updateCreateClusterSetting('InstallationType', $event.target.value);
+            $emit('installation-type-change');
+          "
         >
           <option>manually</option>
-          <option v-if="$parent.$parent.$parent.templateNamesList.length > 0">
+          <option v-if="computed_create_cluster_settings.templates.length > 0">
             from template
           </option>
         </select>
       </div>
 
       <div
-        v-if="$parent.$parent.$parent.installationType == 'manually'"
+        v-if="computed_create_cluster_settings.installation_type == 'manually'"
         class="control my-3"
         id="clusterType"
       ></div>
@@ -51,14 +55,18 @@
         </div>
         <select
           class="custom-select d-block w-100"
-          v-model="$parent.$parent.$parent.selectedTemplateId"
+          v-model="computed_create_cluster_settings.selected_template_id"
           id="selectTemplate"
           @change="
-            $parent.$parent.$parent.openModalCreateEnvironmentFromTemplate()
+            updateCreateClusterSetting(
+              'SelectedTemplateID',
+              $event.target.value
+            );
+            $emit('template-change');
           "
         >
           <option
-            v-for="item in $parent.$parent.$parent.templateNamesList"
+            v-for="item in computed_create_cluster_settings.templates"
             :key="item.id"
             :value="item.id"
           >
@@ -83,19 +91,19 @@
           placeholder="Cluster name"
           v-model="form.clusterName"
           @input="$v.form.clusterName.$touch"
-          @focus="nameFocus = true"
-          @blur="nameFocus = false"
-          @change="changeClusterName()"
+          @change="updateCreateClusterSetting('ClusterName', form.clusterName)"
         />
         <p
           v-if="form.clusterName != '' && !$v.form.clusterName.maxLength && $v.form.clusterName.$dirty"
-          class="help text-danger" style="height: 1.2rem"
+          class="help text-danger"
+          style="height: 1.2rem"
         >
           Invalid cluster name
         </p>
         <p
           v-else-if="form.clusterName != '' && clusterNameResolved && !$v.form.clusterName.isNameFree"
-          class="help text-danger" style="height: 1.2rem"
+          class="help text-danger"
+          style="height: 1.2rem"
         >
           {{ clusterNameTakenMsg }}
         </p>
@@ -119,7 +127,7 @@
           placeholder="Description"
           v-model="form.clusterDescription"
           @input="$v.form.clusterDescription.$touch"
-          @change="changeClusterDescription()"
+          @change="updateCreateClusterSetting('ClusterDescription', form.clusterDescription)"
         ></b-form-textarea>
         <p
           v-if="
@@ -156,25 +164,30 @@
             class="mt-2"
           >
             <div
-              v-if="$parent.$parent.$parent.installationType == 'manually'"
+              v-if="computed_create_cluster_settings.installation_type == 'manually'"
               class="control my-3"
               id="clusterType"
             >
-              <br v-if="$parent.$parent.$parent.kubernetesClusterType.length > 1" />
+              <br v-if="computed_create_cluster_settings.types.length > 1" />
               <div
-                v-if="$parent.$parent.$parent.kubernetesClusterType.length > 1"
+                v-if="computed_create_cluster_settings.types.length > 1"
               >
                 <label>Type</label>
               </div>
               <select
                 class="custom-select d-block w-100"
-                v-model="$parent.$parent.$parent.selectedType"
+                v-model="computed_create_cluster_settings.cluster_type"
                 id="selectType"
-                @change="$parent.$parent.$parent.onTypeChange()"
-                v-if="$parent.$parent.$parent.kubernetesClusterType.length > 1"
+                @change="
+                  updateCreateClusterSetting(
+                    'ClusterType',
+                    $event.target.value
+                  );
+                "
+                v-if="computed_create_cluster_settings.types.length > 1"
               >
                 <option
-                  v-for="item in $parent.$parent.$parent.kubernetesClusterType"
+                  v-for="item in computed_create_cluster_settings.types"
                   :key="item"
                   :value="item"
                 >
@@ -335,18 +348,6 @@ export default {
       this.$store.commit(
         "updateCreateClusterSettingsShowAdvanced",
         !this.computed_create_cluster_settings.show_advanced
-      );
-    },
-    changeClusterName() {
-      this.$store.commit(
-        "updateCreateClusterSettingsClusterName",
-        this.form.clusterName
-      );
-    },
-    changeClusterDescription() {
-      this.$store.commit(
-        "updateCreateClusterSettingsClusterDescription",
-        this.form.clusterDescription
       );
     },
     getClusterNameAndDescription() {

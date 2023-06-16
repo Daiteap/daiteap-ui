@@ -46,7 +46,6 @@ export default {
   data() {
     return {
       showClusterDetails: true,
-      selectedProject: {},
       projectsList: [],
       clusterSteps: [
         {
@@ -86,7 +85,8 @@ export default {
   mounted() {
     let self = this;
 
-    Vue.prototype.$selectedType = 2;
+    this.updateCreateClusterSetting("ClusterType", "Compute");
+
     Vue.prototype.$finalModel = {};
 
     this.getUsersProjectsList();
@@ -260,10 +260,12 @@ export default {
       if (
         self.projectsList.filter((el) => el.ID == self.projectID).length > 0
       ) {
-        self.selectedProject = self.projectID;
+        self.updateCreateClusterSetting('SelectedProject', self.projectID);
       } else {
-        self.selectedProject = self.projectsList[0].ID;
+        self.updateCreateClusterSetting('SelectedProject', self.projectsList[0].ID);
       }
+
+      self.updateCreateClusterSetting('Projects', self.projectsList);
     },
     completeStep(payload) {
       this.clusterSteps.forEach((step) => {
@@ -283,7 +285,7 @@ export default {
     },
     submitCluster() {
       var request = this.$finalModel;
-      request.projectId = this.selectedProject
+      request.projectId = this.computed_create_cluster_settings.selected_project;
 
       let self = this;
       this.axios
@@ -395,6 +397,6 @@ i.top-left {
 }
 
 .vertical-separator .line {
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #ccc;
 }
 </style>

@@ -1,249 +1,250 @@
-import { mount } from '@vue/test-utils';
-import Vue from 'vue';
+import {mount} from "@vue/test-utils";
+import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
-import { BootstrapVue } from 'bootstrap-vue';
-import Notifications from 'vue-notification';
-import AddCloudCredentials from '@/components/platform/AddCloudCredentials.vue';
-import AddAwsAccount from '@/components/platform/addProviderCredentials/AddAwsAccount.vue';
-import WarningAlert from '@/components/platform/WarningAlert.vue';
+import {BootstrapVue} from "bootstrap-vue";
+import Notifications from "vue-notification";
+import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
+import AddAwsAccount
+  from "@/components/platform/addProviderCredentials/AddAwsAccount.vue";
+import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 Vue.config.silent = true;
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.use(Notifications);
 
-describe('Add Cloud Credentials - Amazon', () => {
-    const mocked_get_response = {
-        data: {
-            credentials: [
-                {
-                    id: 1,
-                    label: "aws-1",
-                    provider: "aws",
-                    type: "aws",
-                    contact: "admin@mail.mail",
-                    valid: true,
-                    description: "desc",
-                    created_at: "4/1/2022",
-                    has_associated_environments: false,
-                },
-            ]
-        },
-    };
-    jest.spyOn(axios, 'get').mockResolvedValue(mocked_get_response);
-
-    let credential = {
-        label: "aws-0",
+describe("Add Cloud Credentials - Amazon", () => {
+  const mockedGetResponse = {
+    data: {
+      credentials: [{
+        id: 1,
+        label: "aws-1",
+        provider: "aws",
+        type: "aws",
+        contact: "admin@mail.mail",
+        valid: true,
         description: "desc",
-        aws_access_key_id: "01234567892020202020",
-        aws_secret_access_key: "0123456789202020202040404040404040404040",
+        created_at: "4/1/2022",
+        has_associated_environments: false,
+      }],
+    },
+  };
+
+  const credential = {
+    label: "aws-0",
+    description: "desc",
+    aws_access_key_id: "01234567892020202020",
+    aws_secret_access_key: "0123456789202020202040404040404040404040",
+  };
+
+  let wrapper; let amazon;
+  beforeEach(async () => {
+    wrapper = mount(AddCloudCredentials, {
+      data() {
+        return {
+          computed_theme: "daiteap",
+          get_axiosConfig: () => {
+            return {};
+          },
+          selectedProvider: " ",
+          computed_account_settings: {
+            enable_kubernetes_capi: true,
+          },
+        };
+      },
+      mocks: {
+        getCredentials: function() {
+          return mockedGetResponse.data.credentials;
+        },
+        $router: [],
+      },
+    });
+
+    wrapper.setData({selectedProvider: "aws"});
+    await Vue.nextTick();
+    amazon = wrapper.findComponent(AddAwsAccount);
+    amazon.setData({get_axiosConfig: () => {
+      return {};
+    }});
+
+    // Add Credential
+    let input = amazon.find("[data-test-id=\"input-label\"]");
+    await input.setValue(credential.label);
+
+    input = amazon.find("[data-test-id=\"input-description\"]");
+    await input.setValue(credential.description);
+
+    input = amazon.find("[data-test-id=\"input-id\"]");
+    await input.setValue(credential.aws_access_key_id);
+
+    input = amazon.find("[data-test-id=\"input-secret\"]");
+    await input.setValue(credential.aws_secret_access_key);
+  });
+
+  afterEach(async () => {
+    jest.clearAllMocks();
+  });
+
+  jest.spyOn(document, "getElementById")
+    .mockImplementation((id) => {
+      switch (id) {
+      case "awsLabel":
+        return {value: credential.label};
+      case "awsdescription":
+        return {value: credential.description};
+      case "awsAccessKey":
+        return {value: credential.aws_access_key_id};
+      case "secretAccessKey":
+        return {value: credential.aws_secret_access_key};
+      default:
+        return;
+      }
+    });
+
+  test("checks if label is taken", async () => {
+    const input = amazon.find("[data-test-id=\"input-label\"]");
+    const saveButton = amazon.find("[data-test-id=\"input-save\"]");
+
+    await input.setValue("aws-1");
+    expect(saveButton.classes().includes("deactivated")).toBe(true);
+
+    await input.setValue("aws-2");
+    expect(saveButton.classes().includes("deactivated")).toBe(false);
+  });
+
+  test("adds valid aws credentials", async () => {
+    const mockedPostResponse = {
+      data: {
+        taskId: 0,
+        status: "ok",
+        errorMessage: "",
+        lcmStatuses: {
+          "dlcmV2Images": true,
+          "capiImages": true,
+          "yaookCapiImages": true,
+          "externalNetwork": true,
+        },
+      },
     };
+    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    let wrapper, amazon;
-    beforeEach(async () => {
-        wrapper = mount(AddCloudCredentials, {
-            data() {
-                return {
-                    computed_theme: "daiteap",
-                    get_axiosConfig: () => { return {} },
-                    selectedProvider: " ",
-                    computed_account_settings: {
-                        enable_kubernetes_capi: true,
-                    },
-                }
-            },
-            mocks: {
-                $router: [],
-            },
-        });
+    const saveButton = amazon.find("[data-test-id=\"input-save\"]");
+    saveButton.trigger("click");
+    await Vue.nextTick();
+    expect(amazon.vm.newAws).toEqual(credential);
+    await Vue.nextTick();
 
-        wrapper.setData({ selectedProvider: "aws" })
-        await Vue.nextTick();
-        amazon = wrapper.findComponent(AddAwsAccount);
-        amazon.setData({ get_axiosConfig: () => { return {} } });
+    const alert = wrapper.findComponent(WarningAlert);
+    expect(alert.exists()).toBe(false);
 
-        // Add Credential
-        let input = amazon.find('[data-test-id="input-label"]');
-        await input.setValue(credential.label);
+    expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
 
-        input = amazon.find('[data-test-id="input-description"]');
-        await input.setValue(credential.description);
+  test("does not add invalid aws credentials", async () => {
+    const mockedPostResponse = {
+      data: {
+        taskId: 0,
+        status: "ok",
+        error: true,
+        errorMessage: "",
+        lcmStatuses: {
+          "dlcmV2Images": true,
+          "capiImages": true,
+          "yaookCapiImages": true,
+          "externalNetwork": true,
+        },
+      },
+    };
+    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-        input = amazon.find('[data-test-id="input-id"]');
-        await input.setValue(credential.aws_access_key_id);
+    const saveButton = amazon.find("[data-test-id=\"input-save\"]");
+    saveButton.trigger("click");
+    await Vue.nextTick();
+    expect(amazon.vm.newAws).toEqual(credential);
+    await Vue.nextTick();
 
-        input = amazon.find('[data-test-id="input-secret"]');
-        await input.setValue(credential.aws_secret_access_key);
-    });
+    const alert = wrapper.findComponent(WarningAlert);
+    expect(alert.exists()).toBe(true);
 
-    afterEach(async () => {
-        jest.clearAllMocks();
-    });
+    expect(wrapper.vm.$router[0]).toBe(undefined);
+    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
 
-    jest.spyOn(document, 'getElementById')
-        .mockImplementation((id) => {
-            switch (id) {
-                case 'awsLabel':
-                    return { value: credential.label };
-                case 'awsdescription':
-                    return { value: credential.description };
-                case 'awsAccessKey':
-                    return { value: credential.aws_access_key_id };
-                case 'secretAccessKey':
-                    return { value: credential.aws_secret_access_key };
-                default:
-                    return;
-            }
-        });
+  test("adds aws credentials without capi images or external network", async () => {
+    const mockedPostResponse = {
+      data: {
+        taskId: 0,
+        status: "ok",
+        error: false,
+        errorMessage: "",
+        lcmStatuses: {
+          "dlcmV2Images": true,
+          "capiImages": false,
+          "yaookCapiImages": true,
+          "externalNetwork": false,
+        },
+      },
+    };
+    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    test('checks if label is taken', async () => {
-        let input = amazon.find('[data-test-id="input-label"]');
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        
-        await input.setValue('aws-1');
-        expect(saveButton.attributes().disabled).toBe("disabled");
+    const saveButton = amazon.find("[data-test-id=\"input-save\"]");
+    saveButton.trigger("click");
+    await Vue.nextTick();
+    expect(amazon.vm.newAws).toEqual(credential);
+    await Vue.nextTick();
 
-        await input.setValue('aws-2');
-        expect(saveButton.attributes().disabled).toBe(undefined);
-    });
+    const alert = wrapper.findComponent(WarningAlert);
+    expect(alert.exists()).toBe(false);
 
-    test('adds valid aws credentials', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    dlcmV2Images: true,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-        
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
+    expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
 
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(false);
+  test("shared credentials checkbox works", async () => {
+    const mockedPostResponse = {
+      data: {
+        taskId: 0,
+        status: "ok",
+        msg: {
+          dlcmV2Images: true,
+        },
+      },
+    };
+    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-        expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-    });
+    expect(amazon.vm.sharedCredentials).toBe(false);
+    const input = amazon.find("[data-test-id=\"shared-credential\"]");
+    input.trigger("click");
+    await Vue.nextTick();
+    expect(amazon.vm.sharedCredentials).toBe(true);
 
-    test('does not add invalid aws credentials', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    error: "",
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
+    const saveButton = amazon.find("[data-test-id=\"input-save\"]");
+    saveButton.trigger("click");
+    await Vue.nextTick();
+    expect(amazon.vm.newAws).toEqual(credential);
+    await Vue.nextTick();
 
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
+    const alert = wrapper.findComponent(WarningAlert);
+    expect(alert.exists()).toBe(false);
 
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
+    expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.get).toHaveBeenCalledTimes(1);
 
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    test('does not add aws credentials without dlcmv2 images', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    dlcmV2Images: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(true);
-
-        expect(wrapper.vm.$router[0]).toBe(undefined);
-        expect(axios.post).toHaveBeenCalledTimes(2);
-    });
- 
-    test('adds aws credentials without capi images or external network', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    capiImages: false,
-                    dlcmV2Images: true,
-                    externalNetwork: false,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(false);
-
-        expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-    });
-
-    test('shared credentials checkbox works', async () => {
-        const mocked_post_response = {
-            data: {
-                taskId: 0,
-                status: "ok",
-                msg: {
-                    dlcmV2Images: true,
-                },
-            },
-        };
-        jest.spyOn(axios, 'post').mockResolvedValue(mocked_post_response);
-
-        expect(amazon.vm.sharedCredentials).toBe(false);
-        let input = amazon.find('[data-test-id="shared-credential"]');
-        await input.setChecked();
-        expect(amazon.vm.sharedCredentials).toBe(true);
-        
-        let saveButton = amazon.find('[data-test-id="input-save"]');
-        saveButton.trigger('click');
-        await Vue.nextTick();
-        expect(amazon.vm.newAws).toEqual(credential);
-        await Vue.nextTick();
-
-        let alert = wrapper.findComponent(WarningAlert);
-        expect(alert.exists()).toBe(false);
-
-        expect(wrapper.vm.$router[0].name).toBe("CloudProfile");
-        expect(axios.post).toHaveBeenCalledTimes(3);
-        
-        expect(axios.post).toHaveBeenLastCalledWith(
-            "/server/createCloudCredentials", {
-                "account_params": credential,
-                "provider": "aws",
-                "sharedCredentials": true
-            }, {});
-    });
+    expect(axios.post).toHaveBeenLastCalledWith(
+      "/server/tenants/undefined/cloud-credentials", {
+        "account_params": credential,
+        "provider": "aws",
+        "sharedCredentials": true,
+      }, {});
+  });
 });

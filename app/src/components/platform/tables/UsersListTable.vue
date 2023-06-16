@@ -17,12 +17,9 @@
         <tr>
           <th v-if="clickableRows"></th>
           <th>User</th>
-          <th name="usersHidePriority3" v-if="!showTenant">Role</th>
-          <th v-if="showTenant">Workspaces</th>
-          <th v-if="showTenant">Created At</th>
-          <th name="usersHidePriority1" v-if="!showTenant">Projects</th>
+          <th name="usersHidePriority3">Role</th>
+          <th name="usersHidePriority1">Projects</th>
           <th name="usersHidePriority0">Phone Number</th>
-          <th v-if="showTenant">Quotas</th>
           <th name="usersHidePriority2" v-if="showEdit">Edit</th>
           <th v-if="showdelete == true">
             Remove
@@ -47,45 +44,17 @@
         >
           {{ user.username }}
         </td>
-        <td name="usersHidePriority3" v-if="!showTenant">
+        <td name="usersHidePriority3">
           {{ user.role }}
-        </td>
-        <td v-if="showTenant">
-          <span v-for="tenant in user.tenants" :key="tenant.id">
-            <span 
-              class="clickForDetails"
-              @click="
-                $router.push({
-                  name: 'WorkspaceDetails',
-                  params: {
-                    tenant: tenant,
-                  },
-                })
-              "
-            >{{ tenant.name }}<br/></span>
-          </span>
-        </td>
-        <td v-if="showTenant">
-          {{ user.created | formatDate }}
         </td>
         <td
           name="usersHidePriority1"
           :title="user.projects.toString()"
-          v-if="!showTenant"
         >
           {{ user.projects.toString() }}
         </td>
         <td name="usersHidePriority0">
           {{ user.phone }}
-        </td>
-        <td v-if="showTenant">
-          <div class="pl-2">
-            <div
-              title="User Quotas"
-              @click="goToUserQuotas(user)"
-              class="fas fa-align-left editIcon"
-            ></div>
-          </div>
         </td>
         <td name="usersHidePriority2" v-if="showEdit">
           <div class="pl-2">
@@ -127,10 +96,6 @@ export default {
       default: true
     },
     tenantID: String,
-    showTenant: {
-      type: Boolean,
-      default: false
-    },
   },
   data() {
     return {
@@ -199,15 +164,6 @@ export default {
       }
 
       this.editUserInfo(request);
-    },
-    goToUserQuotas(item) {
-      this.$router.push({
-        name: 'UserQuotas',
-        params: {
-          userID: item.id,
-          username: item.username,
-        },
-      });
     },
   },
   components: {

@@ -116,7 +116,6 @@ export default {
   name: 'AddNewUser',
   mixins: [validationMixin],
   props: [
-    "isBAO",
     "tenant",
     "username",
     "email",
@@ -199,14 +198,7 @@ export default {
         });
     },
     onCancel() {
-      if (!this.isBAO) {
-        this.$router.push("UsersList");
-      } else {
-        this.$router.push({
-          name: "WorkspaceDetails",
-          params: { tenant: this.tenant },
-        });
-      }
+      this.$router.push("UsersList");
     },
     onSave() {
       // add user to the current tenant
@@ -222,10 +214,7 @@ export default {
           if (response.data.user_created == false) {
             self.showAlert("Cannot create user");
           }
-          self.$router.push({
-            name: "UsersList",
-            params: { isBAO: self.isBAO },
-          });
+          self.$router.push("UsersList");
         })
         .catch(function (error) {
           // eslint-disable-next-line no-console

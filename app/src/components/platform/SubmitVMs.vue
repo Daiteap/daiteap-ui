@@ -2,10 +2,11 @@
   <div class="container">
     <br>
     <br>
-    <ConfirmAndRedirectDialog
+    <ConfirmDialog
       v-show="showConfirmDialog"
-      :confirmAndRedirectDialogParams="confirmDialogParams"
-    ></ConfirmAndRedirectDialog>
+      :confirmDialogParams="confirmDialogParams"
+      @confirm-action="cancelInstallation()"
+    ></ConfirmDialog>
     <DeleteDialog
       v-show="showDeleteDialog"
       :deleteDialogParams="deleteDialogParams"
@@ -117,7 +118,7 @@
       <button
         v-if="Number(status) > 1"
         class="btn btn-outline-success btn-daiteap"
-        v-on:click="cancelInstallation(ID, clusterName)"
+        v-on:click="showCancelInstallationDialog(ID, clusterName)"
       >Cancel</button>
       <button
         v-if="Number(status) < 0"
@@ -131,7 +132,7 @@
 
 <script>
 import axios from "axios";
-import ConfirmAndRedirectDialog from "./popup_modals/ConfirmAndRedirectDialog";
+import ConfirmDialog from "./popup_modals/ConfirmDialog";
 import DeleteDialog from "./popup_modals/DeleteDialog";
 import RetryDialog from "./popup_modals/RetryDialog";
 
@@ -159,14 +160,11 @@ export default {
         envName: "",
       },
       confirmDialogParams: {
-        requestBody: {},
         text: "",
-        endpoint: "",
-        successMessage: "",
-        failureMessage: "",
         envName: "",
         envId: "",
-        action: ""
+        action: "",
+        payload: {},
       },
       errorMsg: undefined,
       loading: true,
@@ -181,7 +179,7 @@ export default {
     };
   },
   components: {
-    ConfirmAndRedirectDialog,
+    ConfirmDialog,
     DeleteDialog,
     RetryDialog
   },
@@ -330,23 +328,76 @@ export default {
       this.showDeleteDialog = true;
       this.$bvModal.show("bv-modal-deletedialog");
     },
-    cancelInstallation(id, name) {
+    showCancelInstallationDialog(id, name) {
       this.confirmDialogParams.text =
         'Are you sure you want to cancel the installation:';
       this.confirmDialogParams.envName = name;
-      this.confirmDialogParams.endpoint =
+      this.confirmDialogParams.action = 'Delete';
+      this.confirmDialogParams.payload = {
+        "id": id,
+        "name": name,
+      };
+      this.showConfirmDialog = true;
+      this.$bvModal.show("bv-modal-confirmdialog");
+    },
+    cancelInstallation(payload) {
+      let self = this;
+      const endpoint = 
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        id +
+        payload.id +
         "/cancel-creation";
-      this.confirmDialogParams.successMessage =
-        'You have successfully submitted deletion for "' + name + '".';
-      this.confirmDialogParams.failureMessage =
-        'Error occured while you tried to submit deletion of "' + name + '".';
-      this.confirmDialogParams.action = 'Delete';
-      this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialog");
+      const requestBody = {}
+      const successMessage = 'You have successfully submitted deletion for "' + payload.name + '".';
+      const failureMessage = 'Error occured while you tried to submit deletion of "' + payload.name + '".';
+
+      this.axios
+        .post(
+          endpoint,
+          requestBody,
+          this.get_axiosConfig()
+        )
+        .then(function () {
+          if (successMessage) {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: self.confirmDialogParams.successMessage,
+            });
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialog");
+          self.$router.push({
+            name: "KubernetesClusterList"
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response) {
+            console.log(error.response.data);
+          }
+          if (error.response && error.response.status == "403") {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Access Denied",
+            });
+          } else {
+            if (failureMessage) {
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: failureMessage,
+              });
+            }
+          }
+          self.showConfirmDialog = false;
+          self.$bvModal.hide("bv-modal-confirmdialog");
+        });
     },
     retryCluster(id, name) {
       this.retryDialogParams.requestBody = { clusterID: id };

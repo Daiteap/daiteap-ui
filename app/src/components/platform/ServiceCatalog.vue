@@ -19,7 +19,7 @@
         <CardTitle title="Service Catalog"  style="line-height: 2;"/>
         <div class="ml-auto col-6 d-flex justify-content-end align-items-center">
           <p class="m-0 pr-2">Search in services:</p>
-          <input v-model="serchQuery" type="text" style="background-color:LightGray; border: 1px solid black;"/>
+          <input v-model="searchQuery" type="text" style="background-color:LightGray; border: 1px solid black;"/>
         </div>
       </div>
       <hr />
@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      serchQuery: "",
+      searchQuery: "",
     };
   },
   props: {
@@ -62,7 +62,7 @@ export default {
   methods: {},
   beforeUpdate() {
     if (this.$refs.addServiceComponent) {
-      this.$refs.addServiceComponent.serchQuery = this.serchQuery;
+      this.$refs.addServiceComponent.searchQuery = this.searchQuery;
     }
   },
 };
