@@ -135,7 +135,7 @@ export default {
       });
     },
     deleteAllUsers() {
-      let token = this.$session.get("token");
+      let token = sessionStorage.getItem("token");
       let base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
       let jsonPayload = decodeURIComponent(
         atob(base64)

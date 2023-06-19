@@ -21,7 +21,7 @@
         <h5>Cloud: {{ bucket.provider }}</h5>
         <h5>Project: {{ bucket.project.name }}</h5>
         <h5>Credential: {{ bucket.credential.label }}</h5>
-        <h5>Created At: {{ bucket.created_at | formatDate }}</h5>
+        <h5>Created At: {{ bucket.created_at | FormatDateFilter }}</h5>
         <h5 v-if="details.storage_class">
           Storage Class: {{ details.storage_class }}
         </h5>

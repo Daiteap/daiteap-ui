@@ -3,7 +3,7 @@ import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue-notification";
+import Notifications from "vue3-notifications";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
 import AddGoogleAccount
   from "@/components/platform/addProviderCredentials/AddGoogleAccount.vue";

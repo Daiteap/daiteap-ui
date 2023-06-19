@@ -9,7 +9,7 @@
           <i class="fas fa-square fa-stack-2x" style="line-height: 1.5;"></i>
           <i class="fas fa-database fas fa-stack-1x fa-inverse" style="line-height: 3;"></i>
         </span>
-        <CardTitle title="Storage" style="line-height: 2;" />
+        <CardTitle title="Storage" style="line-height: 2" />
         <span class="text-right h4 ml-auto">
           <AddButton
             text="Add New Bucket or Container"

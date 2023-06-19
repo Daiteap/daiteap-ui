@@ -17,10 +17,9 @@
             <i class="material-icons">keyboard_arrow_left</i>
           </div>
         </template>
-        <template v-for="(step, index) in steps">
+        <template v-for="(step, index) in steps" :key="index">
           <div
             :class="['step', isStepActive(index, step), 'next']"
-            :key="index"
             :style="{width: `${100 / steps.length}%`}"
           >
             <div class="circle">

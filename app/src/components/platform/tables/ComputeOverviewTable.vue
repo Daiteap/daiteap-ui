@@ -153,7 +153,7 @@
               />
             </td>
             <td name="computeHidePriority0">
-              {{ item.CreatedAt | formatDate }}
+              {{ item.CreatedAt | FormatDateFilter }}
             </td>
             <td
               name="computeHidePriority1"

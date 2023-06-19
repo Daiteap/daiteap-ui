@@ -8,7 +8,7 @@ import CloudProfileTable
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue-notification";
+import Notifications from "vue3-notifications";
 
 Vue.config.silent = true;
 Vue.use(VueAxios, axios);

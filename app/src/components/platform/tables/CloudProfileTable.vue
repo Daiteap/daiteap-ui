@@ -74,7 +74,7 @@
             {{ account.cloud_account_info }}
           </td>
           <td name="credentialsHidePriority0">
-            {{ account.created_at_pretty | formatDate }}
+            {{ account.created_at_pretty | FormatDateFilter }}
           </td>
           <td
             name="credentialsHidePriority1"

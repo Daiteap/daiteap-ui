@@ -210,7 +210,7 @@ export default {
     overflow-x: auto;
   }
 
-  ::v-deep .folders-tree {
+  :deep(.folders-tree) {
     width: fit-content;
     min-width: 250px;
 

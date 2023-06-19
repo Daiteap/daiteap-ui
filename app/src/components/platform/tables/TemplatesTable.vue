@@ -111,7 +111,7 @@
               <div v-else>Compute (VM)</div>
             </td>
             <td name="templatesHidePriority0">
-              {{ template.created_at | formatDate }}
+              {{ template.created_at | FormatDateFilter }}
             </td>
             <td
               name="templatesHidePriority1"

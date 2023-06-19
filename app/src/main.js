@@ -3,61 +3,49 @@ import {
   AlertPlugin,
   BootstrapVue,
   CollapsePlugin,
+  DropdownPlugin,
   IconsPlugin,
 } from "bootstrap-vue";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import "bootstrap/dist/css/bootstrap.css";
+import {
+  BAlert,
+  BootstrapVueNext,
+  BCollapse,
+  BDropdown,
+} from "bootstrap-vue-next";
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "core-js";
 import "regenerator-runtime/runtime";
-import Vue from "vue";
+import Vue, {provide, createApp} from "vue";
 import VueAxios from "vue-axios";
-import Notifications from "vue-notification";
-import VueSession from "vue-session";
+import Notifications from "vue3-notifications";
+// import VueSession from "vue-session";
 import VueSidebarMenu from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import "./app.scss";
+import {globalMixins} from "./common/globalMixins";
 import App from "./App.vue";
-import DateFilter from "./common/date.filter";
-import ErrorFilter from "./common/error.filter";
+import {DateFilter, FormatDateFilter} from "./common/date.filter";
+import {ErrorFilter} from "./common/error.filter";
 import router from "./router";
 import Vuex from "vuex";
 import VueSlider from "vue-slider-component";
-import moment from "moment";
-import vuetify from "./vuetify";
+import {createVuetify} from "vuetify";
 import Keycloak from "keycloak-js";
-import {ToggleButton} from "vue-js-toggle-button";
+import helpers from "@/services/helpers.js";
+// import KeycloakConfig from "../public/keycloak.json";
+// import {ToggleButton} from "vue-js-toggle-button";
 
-Vue.component("VueSlider", VueSlider);
-Vue.component("ToggleButton", ToggleButton);
+// Vue.component("VueSlider", VueSlider);
+// Vue.component("ToggleButton", ToggleButton);
 
-Vue.use(Vuex);
-Vue.use(VueSidebarMenu);
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-Vue.use(CollapsePlugin);
-Vue.use(AlertPlugin);
-Vue.use(VueAxios, axios);
-Vue.use(VueSession, {
-  "persist": true,
-});
-Vue.use(Notifications);
+// Vue.use(VueSession, {
+//   "persist": true,
+// });
 
-Vue.prototype.$finalModel = {};
+// Vue.prototype.$finalModel = {};
 
-Vue.config.productionTip = false;
-Vue.filter("date", DateFilter);
-Vue.filter("error", ErrorFilter);
-
-Vue.filter("formatDate", function(value) {
-  if (value) {
-    const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
-    if (date.startsWith("0")) {
-      const newDate = date.substring(1);
-      return newDate;
-    }
-    return date;
-  }
-});
 
 const VUEX_INIT_STATE = {
   account_settings: {
@@ -500,7 +488,7 @@ const store = new Vuex.Store({
   },
 });
 
-Vue.config.productionTip = false;
+// Vue.config.productionTip = false;
 
 let singleUserMode = false;
 
@@ -510,36 +498,1994 @@ if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
   singleUserMode = true;
 }
 
-if (singleUserMode) {
-  new Vue({
-    router,
-    store,
-    vuetify,
-    render: (h) => h(App),
-  }).$mount("#app");
-} else {
-  Vue.$keycloak = Keycloak("./keycloak.json");
 
-  Vue.$keycloak
-    .init({onLoad: "login-required"})
+// Vue.use(Vuex);
+// Vue.use(VueSidebarMenu);
+// Vue.use(BootstrapVue);
+// Vue.use(IconsPlugin);
+// Vue.use(CollapsePlugin);
+// Vue.use(AlertPlugin);
+// Vue.use(VueAxios, axios);
+// Vue.use(VueSession, {
+//   "persist": true,
+// });
+// Vue.use(Notifications);
+
+if (singleUserMode) {
+//   // new Vue({
+//   //   router,
+//   //   store,
+//   //   vuetify,
+//   //   render: (h) => h(App),
+//   // }).$mount("#app");
+  const vuetify = createVuetify();
+  // const app = createApp(App, {keycloak: keycloak})
+  const app = createApp(App)
+    .component("VueSlider", VueSlider)
+    .use(router)
+    .use(store)
+    .use(vuetify)
+    .use(Vuex)
+    .use(VueSidebarMenu)
+    .use(BootstrapVueNext)
+    .use(BCollapse)
+    .use(BDropdown)
+    .use(BAlert)
+    .use(VueAxios, axios)
+    .use(Notifications);
+    // .use(VueSession, {
+    //   "persist": true, 
+    // })
+    // .use(IconsPlugin)
+
+  app.mixin({
+    methods: {
+      sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      },
+      resetState() {
+        this.$store.commit("updateUserInfo", {
+          profile: {
+            role: "",
+          },
+          image: null,
+          username: null,
+          id: null,
+        });
+      },
+      boolToOnOff(bv) {
+        if (bv) {
+          return "On";
+        } else {
+          return "Off";
+        }
+      },
+      get_axiosConfig() {
+        let authorization = "";
+        if (!this.computed_single_user_mode) {
+          // authorization = "JWT " + Vue.$keycloak.token;
+          authorization = "JWT " + keycloak.token;
+        }
+
+        return {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Authorization": authorization,
+            "User-ID": this.computed_userInfo.id,
+          },
+        };
+      },
+      handleRequestError(error, message) {
+        this.usingToken -= 1;
+        console.log(error);
+        if (error.response) {
+          console.log(error.response.data);
+        }
+        if (error.response && error.response.status == "403") {
+          this.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: "Access Denied",
+          });
+        } else {
+          this.$notify({
+            group: "msg",
+            type: "error",
+            title: "Notification:",
+            text: message,
+          });
+        }
+      },
+      changeColumnsVisibility(resourceType, lastIndex) {
+        let offset =
+          document.getElementById("custom-sidebar-menu").clientWidth + 100;
+
+        // Show columns
+        for (let i = lastIndex; i >= 0; i--) {
+          let columns = document.getElementsByName(
+            resourceType + "HidePriority" + i
+          );
+          if (
+            document.getElementById(resourceType + "DataTable").clientWidth +
+              offset <=
+            window.innerWidth
+          ) {
+            for (let j = 0; j < columns.length; j++) {
+              columns[j].style.display = "";
+            }
+          }
+        }
+
+        // Hide columns
+        for (let i = 0; i <= lastIndex; i++) {
+          let columns = document.getElementsByName(
+            resourceType + "HidePriority" + i
+          );
+          if (
+            document.getElementById(resourceType + "DataTable").clientWidth +
+              offset >
+            window.innerWidth
+          ) {
+            for (let j = 0; j < columns.length; j++) {
+              columns[j].style.display = "none";
+            }
+          }
+        }
+      },
+      updateCreateClusterSetting(setting, value) {
+        this.$store.commit("updateCreateClusterSettings" + setting, value);
+      },
+      deleteClusterMain(cluster) {
+        let endpoint;
+        if (cluster.Type == 5) {
+          endpoint =
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.ID +
+            "/capi-delete";
+        } else if (cluster.Type == 8) {
+          endpoint =
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.ID +
+            "/yaook-delete";
+        } else {
+          endpoint =
+            "/server/tenants/" +
+            this.computed_active_tenant_id +
+            "/clusters/" +
+            cluster.ID +
+            "/delete";
+        }
+
+        let self = this;
+        return this.axios
+          .delete(endpoint, this.get_axiosConfig())
+          .then(function () {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text:
+                'You have successfully submitted deletion for "' +
+                cluster.Name +
+                '".',
+            });
+
+            self.showAlert = true;
+            self.alertKey += 1;
+          })
+          .catch(function (error) {
+            console.log(error);
+            if (error.response) {
+              error = error.response.data.error.message;
+            }
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text:
+                'Error occured while you tried to submit deletion of "' +
+                cluster.Name +
+                '".',
+            });
+          });
+      },
+      getUsers() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" + this.computed_active_tenant_id + "/users",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              self.$store.commit("updateUsers", response.data.users_list);
+              resolve(response.data.users_list);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting users.");
+            });
+        })
+      },
+      getProjects() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              self.$store.commit("updateProjects", response.data);
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting projects.");
+            });
+        });
+      },
+      getCredentials() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/cloud-credentials",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              self.$store.commit("updateCredentials", response.data);
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting cloud credentials.");
+            });
+        });
+      },
+      getCredentialDetails(credentialId) {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/cloud-credentials/" +
+                credentialId,
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting cloud credential details.");
+            });
+        });
+      },
+      getAllClusters() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting clusters.");
+            });
+        });
+      },
+      getClusterDetailsMain(clusterID) {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/clusters/" +
+                clusterID,
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting cluster details.");
+            });
+        });
+      },
+      getTemplates() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/environment-templates",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting templates.");
+            });
+        });
+      },
+      getBuckets() {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              self.$store.commit("updateBuckets", response.data);
+              resolve(response.data);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting storage information.");
+            });
+        })
+      },
+      getBucketDetails(bucketID) {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .get(
+              "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/buckets/" +
+                bucketID,
+              this.get_axiosConfig()
+            )
+            .then(function (response) {
+              self.usingToken -= 1;
+              resolve(response.data.bucket_details[0]);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while getting storage information.");
+            });
+        })
+      },
+      getAccountSettings() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/settings",
+            this.get_axiosConfig()
+          )
+          .then(function (response) {
+            self.usingToken -= 1;
+            if (response.status == 200) {
+              self.$store.commit("updateAccountSettings", response.data);
+              self.$store.commit("updateAccount", response.data.tenant);
+              self.$root.$emit("accountSettingsChanged", undefined);
+            }
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting workspace settings!");
+          });
+      },
+      removeComputeNode(nodeID, clusterID) {
+        let self = this;
+        return this.axios
+          .delete(
+            "/server/tenants/" +
+              this.computed_active_tenant_id +
+              "/clusters/" +
+              clusterID +
+              "/nodes/" +
+              nodeID,
+            this.get_axiosConfig()
+          )
+          .then(function () {
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: "Node deletion submitted successfully",
+            });
+            self.getClustersList();
+          })
+          .catch(function () {
+            self.$notify({
+              group: "msg",
+              type: "error",
+              title: "Notification:",
+              text: "Error while removing node.",
+            });
+          });
+      },
+      getProfilePicture() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .get("/server/user/profile/picture", this.get_axiosConfig())
+          .then(function (response) {
+            self.usingToken -= 1;
+            self.$store.commit(
+              "updateUserProfileImageLocation",
+              response.data.location
+            );
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting user image!");
+          });
+      },
+      getUserQuota() {
+        let self = this
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        return this.axios
+          .get(
+            "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
+            this.get_axiosConfig()
+          )
+          .then(function (response) {
+            self.usingToken -= 1;
+            let quota = response.data;
+
+            quota["available_kubernetes_cluster_environments"] =
+              quota["limit_kubernetes_cluster_environments"] - quota["used_kubernetes_cluster_environments"];
+            quota["available_vms_environments"] =
+              quota["limit_compute_vms_environments"] - quota["used_compute_vms_environments"];
+            quota["available_nodes"] =
+              quota["limit_nodes"] - quota["used_nodes"];
+            quota["available_services"] =
+              quota["limit_services"] - quota["used_services"];
+
+            return quota;
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting quotas.");
+          });
+      },
+      getUserInfo() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        let profile = {}
+        let user = {}
+        this.usingToken += 1;
+        this.axios
+          .get("/server/user/profile", this.get_axiosConfig())
+          .then(function (response) {
+            profile = response.data;
+
+            self.axios.get("/server/user", self.get_axiosConfig())
+              .then(function (response) {
+                user = {}
+                user.profile = profile;
+
+                user.username = response.data.username;
+                user.id = response.data.id;
+
+                user.profile.first_name = response.data.first_name;
+                user.profile.last_name = response.data.last_name;
+                user.profile.email = response.data.email;
+
+                user.profile = Object.assign(user.profile, response.data);
+
+                self.usingToken -= 1;
+                self.$store.commit("updateUserInfo", user);
+                self.getAccountSettings();
+              })
+              .catch(function (error) {
+                self.usingToken -= 1;
+                console.log(error);
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Error while getting user information!",
+                });
+              });
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting user information!");
+          });
+      },
+      checkCanChangePassword() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .get("/server/user/password/can-update", this.get_axiosConfig())
+          .then(function (response) {
+            self.usingToken -= 1;
+            self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while checking if change password is permitted!");
+          });
+      },
+      getActiveTenants() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .get("/server/user/active-tenants", this.get_axiosConfig())
+          .then(function (response) {
+            self.usingToken -= 1;
+            if (response.data.activeTenants.length < 2) {
+              self.hasMultipleTenants = false;
+            } else {
+              self.hasMultipleTenants = true;
+            }
+            self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting active tenants!");
+          });
+      },
+      getSpecificUserInfo(tenantId, username) {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        return this.axios
+          .get(
+            "/server/tenants/" + tenantId + "/users/" + username,
+            this.get_axiosConfig()
+          )
+          .then(function (response) {
+            self.usingToken -= 1;
+            return response.data;
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting specific user info!");
+          });
+      },
+      hasMultipleTenants() {
+        return this.hasMultipleTenants;
+      },
+      registerUser() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .get("/server/is-registered", this.get_axiosConfig())
+          .then(function (response) {
+            self.usingToken -= 1;
+            if (!response.data.isRegistered) {
+                    self.axios
+                      .post("/server/tenants", {}, self.get_axiosConfig())
+                      .then(function () {
+                        self.getUserInfo();
+                        self.checkCanChangePassword();
+                        self.getProfilePicture();
+                        self.getActiveTenants();
+                        window.location.href = '#/app/platform/overview';
+                      })
+                      .catch(function (error) {
+                        console.log(error);
+                        self.$notify({
+                          group: "msg",
+                          type: "error",
+                          title: "Notification:",
+                          text: "Error while registering user!",
+                        });
+                })
+                .catch(function (error) {
+                  self.registrationOpen = false;
+                  console.info(error);
+                });
+            } else {
+              self.getUserInfo();
+              self.checkCanChangePassword();
+              self.getProfilePicture();
+              self.getActiveTenants();
+            }
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while getting user information!");
+          });
+      },
+      endSession() {
+        if (window.intervals) {
+          for (let i = 0; i < window.intervals.length; i++) {
+            clearInterval(window.intervals[i]);
+          }
+        }
+        let self = this;
+        // if (Vue.$keycloak.authenticated) {
+        if (this.keycloak.authenticated) {
+          // Vue.$keycloak.logout();
+          this.keycloak.logout();
+        }
+        self.resetState();
+
+        // self.$session.destroy(self.$router.push("/app/login"));
+        sessionStorage.clear();
+        self.$router.push("/app/login");
+      },
+      deleteUserProfilePicture() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .delete(
+            "/server/user/profile/picture",
+            this.get_axiosConfig()
+          )
+          .then(function () {
+            self.usingToken -= 1;
+            self.getProfilePicture();
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while deleting the user image.");
+          });
+      },
+      updateUserProfilePicture(request) {
+        let self = this;
+        return new Promise((resolve) => {
+          while (self.updatingToken) {
+            self.sleep(200);
+          }
+          self.usingToken += 1;
+          this.axios
+            .put(
+              "/server/user/profile/picture",
+              request,
+              this.get_axiosConfig()
+            )
+            .then(function () {
+              self.usingToken -= 1;
+              self.getProfilePicture();
+              resolve(true);
+            })
+            .catch(function (error) {
+              self.handleRequestError(error, "Error while saving the user image.");
+            });
+        });
+      },
+      updateUserInfo(profile, user) {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .put("/server/user/profile", profile, this.get_axiosConfig())
+          .then(function () {
+
+            self.axios
+              .put("/server/user", user, self.get_axiosConfig())
+              .then(function () {
+                self.$notify({
+                  group: "msg",
+                  type: "success",
+                  title: "Notification:",
+                  text: "Successfuly updated user information!",
+                });
+                self.getUserInfo();
+              })
+              .catch(function (error) {
+                console.log(error);
+                if (error.response) {
+                  console.log(error.response.data);
+                }
+                self.usingToken -= 1;
+                self.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Error while saving the user information",
+                });
+              });
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while saving the user information.");
+          });
+      },
+      editUserInfo(request) {
+        const endpoint =
+          "/server/tenants/" +
+          this.computed_active_tenant_id +
+          "/users/" +
+          request.username;
+
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .put(
+            endpoint,
+            request,
+            this.get_axiosConfig()
+          )
+          .then(function () {
+            self.usingToken -= 1;
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: "Successfuly updated user!",
+            });
+
+            self.getUserInfo();
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while updating user.");
+          });
+      },
+      emailUnsubscribe() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
+          .then(function () {
+            self.usingToken -= 1;
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: "Unsubscribe Successful!",
+            });
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while unsubscribing.");
+          });
+      },
+      emailSubscribe() {
+        let self = this;
+        while (self.updatingToken) {
+          self.sleep(200);
+        }
+        this.usingToken += 1;
+        this.axios
+          .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
+          .then(function () {
+            self.usingToken -= 1;
+            self.$notify({
+              group: "msg",
+              type: "success",
+              title: "Notification:",
+              text: "Successfuly subscribed!",
+            });
+          })
+          .catch(function (error) {
+            self.handleRequestError(error, "Error while subscribing.");
+          });
+      },
+    },
+    computed: {
+      computed_account_settings() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.account_settings;
+      },
+      computed_active_tenant_id() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.activeTenantId;
+      },
+      computed_account() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.account;
+      },
+      computed_userInfo() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.userInfo;
+      },
+      computed_isAdmin() {
+        if (!this.$store) {
+          return false;
+        }
+        return (
+          this.$store.state.userInfo.profile.role == helpers.USER_ROLES.ADMIN
+        );
+      },
+      computed_isRegularUser() {
+        if (!this.$store) {
+          return false;
+        }
+        return (
+          this.$store.state.userInfo.profile.role ==
+          helpers.USER_ROLES.REGULAR_USER
+        );
+      },
+      computed_isAccountOwner() {
+        if (!this.$store) {
+          return false;
+        }
+        return (
+          this.$store.state.userInfo.profile.role ==
+          helpers.USER_ROLES.ACCOUNT_OWNER
+        );
+      },
+      computed_tenants() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.tenants;
+      },
+      computed_users() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.users;
+      },
+      computed_credentials() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.credentials;
+      },
+      computed_projects() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.projects;
+      },
+      computed_buckets() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.buckets;
+      },
+      computed_create_cluster_settings() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.create_cluster_settings;
+      },
+      computed_aws_bucket_locations() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.aws_bucket_locations;
+      },
+      computed_google_bucket_locations() {
+        if (!this.$store) {
+          return null;
+        }
+        return this.$store.state.google_bucket_locations;
+      },
+      computed_theme() {
+        return process.env.VUE_APP_THEME;
+      },
+      computed_single_user_mode() {
+        if (process.env.VUE_APP_SINGLE_USER_MODE === "False") {
+          return false;
+        } else {
+          return true;
+        }
+      },
+    },
+  });
+
+  app.config.globalProperties.testTest = "etstststets";
+  app.config.globalProperties.appName = "test";
+  app.config.globalProperties.$filters = {
+    FormatDateFilter,
+    DateFilter,
+    ErrorFilter,
+  };
+
+
+  app.mount("#app");
+
+  // const app = createApp(App)
+  //   .component("VueSlider", VueSlider)
+  //   .use(router)
+  //   .use(store)
+  //   .use(Vuetify)
+  //   .use(Vuex)
+  //   .use(VueSidebarMenu)
+  //   .use(BootstrapVue)
+  //   .use(IconsPlugin)
+  //   .use(CollapsePlugin)
+  //   .use(DropdownPlugin)
+  //   .use(AlertPlugin)
+  //   .use(VueAxios, axios)
+  //   // .use(VueSession, {
+  //   //   "persist": true,
+  //   // })
+  //   .use(Notifications);
+
+  // app.mixin(globalMixins);
+
+  // app.mount("#app");
+
+//   app.config.globalProperties.testTest = "test";
+//   app.config.globalProperties.appName = "test";
+//   app.config.globalProperties.$filters.date(DateFilter);
+//   app.config.globalProperties.$filters.error(ErrorFilter);
+//   app.config.globalProperties.$filters.formatDate(function(value) {
+//     if (value) {
+//       const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
+//       if (date.startsWith("0")) {
+//         const newDate = date.substring(1);
+//         return newDate;
+//       }
+//       return date;
+//     }
+//   });
+} else {
+  // const keycloak = new Keycloak("./public/keycloak.json");
+  const keycloak = new Keycloak({
+    url: "http://127.0.0.1:8082/auth/",
+    realm: "Daiteap",
+    clientId: "app-vue",
+  });
+
+  keycloak
+    .init({
+      onLoad: "login-required",
+      enableLogging: true,
+    })
     .then((auth) => {
       if (!auth) {
         window.location.reload();
       } else {
         console.log("Authenticated");
 
-        new Vue({
-          router,
-          store,
-          vuetify,
-          el: "#app",
-          render: (h) => h(App, {props: {keycloak: Vue.$keycloak}}),
+        // new Vue({
+        //   router,
+        //   store,
+        //   vuetify,
+        //   el: "#app",
+        //   render: (h) => h(App, {props: {keycloak: Vue.$keycloak}}),
+        // });
+        // const app = createApp(App, {props: {keycloak: keycloak}})
+        //   .component("VueSlider", VueSlider)
+        //   .use(router)
+        //   .use(store)
+        //   .use(Vuetify)
+        //   .use(Vuex)
+        //   .use(VueSidebarMenu)
+        //   .use(BootstrapVue)
+        //   .use(IconsPlugin)
+        //   .use(CollapsePlugin)
+        //   .use(DropdownPlugin)
+        //   .use(AlertPlugin)
+        //   .use(VueAxios, axios)
+        //   .use(VueSession, {
+        //     "persist": true,
+        //   })
+        //   .use(Notifications)
+        //   .mount("#app");
+
+        // app.config.globalProperties.$filters.date(DateFilter);
+        // app.config.globalProperties.$filters.error(ErrorFilter);
+        // app.config.globalProperties.$filters.formatDate(function(value) {
+        //   if (value) {
+        //     const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
+        //     if (date.startsWith("0")) {
+        //       const newDate = date.substring(1);
+        //       return newDate;
+        //     }
+        //     return date;
+        //   }
+        // });
+
+        const vuetify = createVuetify();
+        const app = createApp(App)
+          .component("VueSlider", VueSlider)
+          .use(router)
+          .use(store)
+          .use(vuetify)
+          .use(Vuex)
+          .use(VueSidebarMenu)
+          .use(BootstrapVueNext)
+          .use(BootstrapVue)
+          .use(BCollapse)
+          .use(BDropdown)
+          .use(BAlert)
+          .use(BootstrapVue)
+          .use(IconsPlugin)
+          .use(CollapsePlugin)
+          .use(DropdownPlugin)
+          .use(AlertPlugin)
+          .use(VueAxios, axios)
+          .use(Notifications);
+          // .use(VueSession, {
+          //   "persist": true, 
+          // })
+
+        app.config.globalProperties.testTest = "etstststets";
+        app.config.globalProperties.appName = "test";
+
+        app.config.globalProperties.$keycloak = keycloak;
+        app.config.globalProperties.$filters = {
+          FormatDateFilter,
+          DateFilter,
+          ErrorFilter,
+        };
+
+        app.mixin({
+          methods: {
+            sleep(ms) {
+              return new Promise((resolve) => setTimeout(resolve, ms));
+            },
+            resetState() {
+              this.$store.commit("updateUserInfo", {
+                profile: {
+                  role: "",
+                },
+                image: null,
+                username: null,
+                id: null,
+              });
+            },
+            boolToOnOff(bv) {
+              if (bv) {
+                return "On";
+              } else {
+                return "Off";
+              }
+            },
+            get_axiosConfig() {
+              let authorization = "";
+              if (!this.computed_single_user_mode) {
+                // authorization = "JWT " + Vue.$keycloak.token;
+                authorization = "JWT " + keycloak.token;
+              }
+
+              return {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8",
+                  "Authorization": authorization,
+                  "User-ID": this.computed_userInfo.id,
+                },
+              };
+            },
+            handleRequestError(error, message) {
+              this.usingToken -= 1;
+              console.log(error);
+              if (error.response) {
+                console.log(error.response.data);
+              }
+              if (error.response && error.response.status == "403") {
+                this.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: "Access Denied",
+                });
+              } else {
+                this.$notify({
+                  group: "msg",
+                  type: "error",
+                  title: "Notification:",
+                  text: message,
+                });
+              }
+            },
+            changeColumnsVisibility(resourceType, lastIndex) {
+              let offset =
+                document.getElementById("custom-sidebar-menu").clientWidth +
+                100;
+
+              // Show columns
+              for (let i = lastIndex; i >= 0; i--) {
+                let columns = document.getElementsByName(
+                  resourceType + "HidePriority" + i,
+                );
+                if (
+                  document.getElementById(resourceType + "DataTable").clientWidth +
+                    offset <=
+                  window.innerWidth
+                ) {
+                  for (let j = 0; j < columns.length; j++) {
+                    columns[j].style.display = "";
+                  }
+                }
+              }
+
+              // Hide columns
+              for (let i = 0; i <= lastIndex; i++) {
+                let columns = document.getElementsByName(
+                  resourceType + "HidePriority" + i,
+                );
+                if (
+                  document.getElementById(resourceType + "DataTable").clientWidth +
+                    offset >
+                  window.innerWidth
+                ) {
+                  for (let j = 0; j < columns.length; j++) {
+                    columns[j].style.display = "none";
+                  }
+                }
+              }
+            },
+            updateCreateClusterSetting(setting, value) {
+              this.$store.commit("updateCreateClusterSettings" + setting, value);
+            },
+            deleteClusterMain(cluster) {
+              let endpoint;
+              if (cluster.Type == 5) {
+                endpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/" +
+                  cluster.ID +
+                  "/capi-delete";
+              } else if (cluster.Type == 8) {
+                endpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/" +
+                  cluster.ID +
+                  "/yaook-delete";
+              } else {
+                endpoint =
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/clusters/" +
+                  cluster.ID +
+                  "/delete";
+              }
+
+              let self = this;
+              return this.axios
+                .delete(endpoint, this.get_axiosConfig())
+                .then(function() {
+                  self.$notify({
+                    group: "msg",
+                    type: "success",
+                    title: "Notification:",
+                    text:
+                      'You have successfully submitted deletion for "' +
+                      cluster.Name +
+                      '".',
+                  });
+
+                  self.showAlert = true;
+                  self.alertKey += 1;
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error.response) {
+                    error = error.response.data.error.message;
+                  }
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text:
+                      'Error occured while you tried to submit deletion of "' +
+                      cluster.Name +
+                      '".',
+                  });
+                });
+            },
+            getUsers() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" + this.computed_active_tenant_id + "/users",
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    self.$store.commit("updateUsers", response.data.users_list);
+                    resolve(response.data.users_list);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting users.");
+                  });
+              })
+            },
+            getProjects() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" + this.computed_active_tenant_id + "/projects",
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    self.$store.commit("updateProjects", response.data);
+                    resolve(response.data);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting projects.");
+                  });
+              });
+            },
+            getCredentials() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/cloud-credentials",
+                    this.get_axiosConfig(),
+                  )
+                  .then(function(response) {
+                    self.usingToken -= 1;
+                    self.$store.commit("updateCredentials", response.data);
+                    resolve(response.data);
+                  })
+                  .catch(function(error) {
+                    self.handleRequestError(error, "Error while getting cloud credentials.");
+                  });
+              });
+            },
+            getCredentialDetails(credentialId) {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/cloud-credentials/" +
+                      credentialId,
+                    this.get_axiosConfig(),
+                  )
+                  .then(function(response) {
+                    self.usingToken -= 1;
+                    resolve(response.data);
+                  })
+                  .catch(function(error) {
+                    self.handleRequestError(error, "Error while getting cloud credential details.");
+                  });
+              });
+            },
+            getAllClusters() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    resolve(response.data);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting clusters.");
+                  });
+              });
+            },
+            getClusterDetailsMain(clusterID) {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/clusters/" +
+                      clusterID,
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    resolve(response.data);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting cluster details.");
+                  });
+              });
+            },
+            getTemplates() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/environment-templates",
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    resolve(response.data);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting templates.");
+                  });
+              });
+            },
+            getBuckets() {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    self.$store.commit("updateBuckets", response.data);
+                    resolve(response.data);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting storage information.");
+                  });
+              })
+            },
+            getBucketDetails(bucketID) {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .get(
+                    "/server/tenants/" +
+                      this.computed_active_tenant_id +
+                      "/buckets/" +
+                      bucketID,
+                    this.get_axiosConfig()
+                  )
+                  .then(function (response) {
+                    self.usingToken -= 1;
+                    resolve(response.data.bucket_details[0]);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while getting storage information.");
+                  });
+              })
+            },
+            getAccountSettings() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .get(
+                  "/server/tenants/" + this.computed_active_tenant_id + "/settings",
+                  this.get_axiosConfig()
+                )
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  if (response.status == 200) {
+                    self.$store.commit("updateAccountSettings", response.data);
+                    self.$store.commit("updateAccount", response.data.tenant);
+                    self.$root.$emit("accountSettingsChanged", undefined);
+                  }
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting workspace settings!");
+                });
+            },
+            removeComputeNode(nodeID, clusterID) {
+              let self = this;
+              return this.axios
+                .delete(
+                  "/server/tenants/" +
+                    this.computed_active_tenant_id +
+                    "/clusters/" +
+                    clusterID +
+                    "/nodes/" +
+                    nodeID,
+                  this.get_axiosConfig()
+                )
+                .then(function () {
+                  self.$notify({
+                    group: "msg",
+                    type: "success",
+                    title: "Notification:",
+                    text: "Node deletion submitted successfully",
+                  });
+                  self.getClustersList();
+                })
+                .catch(function () {
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: "Error while removing node.",
+                  });
+                });
+            },
+            getProfilePicture() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .get("/server/user/profile/picture", this.get_axiosConfig())
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  self.$store.commit(
+                    "updateUserProfileImageLocation",
+                    response.data.location
+                  );
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting user image!");
+                });
+            },
+            getUserQuota() {
+              let self = this
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              return this.axios
+                .get(
+                  "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
+                  this.get_axiosConfig()
+                )
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  let quota = response.data;
+
+                  quota["available_kubernetes_cluster_environments"] =
+                    quota["limit_kubernetes_cluster_environments"] - quota["used_kubernetes_cluster_environments"];
+                  quota["available_vms_environments"] =
+                    quota["limit_compute_vms_environments"] - quota["used_compute_vms_environments"];
+                  quota["available_nodes"] =
+                    quota["limit_nodes"] - quota["used_nodes"];
+                  quota["available_services"] =
+                    quota["limit_services"] - quota["used_services"];
+
+                  return quota;
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting quotas.");
+                });
+            },
+            getUserInfo() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              let profile = {}
+              let user = {}
+              this.usingToken += 1;
+              this.axios
+                .get("/server/user/profile", this.get_axiosConfig())
+                .then(function (response) {
+                  profile = response.data;
+
+                  self.axios.get("/server/user", self.get_axiosConfig())
+                    .then(function (response) {
+                      user = {}
+                      user.profile = profile;
+
+                      user.username = response.data.username;
+                      user.id = response.data.id;
+
+                      user.profile.first_name = response.data.first_name;
+                      user.profile.last_name = response.data.last_name;
+                      user.profile.email = response.data.email;
+
+                      user.profile = Object.assign(user.profile, response.data);
+
+                      self.usingToken -= 1;
+                      self.$store.commit("updateUserInfo", user);
+                      self.getAccountSettings();
+                    })
+                    .catch(function (error) {
+                      self.usingToken -= 1;
+                      console.log(error);
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Error while getting user information!",
+                      });
+                    });
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting user information!");
+                });
+            },
+            checkCanChangePassword() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .get("/server/user/password/can-update", this.get_axiosConfig())
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while checking if change password is permitted!");
+                });
+            },
+            getActiveTenants() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .get("/server/user/active-tenants", this.get_axiosConfig())
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  if (response.data.activeTenants.length < 2) {
+                    self.hasMultipleTenants = false;
+                  } else {
+                    self.hasMultipleTenants = true;
+                  }
+                  self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting active tenants!");
+                });
+            },
+            getSpecificUserInfo(tenantId, username) {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              return this.axios
+                .get(
+                  "/server/tenants/" + tenantId + "/users/" + username,
+                  this.get_axiosConfig()
+                )
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  return response.data;
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting specific user info!");
+                });
+            },
+            hasMultipleTenants() {
+              return this.hasMultipleTenants;
+            },
+            registerUser() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .get("/server/is-registered", this.get_axiosConfig())
+                .then(function (response) {
+                  self.usingToken -= 1;
+                  if (!response.data.isRegistered) {
+                          self.axios
+                            .post("/server/tenants", {}, self.get_axiosConfig())
+                            .then(function () {
+                              self.getUserInfo();
+                              self.checkCanChangePassword();
+                              self.getProfilePicture();
+                              self.getActiveTenants();
+                              window.location.href = '#/app/platform/overview';
+                            })
+                            .catch(function (error) {
+                              console.log(error);
+                              self.$notify({
+                                group: "msg",
+                                type: "error",
+                                title: "Notification:",
+                                text: "Error while registering user!",
+                              });
+                      })
+                      .catch(function (error) {
+                        self.registrationOpen = false;
+                        console.info(error);
+                      });
+                  } else {
+                    self.getUserInfo();
+                    self.checkCanChangePassword();
+                    self.getProfilePicture();
+                    self.getActiveTenants();
+                  }
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while getting user information!");
+                });
+            },
+            endSession() {
+              if (window.intervals) {
+                for (let i = 0; i < window.intervals.length; i++) {
+                  clearInterval(window.intervals[i]);
+                }
+              }
+              let self = this;
+              // if (Vue.$keycloak.authenticated) {
+              console.log("kookokoko");
+              console.log(this);
+              if (keycloak.authenticated) {
+                // Vue.$keycloak.logout();
+                keycloak.logout();
+              }
+              self.resetState();
+
+              // self.$session.destroy(self.$router.push("/app/login"));
+              sessionStorage.clear();
+              self.$router.push("/app/login");
+            },
+            deleteUserProfilePicture() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .delete(
+                  "/server/user/profile/picture",
+                  this.get_axiosConfig()
+                )
+                .then(function () {
+                  self.usingToken -= 1;
+                  self.getProfilePicture();
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while deleting the user image.");
+                });
+            },
+            updateUserProfilePicture(request) {
+              let self = this;
+              return new Promise((resolve) => {
+                while (self.updatingToken) {
+                  self.sleep(200);
+                }
+                self.usingToken += 1;
+                this.axios
+                  .put(
+                    "/server/user/profile/picture",
+                    request,
+                    this.get_axiosConfig()
+                  )
+                  .then(function () {
+                    self.usingToken -= 1;
+                    self.getProfilePicture();
+                    resolve(true);
+                  })
+                  .catch(function (error) {
+                    self.handleRequestError(error, "Error while saving the user image.");
+                  });
+              });
+            },
+            updateUserInfo(profile, user) {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .put("/server/user/profile", profile, this.get_axiosConfig())
+                .then(function () {
+
+                  self.axios
+                    .put("/server/user", user, self.get_axiosConfig())
+                    .then(function () {
+                      self.$notify({
+                        group: "msg",
+                        type: "success",
+                        title: "Notification:",
+                        text: "Successfuly updated user information!",
+                      });
+                      self.getUserInfo();
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      if (error.response) {
+                        console.log(error.response.data);
+                      }
+                      self.usingToken -= 1;
+                      self.$notify({
+                        group: "msg",
+                        type: "error",
+                        title: "Notification:",
+                        text: "Error while saving the user information",
+                      });
+                    });
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while saving the user information.");
+                });
+            },
+            editUserInfo(request) {
+              const endpoint =
+                "/server/tenants/" +
+                this.computed_active_tenant_id +
+                "/users/" +
+                request.username;
+
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .put(
+                  endpoint,
+                  request,
+                  this.get_axiosConfig()
+                )
+                .then(function () {
+                  self.usingToken -= 1;
+                  self.$notify({
+                    group: "msg",
+                    type: "success",
+                    title: "Notification:",
+                    text: "Successfuly updated user!",
+                  });
+
+                  self.getUserInfo();
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while updating user.");
+                });
+            },
+            emailUnsubscribe() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
+                .then(function () {
+                  self.usingToken -= 1;
+                  self.$notify({
+                    group: "msg",
+                    type: "success",
+                    title: "Notification:",
+                    text: "Unsubscribe Successful!",
+                  });
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while unsubscribing.");
+                });
+            },
+            emailSubscribe() {
+              let self = this;
+              while (self.updatingToken) {
+                self.sleep(200);
+              }
+              this.usingToken += 1;
+              this.axios
+                .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
+                .then(function () {
+                  self.usingToken -= 1;
+                  self.$notify({
+                    group: "msg",
+                    type: "success",
+                    title: "Notification:",
+                    text: "Successfuly subscribed!",
+                  });
+                })
+                .catch(function (error) {
+                  self.handleRequestError(error, "Error while subscribing.");
+                });
+            },
+          },
+          computed: {
+            computed_account_settings() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.account_settings;
+            },
+            computed_active_tenant_id() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.activeTenantId;
+            },
+            computed_account() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.account;
+            },
+            computed_userInfo() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.userInfo;
+            },
+            computed_isAdmin() {
+              if (!this.$store) {
+                return false;
+              }
+              return (
+                this.$store.state.userInfo.profile.role == helpers.USER_ROLES.ADMIN
+              );
+            },
+            computed_isRegularUser() {
+              if (!this.$store) {
+                return false;
+              }
+              return (
+                this.$store.state.userInfo.profile.role ==
+                helpers.USER_ROLES.REGULAR_USER
+              );
+            },
+            computed_isAccountOwner() {
+              if (!this.$store) {
+                return false;
+              }
+              return (
+                this.$store.state.userInfo.profile.role ==
+                helpers.USER_ROLES.ACCOUNT_OWNER
+              );
+            },
+            computed_tenants() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.tenants;
+            },
+            computed_users() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.users;
+            },
+            computed_credentials() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.credentials;
+            },
+            computed_projects() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.projects;
+            },
+            computed_buckets() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.buckets;
+            },
+            computed_create_cluster_settings() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.create_cluster_settings;
+            },
+            computed_aws_bucket_locations() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.aws_bucket_locations;
+            },
+            computed_google_bucket_locations() {
+              if (!this.$store) {
+                return null;
+              }
+              return this.$store.state.google_bucket_locations;
+            },
+            computed_theme() {
+              return process.env.VUE_APP_THEME;
+            },
+            computed_single_user_mode() {
+              if (process.env.VUE_APP_SINGLE_USER_MODE === "False") {
+                return false;
+              } else {
+                return true;
+              }
+            },
+          },
         });
+
+        app.mount("#app");
       }
 
       // Token Refresh
       setInterval(() => {
-        Vue.$keycloak
+        keycloak
           .updateToken(70)
           .then(() => { })
           .catch(() => {
@@ -547,7 +2493,9 @@ if (singleUserMode) {
           });
       }, 6000);
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(3333333333333);
+      console.log(error);
       console.log("Authenticated Failed");
     });
 }

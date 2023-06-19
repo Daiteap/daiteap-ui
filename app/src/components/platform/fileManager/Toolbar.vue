@@ -25,12 +25,11 @@
         <v-icon class="mr-2">{{ storageObject.icon }}</v-icon>
         {{ storageObject.name }}
       </v-btn>
-      <template v-for="(segment, index) in pathSegments">
-        <v-icon :key="index + '-icon'">mdi-chevron-right</v-icon>
+      <template v-for="(segment, index) in pathSegments" :key="index">
+        <v-icon>mdi-chevron-right</v-icon>
         <v-btn
           text
           :input-value="index === pathSegments.length - 1"
-          :key="index + '-btn'"
           @click="changePath(segment.path)"
           >{{ segment.name }}</v-btn
         >
@@ -296,7 +295,7 @@ export default {
 
 <style lang="scss" scoped>
 /* Storage Menu - alternate appearance
-.storage-select-button ::v-deep .v-btn__content {
+.storage-select-button :deep(.v-btn__content) {
     flex-wrap: wrap;
     font-size: 11px;
 

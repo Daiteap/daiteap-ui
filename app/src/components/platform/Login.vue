@@ -24,7 +24,7 @@ export default {
       self.$router.push({ name: "DaiteapWebLandingPage" });
     }
 
-    if (Vue.$keycloak.authenticated) {
+    if (this.$keycloak.authenticated) {
         self.$router.push({ name: "DaiteapWebLandingPage" });
     } else {
       self.login_keycloak();
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     login_keycloak () {
-      Vue.$keycloak.login();
+      this.$keycloak.login();
     },
     forgotPassword_keycloak () {
       window.open("https://localhost:8090/auth/realms/Daiteap/login-actions/reset-credentials", "_blank");
