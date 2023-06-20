@@ -1,10 +1,11 @@
 import {shallowMount, mount} from "@vue/test-utils";
 import SubmitKubernetesCluster
   from "@/components/platform/SubmitKubernetesCluster.vue";
-import axios from "axios";
 import {
   BootstrapVue,
 } from "bootstrap-vue";
+
+import axios from "axios";
 
 import Vue from "vue";
 
@@ -657,10 +658,20 @@ describe("SubmitKubernetesCluster.vue", () => {
 
     it("should show access denied notification" +
     " when request fails with 403 status code", async () => {
+      const responseData = "some string";
+      const response = {
+        data: responseData,
+        status: 403,
+      };
+      const axiosError = {
+        config: {},
+        request: {},
+        response: response};
+
       wrapper.setData({
         axios: {
           post: jest.fn(() =>
-            Promise.reject(new Error("test")),
+            Promise.reject(axiosError),
           ),
         },
       });
@@ -682,10 +693,28 @@ describe("SubmitKubernetesCluster.vue", () => {
 
     it("should show error notification when request" +
     " fails with any other status code", async () => {
+      const responseData = "some string";
+      const response = {
+        data: responseData,
+        status: 500,
+      };
+      const axiosError = {
+        config: {},
+        request: {},
+        response: response};
+
       wrapper.setData({
         axios: {
           post: jest.fn(() =>
-            Promise.reject(new Error("test")),
+            Promise.reject(axiosError),
+          ),
+        },
+      });
+
+      wrapper.setData({
+        axios: {
+          post: jest.fn(() =>
+            Promise.reject(axiosError),
           ),
         },
       });
