@@ -722,7 +722,10 @@ export default {
     }
     clearInterval(this.interval);
 
-    window.removeEventListener("resize", this.columnsEvent);
+    if (this.columnsEvent)
+    {
+      window.removeEventListener("resize", this.columnsEvent);
+    }
   },
 };
 </script>

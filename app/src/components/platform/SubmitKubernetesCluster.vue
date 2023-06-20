@@ -277,15 +277,24 @@ export default {
   methods: {
     getInstallationStatusInterval() {
       let self = this;
+
+      // Clear existing intervals
+      if (window.intervals) {
+        for (let i = 0; i < window.intervals.length; i++) {
+          clearInterval(window.intervals[i]);
+        }
+      }
+
+      // Reset window.intervals and set new interval
+      window.intervals = [];
       self.interval = setInterval(() => {
         self.getInstallationStatus(self);
       }, 5000);
-
-      window.intervals = [];
       window.intervals.push(self.interval);
     },
     getInstallationStatus(currentObject) {
       let self = currentObject;
+      self.changeInstallationStatus();
 
       axios
         .get(
@@ -437,14 +446,13 @@ export default {
           this.get_axiosConfig()
         )
         .then(function () {
-          if (successMessage) {
-            self.$notify({
-              group: "msg",
-              type: "success",
-              title: "Notification:",
-              text: self.confirmDialogParams.successMessage,
-            });
-          }
+          self.$notify({
+            group: "msg",
+            type: "success",
+            title: "Notification:",
+            text: self.confirmDialogParams.successMessage,
+          });
+
           self.showConfirmDialog = false;
           self.$bvModal.hide("bv-modal-confirmdialog");
           self.$router.push({
@@ -572,6 +580,8 @@ export default {
       for (let i = 0; i < window.intervals.length; i++) {
         clearInterval(window.intervals[i]);
       }
+
+      window.intervals = [];
       this.$router.push({
         name: "ClusterDetails",
         params: {
@@ -586,6 +596,8 @@ export default {
       clearInterval(window.intervals[i]);
       }
     clearInterval(this.interval);
+
+    window.intervals = [];
   }
 };
 </script>
