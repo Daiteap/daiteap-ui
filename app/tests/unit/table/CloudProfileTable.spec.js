@@ -1,7 +1,9 @@
 import {mount} from "@vue/test-utils";
-import CloudProfileTable from "@/components/platform/tables/CloudProfileTable.vue";
+import CloudProfileTable from
+  "@/components/platform/tables/CloudProfileTable.vue";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
-import SpecificUserInfo from "@/components/platform/popup_modals/SpecificUserInfo";
+import SpecificUserInfo from
+  "@/components/platform/popup_modals/SpecificUserInfo";
 import Vue from "vue";
 import moment from "moment";
 import BootstrapVue from "bootstrap-vue";
@@ -130,14 +132,16 @@ describe("CloudProfileTable", () => {
     expect(wrapper.emitted("openEditPopup")[0][0]).toBe(allAccounts[0]);
   });
 
-  it("emits the 'removeAccount' event when the remove button is clicked", () => {
+  it("emits the 'removeAccount' event" +
+  " when the remove button is clicked", () => {
     const removeButton = wrapper.findComponent(RemoveAccountButton);
     removeButton.vm.$emit("removeAccount", allAccounts[1]);
     expect(wrapper.emitted("removeAccount")).toBeTruthy();
     expect(wrapper.emitted("removeAccount")[0][0]).toBe(allAccounts[1]);
   });
 
-  it("displays the SpecificUserInfo component when the 'showUserDetails' method is called", async () => {
+  it("displays the SpecificUserInfo component" +
+  " when the 'showUserDetails' method is called", async () => {
     await wrapper.vm.showUserDetails(allAccounts[0].contact);
 
     await wrapper.vm.$nextTick();
@@ -149,7 +153,8 @@ describe("CloudProfileTable", () => {
     );
   });
 
-  it("hides the SpecificUserInfo component when the 'hideUserDetails' method is called", () => {
+  it("hides the SpecificUserInfo component" +
+  " when the 'hideUserDetails' method is called", () => {
     wrapper.vm.showUserDetails(allAccounts[0].contact);
     wrapper.vm.hideUserDetails();
     expect(wrapper.findComponent(SpecificUserInfo).exists()).toBe(false);

@@ -1,5 +1,6 @@
 import {shallowMount, mount} from "@vue/test-utils";
-import SubmitKubernetesCluster from "@/components/platform/SubmitKubernetesCluster.vue";
+import SubmitKubernetesCluster
+  from "@/components/platform/SubmitKubernetesCluster.vue";
 import axios from "axios";
 import {
   BootstrapVue,
@@ -140,8 +141,10 @@ describe("SubmitKubernetesCluster.vue", () => {
     it("shows retry dialog", async () => {
       const mockId = 1;
       const mockName = "Test Cluster";
-      const mockSuccessMessage = `You have successfully submitted retry for "${mockName}".`;
-      const mockFailureMessage = `Error occured while you tried to submit retry of "${mockName}".`;
+      const mockSuccessMessage =
+        `You have successfully submitted retry for "${mockName}".`;
+      const mockFailureMessage =
+        `Error occured while you tried to submit retry of "${mockName}".`;
       const mockShowRetryDialog = true;
       const mockBvModalShow = jest.fn();
 
@@ -563,7 +566,8 @@ describe("SubmitKubernetesCluster.vue", () => {
       wrapper.vm.showCancelInstallationDialog(1, "Test Cluster");
       expect(wrapper.vm.showConfirmDialog).toBe(true);
       expect(wrapper.vm.confirmDialogParams.text).toEqual(
-        "Are you sure you want to cancel the installation and delete the existing resources:",
+        "Are you sure you want to cancel the " +
+        "installation and delete the existing resources:",
       );
       expect(wrapper.vm.confirmDialogParams.envName).toEqual("Test Cluster");
       expect(wrapper.vm.confirmDialogParams.action).toEqual("Delete");
@@ -588,7 +592,8 @@ describe("SubmitKubernetesCluster.vue", () => {
           return {
             computed_active_tenant_id: "test-tenant-id",
             confirmDialogParams: {
-              text: "Are you sure you want to cancel the installation and delete the existing resources:",
+              text: "Are you sure you want to cancel the" +
+              " installation and delete the existing resources:",
               envName: "",
               action: "Delete",
               payload: {
@@ -596,9 +601,11 @@ describe("SubmitKubernetesCluster.vue", () => {
                 name: "test-cluster-name",
               },
               successMessage:
-                "You have successfully submitted deletion for \"test-cluster-name\".",
+                "You have successfully submitted" +
+                " deletion for \"test-cluster-name\".",
               failureMessage:
-                "Error occured while you tried to submit deletion of \"test-cluster-name\".",
+                "Error occured while you tried to" +
+                " submit deletion of \"test-cluster-name\".",
             },
             get_axiosConfig: () => {
               return {};
@@ -629,7 +636,8 @@ describe("SubmitKubernetesCluster.vue", () => {
       await wrapper.vm.cancelInstallation(payload);
 
       expect(wrapper.vm.axios.post).toHaveBeenCalledWith(
-        "/server/tenants/test-tenant-id/clusters/test-cluster-id/cancel-creation",
+        "/server/tenants/test-tenant-id/" +
+        "clusters/test-cluster-id/cancel-creation",
         {},
         expect.any(Object),
       );
@@ -638,7 +646,8 @@ describe("SubmitKubernetesCluster.vue", () => {
         group: "msg",
         type: "success",
         title: "Notification:",
-        text: "You have successfully submitted deletion for \"test-cluster-name\".",
+        text: "You have successfully" +
+        " submitted deletion for \"test-cluster-name\".",
       });
 
       expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -646,11 +655,12 @@ describe("SubmitKubernetesCluster.vue", () => {
       });
     });
 
-    it("should show access denied notification when request fails with 403 status code", async () => {
+    it("should show access denied notification" +
+    " when request fails with 403 status code", async () => {
       wrapper.setData({
         axios: {
           post: jest.fn(() =>
-            Promise.reject({response: {status: 403, data: "test"}}),
+            Promise.reject(new Error("test")),
           ),
         },
       });
@@ -670,11 +680,12 @@ describe("SubmitKubernetesCluster.vue", () => {
       });
     });
 
-    it("should show error notification when request fails with any other status code", async () => {
+    it("should show error notification when request" +
+    " fails with any other status code", async () => {
       wrapper.setData({
         axios: {
           post: jest.fn(() =>
-            Promise.reject({response: {status: 500, data: "test"}}),
+            Promise.reject(new Error("test")),
           ),
         },
       });
@@ -686,7 +697,8 @@ describe("SubmitKubernetesCluster.vue", () => {
         group: "msg",
         type: "error",
         title: "Notification:",
-        text: "Error occured while you tried to submit deletion of \"test-cluster-name\".",
+        text: "Error occured while you tried to" +
+        " submit deletion of \"test-cluster-name\".",
       });
     });
   });

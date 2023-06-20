@@ -33,34 +33,40 @@ describe("ValidateButton", () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it("displays the check and question icons when validationStatus is false", () => {
+  it("displays the check and question" +
+  " icons when validationStatus is false", () => {
     expect(wrapper.find(".fa-check-circle").exists()).toBe(true);
     expect(wrapper.find(".fa-question-circle").exists()).toBe(true);
   });
 
-  it("displays the timed out message when validationStatus is \"timedOut\"", async () => {
+  it("displays the timed out message" +
+  " when validationStatus is \"timedOut\"", async () => {
     await wrapper.setProps({validationStatus: "timedOut"});
     expect(wrapper.find(".fa-clock").exists()).toBe(true);
     expect(wrapper.find(".ml-3").text()).toBe("Timed out");
   });
 
-  it("displays the deleting message when account is in listOfAccountsInDeletion", async () => {
+  it("displays the deleting message" +
+  " when account is in listOfAccountsInDeletion", async () => {
     await wrapper.setProps({listOfAccountsInDeletion: [1]});
     await wrapper.setProps({validationStatus: true});
     expect(wrapper.find(".text-danger").text()).toBe("Deleting...");
   });
 
-  it("displays the success checkmark when validationStatus is true and alert show is false", async () => {
+  it("displays the success checkmark" +
+  " when validationStatus is true and alert show is false", async () => {
     await wrapper.setProps({validationStatus: true});
     expect(wrapper.find(".checkmark").exists()).toBe(true);
   });
 
-  it("displays the failure icon when validationStatus is \"error\"", async () => {
+  it("displays the failure icon when" +
+  " validationStatus is \"error\"", async () => {
     await wrapper.setProps({validationStatus: "error"});
     expect(wrapper.find(".load-failure").exists()).toBe(true);
   });
 
-  it("displays the partial success icon when validationStatus is true and alert show is true", async () => {
+  it("displays the partial success icon when" +
+  " validationStatus is true and alert show is true", async () => {
     await wrapper.setProps({
       validationStatus: true,
       alerts: [{id: 1, show: true}],
