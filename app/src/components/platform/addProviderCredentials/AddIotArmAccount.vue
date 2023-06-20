@@ -136,7 +136,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.label.$invalid && !labelInFocus ? 'is-danger' : '',
+                  v$.iotarm.label.$invalid && !labelInFocus ? 'is-danger' : '',
                 ]"
                 type="text"
                 id="iotarmlabel"
@@ -154,7 +154,7 @@
               >
                 Cloud Credentials name already taken
               </p>
-              <p v-else-if="iotarm.label != '' && !$v.iotarm.label.and" class="help text-danger">
+              <p v-else-if="iotarm.label != '' && !v$.iotarm.label.and" class="help text-danger">
                 This Cloud Credentials name is not valid
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -175,7 +175,7 @@
               ></b-form-textarea>
             </div>
             <div class="">
-              <p v-if="$v.iotarm.description.$invalid" class="help text-danger">
+              <p v-if="v$.iotarm.description.$invalid" class="help text-danger">
                 Invalid Cloud Credentials Description
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -190,7 +190,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.vpcCidr.$invalid &&
+                  v$.iotarm.vpcCidr.$invalid &&
                   iotarm.vpcCidr != '' &&
                   !gwPublicIpInFocus
                     ? 'is-danger'
@@ -205,7 +205,7 @@
             </div>
             <div class="">
               <p
-                v-if="iotarm.vpcCidr != '' && $v.iotarm.vpcCidr.$invalid"
+                v-if="iotarm.vpcCidr != '' && v$.iotarm.vpcCidr.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid IP
@@ -222,7 +222,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.gw_public_ip.$invalid &&
+                  v$.iotarm.gw_public_ip.$invalid &&
                   iotarm.gw_public_ip != '' &&
                   !gwPublicIpInFocus
                     ? 'is-danger'
@@ -237,7 +237,7 @@
             </div>
             <div class="">
               <p
-                v-if="iotarm.gw_public_ip != '' && $v.iotarm.gw_public_ip.$invalid"
+                v-if="iotarm.gw_public_ip != '' && v$.iotarm.gw_public_ip.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid IP
@@ -249,12 +249,12 @@
             <label class="control-label"> Gateway Private IP: * </label>
             <div class="">
               <input
-                :disabled="$v.iotarm.vpcCidr.$invalid"
+                :disabled="v$.iotarm.vpcCidr.$invalid"
                 v-model="iotarm.gw_private_ip"
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.gw_private_ip.$invalid &&
+                  v$.iotarm.gw_private_ip.$invalid &&
                   iotarm.gw_private_ip != '' &&
                   !gwPrivateIpInFocus
                     ? 'is-danger'
@@ -269,7 +269,7 @@
             </div>
             <div class="">
               <p
-                v-if="iotarm.gw_private_ip != '' && $v.iotarm.gw_private_ip.$invalid"
+                v-if="iotarm.gw_private_ip != '' && v$.iotarm.gw_private_ip.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid IP
@@ -286,7 +286,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.admin_username.$invalid &&
+                  v$.iotarm.admin_username.$invalid &&
                   iotarm.admin_username != '' &&
                   !iotAdminUsernameInFocus
                     ? 'is-danger'
@@ -302,7 +302,7 @@
 
             <div class="">
               <p
-                v-if="iotarm.admin_username != '' && $v.iotarm.admin_username.$invalid"
+                v-if="iotarm.admin_username != '' && v$.iotarm.admin_username.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid username
@@ -326,7 +326,7 @@
             </div>
             <div class="">
               <p
-                v-if="iotarm.admin_private_key != '' && $v.iotarm.admin_private_key.$invalid"
+                v-if="iotarm.admin_private_key != '' && v$.iotarm.admin_private_key.$invalid"
                 class="help text-danger"
               >
                 Please provide a private key.
@@ -343,7 +343,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.iotarm.admin_private_key_password.$invalid &&
+                  v$.iotarm.admin_private_key_password.$invalid &&
                   iotarm.admin_private_key_password != '' &&
                   !iotAdminPrivateKeyPasswordInFocus
                     ? 'is-danger'
@@ -366,7 +366,7 @@
                 password protected)
               </p>
               <p
-                v-else-if="$v.iotarm.admin_private_key_password.$invalid"
+                v-else-if="v$.iotarm.admin_private_key_password.$invalid"
                 class="help text-danger"
               >
                 Please provide a password for the private key
@@ -398,7 +398,7 @@
             <div class="">
               <div
                 class="custom-button float-right ml-5"
-                :class="[$v.iotarm.$invalid || loading ? 'deactivated' : '']"
+                :class="[v$.iotarm.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()"
                 data-test-id="input-save"
               >
@@ -419,8 +419,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { and, required, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 let newLabelValidation = function (value) {
   if (this.allCurrentLabels.includes(value)) {
@@ -437,9 +437,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       gwPublicIpInFocus: false,
       gwPrivateIpInFocus: false,
@@ -555,7 +555,7 @@ export default {
       this.$bvModal.hide("bv-modal-addiotarmaccount");
       document.getElementById("addNewAccountIotArmeForm").reset();
       this.$nextTick(() => {
-        this.$v.$reset();
+        this.v$.$reset();
       });
       this.$router.push({ name: "CloudProfile" });
     },

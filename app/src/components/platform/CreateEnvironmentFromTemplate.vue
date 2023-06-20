@@ -23,15 +23,15 @@
                 Environment name: *
               </label>
               <div class="">
-                <input v-model="environmentName" v-on:change="$v.environmentName.$touch" class="form-control" :class="[
+                <input v-model="environmentName" v-on:change="v$.environmentName.$touch" class="form-control" :class="[
                   'input',
-                  $v.environmentName.$invalid ? 'is-danger' : '',
+                  v$.environmentName.$invalid ? 'is-danger' : '',
                 ]" autocomplete="off" type="text" id="environmentNameField" />
                 <p
                   v-if="
                     environmentName != '' &&
-                    !$v.environmentName.and &&
-                    $v.environmentName.$dirty
+                    !v$.environmentName.and &&
+                    v$.environmentName.$dirty
                   "
                   class="help text-danger"
                   style="height: 1.2rem"
@@ -42,7 +42,7 @@
                   v-else-if="
                     environmentName != '' &&
                     clusterNameResolved &&
-                    !$v.environmentName.isNameFree
+                    !v$.environmentName.isNameFree
                   "
                   class="help text-danger"
                   style="height: 1.2rem"
@@ -63,18 +63,18 @@
               <div class="">
                 <b-form-textarea
                   v-model="clusterDescription"
-                  v-on:change="$v.clusterDescription.$touch"
+                  v-on:change="v$.clusterDescription.$touch"
                   placeholder="Description"
                   class="form-control"
                   :class="[
                     'input',
-                    $v.clusterDescription.$invalid ? 'is-danger' : '',
+                    v$.clusterDescription.$invalid ? 'is-danger' : '',
                   ]"
                   autocomplete="off"
                   type="text"
                   id="clusterDescriptionField"
                 ></b-form-textarea>
-                <p v-if="$v.clusterDescription.$invalid" class="help text-danger">
+                <p v-if="v$.clusterDescription.$invalid" class="help text-danger">
                   Invalid cluster description
                 </p>
               </div>
@@ -220,16 +220,8 @@
 <script>
 import helpers from "@/services/helpers.js";
 import CreateFromTemplateNode from "@/components/platform/CreateFromTemplateNode.vue";
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  and,
-  minLength,
-  maxLength,
-  minValue,
-  maxValue,
-  requiredIf,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, minValue, maxValue, required, requiredIf } from "@vuelidate/validators";
 import QuotaExceededModal from "@/components/platform/popup_modals/QuotaExceededModal";
 import ShowErrorCreatingCluster from "@/components/platform/popup_modals/ShowErrorCreatingCluster";
 import "vue-slider-component/theme/default.css";
@@ -239,9 +231,9 @@ export default {
   props: {
     projectId: String,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       environmentName: "",
       clusterDescription: "",
       templateProvidersList: [],

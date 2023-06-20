@@ -37,7 +37,7 @@
         <textarea
           class="form-control"
           rows="20"
-          v-on:change="$v.form.valuesFile.$touch"
+          v-on:change="v$.form.valuesFile.$touch"
           v-model="form.valuesFile"
         ></textarea>
       </div>
@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 import Vue from "vue";
 import axios from "axios";
 import TextPopup from "../popup_modals/TextPopup";
@@ -59,7 +59,6 @@ export default {
     "currentStep",
     "clusterID"
   ],
-  mixins: [validationMixin],
   created() { },
   mounted() {
     let self = this;
@@ -148,6 +147,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       defaultName: "name",
       showTextPopup: false,
       textPopupParams: {
@@ -172,7 +172,7 @@ export default {
     TextPopup,
   },
   watch: {
-    $v: {
+    v$: {
       handler: function(val) {
         if (!val.$invalid) {
           Vue.prototype.$finalModel = {

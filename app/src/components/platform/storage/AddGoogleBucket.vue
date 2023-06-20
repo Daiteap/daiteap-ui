@@ -42,7 +42,7 @@
           type="text" />
       </div>
       <div class="">
-        <p v-if="googleSelected && bucketName != '' && $v.bucketName.$invalid" class="m-3 help text-danger">
+        <p v-if="googleSelected && bucketName != '' && v$.bucketName.$invalid" class="m-3 help text-danger">
           Invalid Bucket Name
         </p>
         <div v-else></div>
@@ -60,7 +60,7 @@
       </div>
       <div class="">
         <p
-          v-if="googleSelected && $v.description.$invalid"
+          v-if="googleSelected && v$.description.$invalid"
           class="m-3 help text-danger"
         >
           Invalid Description
@@ -178,13 +178,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength,
-  helpers,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, maxLength, helpers, required } from "@vuelidate/validators";
 
 const bucketNameValidation = function (value) {
   if (value.length > 63 && !value.includes(".")) {
@@ -250,6 +245,7 @@ export default {
   name: "AddGoogleBucket",
   data() {
     return {
+      v$: useVuelidate(),
       credentials: [],
       credential_id: "",
       projects: [],
@@ -278,7 +274,7 @@ export default {
   },
   computed: {
     saveDeactivated() {
-      return this.$v.bucketName.$invalid || this.credential_id == '' || this.project_id == '' || this.location == '' || (this.location_type == 'Dual-region' && this.location2 == '');
+      return this.v$.bucketName.$invalid || this.credential_id == '' || this.project_id == '' || this.location == '' || (this.location_type == 'Dual-region' && this.location2 == '');
     }
   },
   methods: {
@@ -388,7 +384,6 @@ export default {
       }
     },
   },
-  mixins: [validationMixin],
   validations: {
     bucketName: {
       required,

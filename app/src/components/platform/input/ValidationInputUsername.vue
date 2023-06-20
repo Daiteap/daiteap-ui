@@ -13,7 +13,7 @@
         ></b-form-input>
         <div
           class="help text-danger"
-          v-if="!$v.value.minLength || !$v.value.maxLength || !$v.value.usernameValidation && !disabled"
+          v-if="!v$.value.minLength || !v$.value.maxLength || !v$.value.usernameValidation && !disabled"
         >
           {{ errorMsg }}
         </div>
@@ -23,19 +23,13 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength,
-  helpers,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, minLength, helpers, required } from "@vuelidate/validators";
 
 const usernameValidation = helpers.regex('usernameValidation', /^[a-z\d._-]*$/i);
 
 export default {
   name: "ValidationInputUsername",
-  mixins: [validationMixin],
   validations: {
     value: {
       required,
@@ -46,6 +40,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       valuecopy: "",
       usernameResolved: true,
     };

@@ -52,7 +52,7 @@
             <div class="">
               <input required autocomplete="off" v-model="aws.label" class="form-control" :class="[
                 'input',
-                $v.aws.label.$invalid && !labelInFocus ? 'is-danger' : '',
+                v$.aws.label.$invalid && !labelInFocus ? 'is-danger' : '',
               ]" type="text" id="awsLabel" @focus="labelInFocus = true" @blur="labelInFocus = false"
                 data-test-id="input-label" />
             </div>
@@ -62,7 +62,7 @@
               " class="help text-danger">
                 Cloud Credentials name already taken
               </p>
-              <p v-if="aws.label != '' && !$v.aws.label.and" class="help text-danger">
+              <p v-if="aws.label != '' && !v$.aws.label.and" class="help text-danger">
                 This Cloud Credentials name is not valid
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -83,7 +83,7 @@
               ></b-form-textarea>
             </div>
             <div class="">
-              <p v-if="$v.aws.description.$invalid" class="help text-danger">
+              <p v-if="v$.aws.description.$invalid" class="help text-danger">
                 Invalid Cloud Credentials Description
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -95,7 +95,7 @@
             <div class="">
               <input v-model="aws.aws_access_key_id" class="form-control" :class="[
                 'input',
-                $v.aws.aws_access_key_id.$invalid &&
+                v$.aws.aws_access_key_id.$invalid &&
                   aws.aws_access_key_id != '' &&
                   !accessKeyInFocus
                   ? 'is-danger'
@@ -103,7 +103,7 @@
               ]" type="text" id="awsAccessKey" data-test-id="input-id" />
             </div>
             <div class="">
-              <p v-if="aws.aws_access_key_id != '' && $v.aws.aws_access_key_id.$invalid" class="help text-danger">
+              <p v-if="aws.aws_access_key_id != '' && v$.aws.aws_access_key_id.$invalid" class="help text-danger">
                 Please provide a valid AWS Access Key
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -114,7 +114,7 @@
             <div class="">
               <input v-model="aws.aws_secret_access_key" class="form-control" :class="[
                 'input',
-                $v.aws.aws_secret_access_key.$invalid &&
+                v$.aws.aws_secret_access_key.$invalid &&
                   aws.aws_secret_access_key != '' &&
                   !secretKeyInFocus
                   ? 'is-danger'
@@ -122,7 +122,7 @@
               ]" type="password" id="secretAccessKey" data-test-id="input-secret" />
             </div>
             <div class="">
-              <p v-if="aws.aws_secret_access_key != '' && $v.aws.aws_secret_access_key.$invalid"
+              <p v-if="aws.aws_secret_access_key != '' && v$.aws.aws_secret_access_key.$invalid"
                 class="help text-danger">
                 Please provide a valid AWS Secret Key
               </p>
@@ -143,7 +143,7 @@
 
           <div class="form-group">
             <div class="">
-              <div class="custom-button float-right ml-5" :class="[$v.aws.$invalid || loading ? 'deactivated' : '']"
+              <div class="custom-button float-right ml-5" :class="[v$.aws.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()" data-test-id="input-save">
                 Save
               </div>
@@ -159,8 +159,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, and, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 let newLabelValidation = function (value) {
   if (this.allCurrentLabels.includes(value)) {
@@ -177,9 +177,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       accessKeyInFocus: false,
       secretKeyInFocus: false,

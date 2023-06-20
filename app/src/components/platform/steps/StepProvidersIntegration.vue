@@ -42,16 +42,16 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
-import { required, minLength } from "vuelidate/lib/validators";
+import { minLength, required } from "@vuelidate/validators";
 
 export default {
   name: "StepProvidersIntegration",
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       form: {
         load_balancer_integration: ""
       }
@@ -82,7 +82,7 @@ export default {
     },
   },
   watch: {
-    $v: {
+    v$: {
       handler: function (val) {
         if (!val.$invalid) {
           Vue.prototype.$finalModel = {

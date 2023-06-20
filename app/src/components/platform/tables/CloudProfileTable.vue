@@ -74,7 +74,7 @@
             {{ account.cloud_account_info }}
           </td>
           <td name="credentialsHidePriority0">
-            {{ account.created_at_pretty | FormatDateFilter }}
+            {{ FormatDateFilter(account.created_at_pretty) }}
           </td>
           <td
             name="credentialsHidePriority1"
@@ -196,15 +196,6 @@ export default {
     ValidateButton,
     RemoveAccountButton,
     SpecificUserInfo,
-  },
-  filters: {
-    upperCase: function (data) {
-      let upper = [];
-      data.split("_").forEach((word) => {
-        upper.push(word[0].toUpperCase() + word.substring(1));
-      });
-      return upper.join(" ");
-    },
   },
 };
 </script>

@@ -20,7 +20,7 @@
                   id="description"
                 ></b-form-textarea>
               </div>
-              <div v-if="$v.currentBucket.description.$invalid">
+              <div v-if="v$.currentBucket.description.$invalid">
                 <p class="help text-danger">Invalid Description</p>
               </div>
               <div v-else style="height: 0rem"></div>
@@ -32,7 +32,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.currentBucket.$invalid ? 'deactivated' : '']"
+                :class="[v$.currentBucket.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
               >
                 Save
@@ -47,14 +47,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength } from "@vuelidate/validators";
 
 export default {
   name: "EditBucketPopup",
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       bucket: {},
     };
   },

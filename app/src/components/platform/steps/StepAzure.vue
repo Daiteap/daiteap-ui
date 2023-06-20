@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, required } from "@vuelidate/validators";
 import Vue from "vue";
 import axios from "axios";
 import "vue-slider-component/theme/default.css";
@@ -78,7 +78,6 @@ import AddButton from "@/components/platform/AddButton"
 export default {
   name: "StepAzure",
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   components: {
     NodeGroup,
     AddButton
@@ -452,6 +451,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       errorMsg: "",
       vpcCidrFocus: false,
       loadingAccounts: true,
@@ -521,7 +521,7 @@ export default {
   },
 
   watch: {
-    $v: {
+    v$: {
       handler: function (val) {
         if (!val.$invalid && !this.ipConflicts && this.checkCanContinue) {
           Vue.prototype.$finalModel = {
@@ -551,7 +551,7 @@ export default {
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
       self.$destroy()
     );
-    if (!this.$v.$invalid && !this.ipConflicts) {
+    if (!this.v$.$invalid && !this.ipConflicts) {
       this.$emit("can-continue", { value: true });
     } else {
       this.$emit("can-continue", { value: false });

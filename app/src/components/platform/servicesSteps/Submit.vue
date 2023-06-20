@@ -7,13 +7,12 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
 
 export default {
   name: 'Submit',
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   mounted() {
     let self = this;
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
@@ -32,6 +31,7 @@ export default {
   methods: {},
   data() {
     return {
+      v$: useVuelidate(),
       form: {
 
       }

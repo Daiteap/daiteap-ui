@@ -41,16 +41,16 @@
             {{ item.company }}
           </td>
           <td name="tenantsHidePriority1">
-            {{ item.createdAt | FormatDateFilter }}
+            {{ FormatDateFilter(item.createdAt) }}
           </td>
           <td name="tenantsHidePriority0">
-            {{ item.updatedAt | FormatDateFilter }}
+            {{ FormatDateFilter(item.updatedAt) }}
           </td>
           <td>
-            <toggle-button
+            <Toggle
               :value="item.selected"
               data-test-id="compute-option-button"
-              @input="showChangeTenantDialog(item)"
+              @change="showChangeTenantDialog(item)"
               :disabled="item.selected"
               sync
             />
@@ -63,6 +63,7 @@
 
 <script>
 import ConfirmDialog from "../popup_modals/ConfirmDialog";
+import Toggle from "@vueform/toggle";
 
 export default {
   props: {
@@ -71,6 +72,7 @@ export default {
   },
   components: {
     ConfirmDialog,
+    Toggle,
   },
   data() {
     return {
@@ -324,3 +326,5 @@ kbd:hover {
   background-color: #ea002f;
 }
 </style>
+
+<style src="@vueform/toggle/themes/default.css"></style>

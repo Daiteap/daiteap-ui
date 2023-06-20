@@ -22,13 +22,13 @@
 
               <div>
                 <p
-                  v-if="!$v.currentCluster.Name.maxLength"
+                  v-if="!v$.currentCluster.Name.maxLength"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   Invalid Cluster Name
                 </p>
                 <p
-                  v-else-if="nameResolved && !$v.currentCluster.Name.isNameFree && currentCluster.Name != ''"
+                  v-else-if="nameResolved && !v$.currentCluster.Name.isNameFree && currentCluster.Name != ''"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
@@ -53,7 +53,7 @@
                   id="description"
                 ></b-form-textarea>
               </div>
-              <div v-if="$v.currentCluster.Description.$invalid">
+              <div v-if="v$.currentCluster.Description.$invalid">
                 <p class="help text-danger">
                   Invalid Cluster Description
                 </p>
@@ -67,7 +67,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.currentCluster.$invalid ? 'deactivated' : '']"
+                :class="[v$.currentCluster.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
               >
                 Save
@@ -87,14 +87,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 
 export default {
   name: 'EditClusterPopup',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       cluster: {},
       nameResolved: true,
       nameTakenMsg: "This cluster name is taken",

@@ -722,7 +722,7 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
 import axios from "axios";
 import YAMLUpload from "./YAMLUpload";
@@ -733,7 +733,6 @@ export default {
     "clickedNext",
     "currentStep"
   ],
-  mixins: [validationMixin],
   mounted() {
     let self = this;
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
@@ -1432,6 +1431,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       reservedServiceNames: [],
       invalidName: false,
       existingServiceName: false,
@@ -1483,7 +1483,7 @@ export default {
     form: {},
   },
   watch: {
-    $v: {
+    v$: {
       handler: function () {
         if (
           (this.form.cloud_providers.alicloudSelected == false &&

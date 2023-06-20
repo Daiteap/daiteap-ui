@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Keycloak from "keycloak-js";
 
-const _keycloak = Keycloak("./keycloak.json");
+const _keycloak = new Keycloak("./keycloak.json");
 
 const Plugin = {
   install(Vue) {

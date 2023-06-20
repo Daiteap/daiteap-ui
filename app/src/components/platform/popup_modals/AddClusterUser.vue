@@ -44,8 +44,8 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.user.username.$invalid &&
-                  $v.user.username.$dirty &&
+                  v$.user.username.$invalid &&
+                  v$.user.username.$dirty &&
                   !usernameFocus
                     ? 'is-danger'
                     : '',
@@ -54,14 +54,14 @@
                 @blur="usernameFocus = false"
                 type="text"
                 value
-                v-on:click="$v.user.username.$touch"
+                v-on:click="v$.user.username.$touch"
                 placeholder="*Username"
               />
             </div>
             <div v-if="!user.username" style="height: 2.25rem">
               <p class="help is-danger col-lg">* Username is a required</p>
             </div>
-            <p v-else-if="$v.user.username.$invalid" class="help">
+            <p v-else-if="v$.user.username.$invalid" class="help">
               Must be unique and between 3 and 20 characters long.
               <br />
               Allowed characters: a-z 0-9 _
@@ -106,11 +106,11 @@
             <div class="col-lg-16">
               <textarea
                 placeholder="*Public SSH Key"
-                v-on:change="$v.user.public_ssh_key.$touch"
+                v-on:change="v$.user.public_ssh_key.$touch"
                 class="form-control"
                 :class="[
-                  $v.user.public_ssh_key.$invalid &&
-                  $v.user.public_ssh_key.$dirty &&
+                  v$.user.public_ssh_key.$invalid &&
+                  v$.user.public_ssh_key.$dirty &&
                   !sshFocus
                     ? 'is-danger'
                     : '',
@@ -127,8 +127,8 @@
             </div>
             <p
               v-else-if="
-                $v.user.public_ssh_key.$invalid &&
-                $v.user.public_ssh_key.$dirty &&
+                v$.user.public_ssh_key.$invalid &&
+                v$.user.public_ssh_key.$dirty &&
                 !sshFocus
               "
               class="help is-danger col-lg-4"
@@ -185,8 +185,8 @@
                       class="form-control"
                       :class="[
                         'input',
-                        $v.user.first_name.$invalid &&
-                        $v.user.first_name.$dirty &&
+                        v$.user.first_name.$invalid &&
+                        v$.user.first_name.$dirty &&
                         !firstnameFocus
                           ? 'is-danger'
                           : '',
@@ -195,14 +195,14 @@
                       value
                       @focus="firstnameFocus = true"
                       @blur="firstnameFocus = false"
-                      v-on:change="$v.user.first_name.$touch"
+                      v-on:change="v$.user.first_name.$touch"
                       placeholder="First Name"
                     />
                   </div>
                   <p
                     v-if="
-                      $v.user.first_name.$invalid &&
-                      $v.user.first_name.$dirty &&
+                      v$.user.first_name.$invalid &&
+                      v$.user.first_name.$dirty &&
                       !firstnameFocus
                     "
                     class="help is-danger col-lg-4"
@@ -220,8 +220,8 @@
                       class="form-control"
                       :class="[
                         'input',
-                        $v.user.last_name.$invalid &&
-                        $v.user.last_name.$dirty &&
+                        v$.user.last_name.$invalid &&
+                        v$.user.last_name.$dirty &&
                         !lastnameFocus
                           ? 'is-danger'
                           : '',
@@ -230,14 +230,14 @@
                       value
                       @focus="lastnameFocus = true"
                       @blur="lastnameFocus = false"
-                      v-on:change="$v.user.last_name.$touch"
+                      v-on:change="v$.user.last_name.$touch"
                       placeholder="Last Name"
                     />
                   </div>
                   <p
                     v-if="
-                      $v.user.last_name.$invalid &&
-                      $v.user.last_name.$dirty &&
+                      v$.user.last_name.$invalid &&
+                      v$.user.last_name.$dirty &&
                       !lastnameFocus
                     "
                     class="help is-danger col-lg-4"
@@ -255,15 +255,15 @@
                       class="form-control"
                       :class="[
                         'input',
-                        $v.user.email.$invalid &&
-                        $v.user.email.$dirty &&
+                        v$.user.email.$invalid &&
+                        v$.user.email.$dirty &&
                         !emailFocus
                           ? 'is-danger'
                           : '',
                       ]"
                       type="email"
                       value
-                      v-on:change="$v.user.email.$touch"
+                      v-on:change="v$.user.email.$touch"
                       @focus="emailFocus = true"
                       @blur="emailFocus = false"
                       placeholder="Email"
@@ -271,8 +271,8 @@
                   </div>
                   <p
                     v-if="
-                      $v.user.email.$invalid &&
-                      $v.user.email.$dirty &&
+                      v$.user.email.$invalid &&
+                      v$.user.email.$dirty &&
                       !emailFocus
                     "
                     class="help is-danger col-lg-4"
@@ -293,7 +293,7 @@
               <input
                 v-on:click="submitAndValidateInBackend"
                 type="button"
-                :disabled="$v.user.$invalid || submitting"
+                :disabled="v$.user.$invalid || submitting"
                 class="btn btn-outline-success col-lg-5 float-sm-right"
                 value="Submit"
               />
@@ -315,24 +315,17 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  or,
-  minLength,
-  email,
-  maxLength,
-  required,
-  alpha,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { or, minLength, maxLength, email, required, alpha } from "@vuelidate/validators";
 
 const isSSHKey = (value) => /AAAAB3NzaC1yc2E/.test(value);
 const isEmpty = (value) => value == "";
 
 export default {
   name: 'AddClusterUser',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       usernameIsTaken: false,
       usernameFocus: false,
       firstnameFocus: false,
@@ -395,7 +388,7 @@ export default {
       this.backendValidationError = false;
       document.getElementById("addUserForm").reset();
       this.$nextTick(() => {
-        this.$v.$reset();
+        this.v$.$reset();
       });
     },
     submitNewUser() {

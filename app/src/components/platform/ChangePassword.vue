@@ -13,8 +13,8 @@
           inputplaceholder="Current password"
           errorMsg="Invalid password"
           v-model="form.current_password"
-          :validation="$v.form.current_password"
-          @change="$v.form.current_password.$touch"
+          :validation="v$.form.current_password"
+          @change="v$.form.current_password.$touch"
         />
 
         <VerticalInput
@@ -24,8 +24,8 @@
           inputplaceholder="New password"
           errorMsg="Password must contain upper case, lower case, special character, number, and at least 8 characters"
           v-model="form.new_password"
-          :validation="$v.form.new_password"
-          @change="$v.form.new_password.$touch"
+          :validation="v$.form.new_password"
+          @change="v$.form.new_password.$touch"
         />
 
         <VerticalInput
@@ -35,8 +35,8 @@
           inputplaceholder="Confirm password"
           errorMsg="Password must contain upper case, lower case, special character, number, and at least 8 characters"
           v-model="form.new_password_confirmation"
-          :validation="$v.form.new_password_confirmation"
-          @change="$v.form.new_password_confirmation.$touch"
+          :validation="v$.form.new_password_confirmation"
+          @change="v$.form.new_password_confirmation.$touch"
         />
 
         <div class="form-group">
@@ -44,7 +44,7 @@
           <div class="d-flex justify-content-end">
             <div
               class="custom-button"
-              :class="[$v.form.$invalid || loading ? 'deactivated' : '']"
+              :class="[v$.form.$invalid || loading ? 'deactivated' : '']"
               @click="savePassword()"
             >
               Save Password
@@ -57,20 +57,20 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, minLength, required } from "@vuelidate/validators";
 import CardTitle from "@/components/platform/CardTitle";
 import VerticalInput from "@/components/platform/input/VerticalInput";
 
 export default {
   name: 'ChangePassword',
-  mixins: [validationMixin],
   components: {
     CardTitle,
     VerticalInput,
   },
   data() {
     return {
+      v$: useVuelidate(),
       form: {
         current_password: "",
         new_password: "",

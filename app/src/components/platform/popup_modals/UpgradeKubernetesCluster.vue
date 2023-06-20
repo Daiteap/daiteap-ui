@@ -46,7 +46,7 @@
             <div class="col-lg-16">
               <input
                 v-on:click="upgradeKubernetesCluster"
-                :disabled="$v.$invalid"
+                :disabled="v$.$invalid"
                 type="button"
                 class="btn btn-primary col-lg-5 float-sm-right"
                 value="Submit"
@@ -66,14 +66,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import axios from "axios";
 
 export default {
   name: 'UpgradeKuberbetesCluster',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       interval: "",
       upgradeVersion: "",
       upgradeVersions: [],

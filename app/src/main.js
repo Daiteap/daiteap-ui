@@ -8,23 +8,21 @@ import {
 } from "bootstrap-vue";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import "bootstrap/dist/css/bootstrap.css";
-import {
-  BAlert,
-  BootstrapVueNext,
-  BCollapse,
-  BDropdown,
-} from "bootstrap-vue-next";
-import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
+// import {
+//   BAlert,
+//   BootstrapVueNext,
+//   BCollapse,
+//   BDropdown,
+// } from "bootstrap-vue-next";
+// import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "core-js";
 import "regenerator-runtime/runtime";
-import Vue, {provide, createApp} from "vue";
+import {createApp} from "vue";
 import VueAxios from "vue-axios";
-import Notifications from "vue3-notifications";
-// import VueSession from "vue-session";
+import Notifications from "@kyvg/vue3-notification";
 import VueSidebarMenu from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import "./app.scss";
-import {globalMixins} from "./common/globalMixins";
 import App from "./App.vue";
 import {DateFilter, FormatDateFilter} from "./common/date.filter";
 import {ErrorFilter} from "./common/error.filter";
@@ -34,17 +32,11 @@ import VueSlider from "vue-slider-component";
 import {createVuetify} from "vuetify";
 import Keycloak from "keycloak-js";
 import helpers from "@/services/helpers.js";
-// import KeycloakConfig from "../public/keycloak.json";
-// import {ToggleButton} from "vue-js-toggle-button";
 
-// Vue.component("VueSlider", VueSlider);
-// Vue.component("ToggleButton", ToggleButton);
 
 // Vue.use(VueSession, {
 //   "persist": true,
 // });
-
-// Vue.prototype.$finalModel = {};
 
 
 const VUEX_INIT_STATE = {
@@ -488,8 +480,6 @@ const store = new Vuex.Store({
   },
 });
 
-// Vue.config.productionTip = false;
-
 let singleUserMode = false;
 
 if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
@@ -498,28 +488,8 @@ if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
   singleUserMode = true;
 }
 
-
-// Vue.use(Vuex);
-// Vue.use(VueSidebarMenu);
-// Vue.use(BootstrapVue);
-// Vue.use(IconsPlugin);
-// Vue.use(CollapsePlugin);
-// Vue.use(AlertPlugin);
-// Vue.use(VueAxios, axios);
-// Vue.use(VueSession, {
-//   "persist": true,
-// });
-// Vue.use(Notifications);
-
 if (singleUserMode) {
-//   // new Vue({
-//   //   router,
-//   //   store,
-//   //   vuetify,
-//   //   render: (h) => h(App),
-//   // }).$mount("#app");
   const vuetify = createVuetify();
-  // const app = createApp(App, {keycloak: keycloak})
   const app = createApp(App)
     .component("VueSlider", VueSlider)
     .use(router)
@@ -527,16 +497,24 @@ if (singleUserMode) {
     .use(vuetify)
     .use(Vuex)
     .use(VueSidebarMenu)
-    .use(BootstrapVueNext)
-    .use(BCollapse)
-    .use(BDropdown)
-    .use(BAlert)
+    // .use(BootstrapVueNext)
+    .use(BootstrapVue)
+    // .use(BCollapse)
+    // .use(BDropdown)
+    // .use(BAlert)
+    .use(BootstrapVue)
+    .use(IconsPlugin)
+    .use(CollapsePlugin)
+    .use(DropdownPlugin)
+    .use(AlertPlugin)
     .use(VueAxios, axios)
     .use(Notifications);
-    // .use(VueSession, {
-    //   "persist": true, 
-    // })
-    // .use(IconsPlugin)
+
+  app.config.globalProperties.$keycloak = keycloak;
+  app.config.globalProperties.FormatDateFilter = FormatDateFilter;
+  app.config.globalProperties.DateFilter = DateFilter;
+  app.config.globalProperties.ErrorFilter = ErrorFilter;
+  app.config.globalProperties.$finalModel = {};
 
   app.mixin({
     methods: {
@@ -563,7 +541,6 @@ if (singleUserMode) {
       get_axiosConfig() {
         let authorization = "";
         if (!this.computed_single_user_mode) {
-          // authorization = "JWT " + Vue.$keycloak.token;
           authorization = "JWT " + keycloak.token;
         }
 
@@ -599,14 +576,16 @@ if (singleUserMode) {
       },
       changeColumnsVisibility(resourceType, lastIndex) {
         let offset =
-          document.getElementById("custom-sidebar-menu").clientWidth + 100;
+          document.getElementById("custom-sidebar-menu").clientWidth +
+          100;
 
         // Show columns
         for (let i = lastIndex; i >= 0; i--) {
           let columns = document.getElementsByName(
-            resourceType + "HidePriority" + i
+            resourceType + "HidePriority" + i,
           );
           if (
+            document.getElementById(resourceType + "DataTable") &&
             document.getElementById(resourceType + "DataTable").clientWidth +
               offset <=
             window.innerWidth
@@ -620,9 +599,10 @@ if (singleUserMode) {
         // Hide columns
         for (let i = 0; i <= lastIndex; i++) {
           let columns = document.getElementsByName(
-            resourceType + "HidePriority" + i
+            resourceType + "HidePriority" + i,
           );
           if (
+            document.getElementById(resourceType + "DataTable") &&
             document.getElementById(resourceType + "DataTable").clientWidth +
               offset >
             window.innerWidth
@@ -634,7 +614,8 @@ if (singleUserMode) {
         }
       },
       updateCreateClusterSetting(setting, value) {
-        this.$store.commit("updateCreateClusterSettings" + setting, value);
+        this.$store.commit(
+          "updateCreateClusterSettings" + setting, value);
       },
       deleteClusterMain(cluster) {
         let endpoint;
@@ -664,21 +645,21 @@ if (singleUserMode) {
         let self = this;
         return this.axios
           .delete(endpoint, this.get_axiosConfig())
-          .then(function () {
+          .then(function() {
             self.$notify({
               group: "msg",
               type: "success",
               title: "Notification:",
               text:
-                'You have successfully submitted deletion for "' +
+                "You have successfully submitted deletion for \"" +
                 cluster.Name +
-                '".',
+                "\".",
             });
 
             self.showAlert = true;
             self.alertKey += 1;
           })
-          .catch(function (error) {
+          .catch(function(error) {
             console.log(error);
             if (error.response) {
               error = error.response.data.error.message;
@@ -688,9 +669,9 @@ if (singleUserMode) {
               type: "error",
               title: "Notification:",
               text:
-                'Error occured while you tried to submit deletion of "' +
+                "Error occured while you tried to submit deletion of \"" +
                 cluster.Name +
-                '".',
+                "\".",
             });
           });
       },
@@ -704,17 +685,19 @@ if (singleUserMode) {
           this.axios
             .get(
               "/server/tenants/" + this.computed_active_tenant_id + "/users",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               self.$store.commit("updateUsers", response.data.users_list);
               resolve(response.data.users_list);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting users.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting users.");
             });
-        })
+        });
       },
       getProjects() {
         let self = this;
@@ -726,15 +709,17 @@ if (singleUserMode) {
           this.axios
             .get(
               "/server/tenants/" + this.computed_active_tenant_id + "/projects",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               self.$store.commit("updateProjects", response.data);
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting projects.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting projects.");
             });
         });
       },
@@ -750,15 +735,17 @@ if (singleUserMode) {
               "/server/tenants/" +
                 this.computed_active_tenant_id +
                 "/cloud-credentials",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               self.$store.commit("updateCredentials", response.data);
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting cloud credentials.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting cloud credentials.");
             });
         });
       },
@@ -775,14 +762,16 @@ if (singleUserMode) {
                 this.computed_active_tenant_id +
                 "/cloud-credentials/" +
                 credentialId,
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting cloud credential details.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting cloud credential details.");
             });
         });
       },
@@ -796,14 +785,16 @@ if (singleUserMode) {
           this.axios
             .get(
               "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting clusters.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting clusters.");
             });
         });
       },
@@ -820,14 +811,16 @@ if (singleUserMode) {
                 this.computed_active_tenant_id +
                 "/clusters/" +
                 clusterID,
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting cluster details.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting cluster details.");
             });
         });
       },
@@ -843,14 +836,16 @@ if (singleUserMode) {
               "/server/tenants/" +
                 this.computed_active_tenant_id +
                 "/environment-templates",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting templates.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting templates.");
             });
         });
       },
@@ -864,17 +859,19 @@ if (singleUserMode) {
           this.axios
             .get(
               "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               self.$store.commit("updateBuckets", response.data);
               resolve(response.data);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting storage information.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting storage information.");
             });
-        })
+        });
       },
       getBucketDetails(bucketID) {
         let self = this;
@@ -889,16 +886,18 @@ if (singleUserMode) {
                 this.computed_active_tenant_id +
                 "/buckets/" +
                 bucketID,
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function (response) {
+            .then(function(response) {
               self.usingToken -= 1;
               resolve(response.data.bucket_details[0]);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while getting storage information.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while getting storage information.");
             });
-        })
+        });
       },
       getAccountSettings() {
         let self = this;
@@ -909,9 +908,9 @@ if (singleUserMode) {
         this.axios
           .get(
             "/server/tenants/" + this.computed_active_tenant_id + "/settings",
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             if (response.status == 200) {
               self.$store.commit("updateAccountSettings", response.data);
@@ -919,8 +918,10 @@ if (singleUserMode) {
               self.$root.$emit("accountSettingsChanged", undefined);
             }
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting workspace settings!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting workspace settings!");
           });
       },
       removeComputeNode(nodeID, clusterID) {
@@ -933,9 +934,9 @@ if (singleUserMode) {
               clusterID +
               "/nodes/" +
               nodeID,
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function () {
+          .then(function() {
             self.$notify({
               group: "msg",
               type: "success",
@@ -944,7 +945,7 @@ if (singleUserMode) {
             });
             self.getClustersList();
           })
-          .catch(function () {
+          .catch(function() {
             self.$notify({
               group: "msg",
               type: "error",
@@ -961,19 +962,21 @@ if (singleUserMode) {
         this.usingToken += 1;
         this.axios
           .get("/server/user/profile/picture", this.get_axiosConfig())
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             self.$store.commit(
               "updateUserProfileImageLocation",
-              response.data.location
+              response.data.location,
             );
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting user image!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting user image!");
           });
       },
       getUserQuota() {
-        let self = this
+        let self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -981,16 +984,18 @@ if (singleUserMode) {
         return this.axios
           .get(
             "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             let quota = response.data;
 
             quota["available_kubernetes_cluster_environments"] =
-              quota["limit_kubernetes_cluster_environments"] - quota["used_kubernetes_cluster_environments"];
+              (quota["limit_kubernetes_cluster_environments"] -
+                quota["used_kubernetes_cluster_environments"]);
             quota["available_vms_environments"] =
-              quota["limit_compute_vms_environments"] - quota["used_compute_vms_environments"];
+              (quota["limit_compute_vms_environments"] -
+                quota["used_compute_vms_environments"]);
             quota["available_nodes"] =
               quota["limit_nodes"] - quota["used_nodes"];
             quota["available_services"] =
@@ -998,7 +1003,7 @@ if (singleUserMode) {
 
             return quota;
           })
-          .catch(function (error) {
+          .catch(function(error) {
             self.handleRequestError(error, "Error while getting quotas.");
           });
       },
@@ -1007,17 +1012,17 @@ if (singleUserMode) {
         while (self.updatingToken) {
           self.sleep(200);
         }
-        let profile = {}
-        let user = {}
+        let profile = {};
+        let user = {};
         this.usingToken += 1;
         this.axios
           .get("/server/user/profile", this.get_axiosConfig())
-          .then(function (response) {
+          .then(function(response) {
             profile = response.data;
 
             self.axios.get("/server/user", self.get_axiosConfig())
-              .then(function (response) {
-                user = {}
+              .then(function(response) {
+                user = {};
                 user.profile = profile;
 
                 user.username = response.data.username;
@@ -1033,7 +1038,7 @@ if (singleUserMode) {
                 self.$store.commit("updateUserInfo", user);
                 self.getAccountSettings();
               })
-              .catch(function (error) {
+              .catch(function(error) {
                 self.usingToken -= 1;
                 console.log(error);
                 self.$notify({
@@ -1044,8 +1049,10 @@ if (singleUserMode) {
                 });
               });
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting user information!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting user information!");
           });
       },
       checkCanChangePassword() {
@@ -1056,12 +1063,16 @@ if (singleUserMode) {
         this.usingToken += 1;
         this.axios
           .get("/server/user/password/can-update", this.get_axiosConfig())
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
-            self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
+            self.$store.commit(
+              "canChangePassword",
+              response.data.canUpdateUserPassword);
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while checking if change password is permitted!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while checking if change password is permitted!");
           });
       },
       getActiveTenants() {
@@ -1072,17 +1083,21 @@ if (singleUserMode) {
         this.usingToken += 1;
         this.axios
           .get("/server/user/active-tenants", this.get_axiosConfig())
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             if (response.data.activeTenants.length < 2) {
               self.hasMultipleTenants = false;
             } else {
               self.hasMultipleTenants = true;
             }
-            self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+            self.$store.commit(
+              "updateActiveTenant",
+              response.data.selectedTenant);
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting active tenants!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting active tenants!");
           });
       },
       getSpecificUserInfo(tenantId, username) {
@@ -1094,14 +1109,16 @@ if (singleUserMode) {
         return this.axios
           .get(
             "/server/tenants/" + tenantId + "/users/" + username,
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             return response.data;
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting specific user info!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting specific user info!");
           });
       },
       hasMultipleTenants() {
@@ -1115,28 +1132,28 @@ if (singleUserMode) {
         this.usingToken += 1;
         this.axios
           .get("/server/is-registered", this.get_axiosConfig())
-          .then(function (response) {
+          .then(function(response) {
             self.usingToken -= 1;
             if (!response.data.isRegistered) {
-                    self.axios
-                      .post("/server/tenants", {}, self.get_axiosConfig())
-                      .then(function () {
-                        self.getUserInfo();
-                        self.checkCanChangePassword();
-                        self.getProfilePicture();
-                        self.getActiveTenants();
-                        window.location.href = '#/app/platform/overview';
-                      })
-                      .catch(function (error) {
-                        console.log(error);
-                        self.$notify({
-                          group: "msg",
-                          type: "error",
-                          title: "Notification:",
-                          text: "Error while registering user!",
-                        });
+              self.axios
+                .post("/server/tenants", {}, self.get_axiosConfig())
+                .then(function() {
+                  self.getUserInfo();
+                  self.checkCanChangePassword();
+                  self.getProfilePicture();
+                  self.getActiveTenants();
+                  window.location.href = "#/app/platform/overview";
                 })
-                .catch(function (error) {
+                .catch(function(error) {
+                  console.log(error);
+                  self.$notify({
+                    group: "msg",
+                    type: "error",
+                    title: "Notification:",
+                    text: "Error while registering user!",
+                  });
+                })
+                .catch(function(error) {
                   self.registrationOpen = false;
                   console.info(error);
                 });
@@ -1147,8 +1164,10 @@ if (singleUserMode) {
               self.getActiveTenants();
             }
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while getting user information!");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while getting user information!");
           });
       },
       endSession() {
@@ -1158,14 +1177,11 @@ if (singleUserMode) {
           }
         }
         let self = this;
-        // if (Vue.$keycloak.authenticated) {
-        if (this.keycloak.authenticated) {
-          // Vue.$keycloak.logout();
-          this.keycloak.logout();
+        if (keycloak.authenticated) {
+          keycloak.logout();
         }
         self.resetState();
 
-        // self.$session.destroy(self.$router.push("/app/login"));
         sessionStorage.clear();
         self.$router.push("/app/login");
       },
@@ -1178,14 +1194,16 @@ if (singleUserMode) {
         this.axios
           .delete(
             "/server/user/profile/picture",
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function () {
+          .then(function() {
             self.usingToken -= 1;
             self.getProfilePicture();
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while deleting the user image.");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while deleting the user image.");
           });
       },
       updateUserProfilePicture(request) {
@@ -1199,15 +1217,17 @@ if (singleUserMode) {
             .put(
               "/server/user/profile/picture",
               request,
-              this.get_axiosConfig()
+              this.get_axiosConfig(),
             )
-            .then(function () {
+            .then(function() {
               self.usingToken -= 1;
               self.getProfilePicture();
               resolve(true);
             })
-            .catch(function (error) {
-              self.handleRequestError(error, "Error while saving the user image.");
+            .catch(function(error) {
+              self.handleRequestError(
+                error,
+                "Error while saving the user image.");
             });
         });
       },
@@ -1219,11 +1239,10 @@ if (singleUserMode) {
         this.usingToken += 1;
         this.axios
           .put("/server/user/profile", profile, this.get_axiosConfig())
-          .then(function () {
-
+          .then(function() {
             self.axios
               .put("/server/user", user, self.get_axiosConfig())
-              .then(function () {
+              .then(function() {
                 self.$notify({
                   group: "msg",
                   type: "success",
@@ -1232,7 +1251,7 @@ if (singleUserMode) {
                 });
                 self.getUserInfo();
               })
-              .catch(function (error) {
+              .catch(function(error) {
                 console.log(error);
                 if (error.response) {
                   console.log(error.response.data);
@@ -1246,8 +1265,10 @@ if (singleUserMode) {
                 });
               });
           })
-          .catch(function (error) {
-            self.handleRequestError(error, "Error while saving the user information.");
+          .catch(function(error) {
+            self.handleRequestError(
+              error,
+              "Error while saving the user information.");
           });
       },
       editUserInfo(request) {
@@ -1266,9 +1287,9 @@ if (singleUserMode) {
           .put(
             endpoint,
             request,
-            this.get_axiosConfig()
+            this.get_axiosConfig(),
           )
-          .then(function () {
+          .then(function() {
             self.usingToken -= 1;
             self.$notify({
               group: "msg",
@@ -1279,7 +1300,7 @@ if (singleUserMode) {
 
             self.getUserInfo();
           })
-          .catch(function (error) {
+          .catch(function(error) {
             self.handleRequestError(error, "Error while updating user.");
           });
       },
@@ -1290,8 +1311,12 @@ if (singleUserMode) {
         }
         this.usingToken += 1;
         this.axios
-          .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
-          .then(function () {
+          .put(
+            "/server/user/profile",
+            {news_subscribbed: false},
+            this.get_axiosConfig(),
+          )
+          .then(function() {
             self.usingToken -= 1;
             self.$notify({
               group: "msg",
@@ -1300,7 +1325,7 @@ if (singleUserMode) {
               text: "Unsubscribe Successful!",
             });
           })
-          .catch(function (error) {
+          .catch(function(error) {
             self.handleRequestError(error, "Error while unsubscribing.");
           });
       },
@@ -1311,8 +1336,12 @@ if (singleUserMode) {
         }
         this.usingToken += 1;
         this.axios
-          .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
-          .then(function () {
+          .put(
+            "/server/user/profile",
+            {news_subscribbed: true},
+            this.get_axiosConfig(),
+          )
+          .then(function() {
             self.usingToken -= 1;
             self.$notify({
               group: "msg",
@@ -1321,11 +1350,13 @@ if (singleUserMode) {
               text: "Successfuly subscribed!",
             });
           })
-          .catch(function (error) {
+          .catch(function(error) {
             self.handleRequestError(error, "Error while subscribing.");
           });
       },
     },
+  });
+  app.mixin({
     computed: {
       computed_account_settings() {
         if (!this.$store) {
@@ -1438,60 +1469,9 @@ if (singleUserMode) {
     },
   });
 
-  app.config.globalProperties.testTest = "etstststets";
-  app.config.globalProperties.appName = "test";
-  app.config.globalProperties.$filters = {
-    FormatDateFilter,
-    DateFilter,
-    ErrorFilter,
-  };
-
-
   app.mount("#app");
-
-  // const app = createApp(App)
-  //   .component("VueSlider", VueSlider)
-  //   .use(router)
-  //   .use(store)
-  //   .use(Vuetify)
-  //   .use(Vuex)
-  //   .use(VueSidebarMenu)
-  //   .use(BootstrapVue)
-  //   .use(IconsPlugin)
-  //   .use(CollapsePlugin)
-  //   .use(DropdownPlugin)
-  //   .use(AlertPlugin)
-  //   .use(VueAxios, axios)
-  //   // .use(VueSession, {
-  //   //   "persist": true,
-  //   // })
-  //   .use(Notifications);
-
-  // app.mixin(globalMixins);
-
-  // app.mount("#app");
-
-//   app.config.globalProperties.testTest = "test";
-//   app.config.globalProperties.appName = "test";
-//   app.config.globalProperties.$filters.date(DateFilter);
-//   app.config.globalProperties.$filters.error(ErrorFilter);
-//   app.config.globalProperties.$filters.formatDate(function(value) {
-//     if (value) {
-//       const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
-//       if (date.startsWith("0")) {
-//         const newDate = date.substring(1);
-//         return newDate;
-//       }
-//       return date;
-//     }
-//   });
 } else {
-  // const keycloak = new Keycloak("./public/keycloak.json");
-  const keycloak = new Keycloak({
-    url: "http://127.0.0.1:8082/auth/",
-    realm: "Daiteap",
-    clientId: "app-vue",
-  });
+  const keycloak = new Keycloak("./keycloak.json");
 
   keycloak
     .init({
@@ -1504,45 +1484,6 @@ if (singleUserMode) {
       } else {
         console.log("Authenticated");
 
-        // new Vue({
-        //   router,
-        //   store,
-        //   vuetify,
-        //   el: "#app",
-        //   render: (h) => h(App, {props: {keycloak: Vue.$keycloak}}),
-        // });
-        // const app = createApp(App, {props: {keycloak: keycloak}})
-        //   .component("VueSlider", VueSlider)
-        //   .use(router)
-        //   .use(store)
-        //   .use(Vuetify)
-        //   .use(Vuex)
-        //   .use(VueSidebarMenu)
-        //   .use(BootstrapVue)
-        //   .use(IconsPlugin)
-        //   .use(CollapsePlugin)
-        //   .use(DropdownPlugin)
-        //   .use(AlertPlugin)
-        //   .use(VueAxios, axios)
-        //   .use(VueSession, {
-        //     "persist": true,
-        //   })
-        //   .use(Notifications)
-        //   .mount("#app");
-
-        // app.config.globalProperties.$filters.date(DateFilter);
-        // app.config.globalProperties.$filters.error(ErrorFilter);
-        // app.config.globalProperties.$filters.formatDate(function(value) {
-        //   if (value) {
-        //     const date = moment(String(value)).format("DD MMM YYYY, HH:mm");
-        //     if (date.startsWith("0")) {
-        //       const newDate = date.substring(1);
-        //       return newDate;
-        //     }
-        //     return date;
-        //   }
-        // });
-
         const vuetify = createVuetify();
         const app = createApp(App)
           .component("VueSlider", VueSlider)
@@ -1551,11 +1492,11 @@ if (singleUserMode) {
           .use(vuetify)
           .use(Vuex)
           .use(VueSidebarMenu)
-          .use(BootstrapVueNext)
+          // .use(BootstrapVueNext)
           .use(BootstrapVue)
-          .use(BCollapse)
-          .use(BDropdown)
-          .use(BAlert)
+          // .use(BCollapse)
+          // .use(BDropdown)
+          // .use(BAlert)
           .use(BootstrapVue)
           .use(IconsPlugin)
           .use(CollapsePlugin)
@@ -1563,19 +1504,12 @@ if (singleUserMode) {
           .use(AlertPlugin)
           .use(VueAxios, axios)
           .use(Notifications);
-          // .use(VueSession, {
-          //   "persist": true, 
-          // })
-
-        app.config.globalProperties.testTest = "etstststets";
-        app.config.globalProperties.appName = "test";
 
         app.config.globalProperties.$keycloak = keycloak;
-        app.config.globalProperties.$filters = {
-          FormatDateFilter,
-          DateFilter,
-          ErrorFilter,
-        };
+        app.config.globalProperties.FormatDateFilter = FormatDateFilter;
+        app.config.globalProperties.DateFilter = DateFilter;
+        app.config.globalProperties.ErrorFilter = ErrorFilter;
+        app.config.globalProperties.$finalModel = {};
 
         app.mixin({
           methods: {
@@ -1602,7 +1536,6 @@ if (singleUserMode) {
             get_axiosConfig() {
               let authorization = "";
               if (!this.computed_single_user_mode) {
-                // authorization = "JWT " + Vue.$keycloak.token;
                 authorization = "JWT " + keycloak.token;
               }
 
@@ -1647,6 +1580,7 @@ if (singleUserMode) {
                   resourceType + "HidePriority" + i,
                 );
                 if (
+                  document.getElementById(resourceType + "DataTable") &&
                   document.getElementById(resourceType + "DataTable").clientWidth +
                     offset <=
                   window.innerWidth
@@ -1663,6 +1597,7 @@ if (singleUserMode) {
                   resourceType + "HidePriority" + i,
                 );
                 if (
+                  document.getElementById(resourceType + "DataTable") &&
                   document.getElementById(resourceType + "DataTable").clientWidth +
                     offset >
                   window.innerWidth
@@ -1674,7 +1609,8 @@ if (singleUserMode) {
               }
             },
             updateCreateClusterSetting(setting, value) {
-              this.$store.commit("updateCreateClusterSettings" + setting, value);
+              this.$store.commit(
+                "updateCreateClusterSettings" + setting, value);
             },
             deleteClusterMain(cluster) {
               let endpoint;
@@ -1710,15 +1646,15 @@ if (singleUserMode) {
                     type: "success",
                     title: "Notification:",
                     text:
-                      'You have successfully submitted deletion for "' +
+                      "You have successfully submitted deletion for \"" +
                       cluster.Name +
-                      '".',
+                      "\".",
                   });
 
                   self.showAlert = true;
                   self.alertKey += 1;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                   console.log(error);
                   if (error.response) {
                     error = error.response.data.error.message;
@@ -1728,9 +1664,9 @@ if (singleUserMode) {
                     type: "error",
                     title: "Notification:",
                     text:
-                      'Error occured while you tried to submit deletion of "' +
+                      "Error occured while you tried to submit deletion of \"" +
                       cluster.Name +
-                      '".',
+                      "\".",
                   });
                 });
             },
@@ -1743,18 +1679,22 @@ if (singleUserMode) {
                 self.usingToken += 1;
                 this.axios
                   .get(
-                    "/server/tenants/" + this.computed_active_tenant_id + "/users",
-                    this.get_axiosConfig()
+                    "/server/tenants/" +
+                    this.computed_active_tenant_id +
+                    "/users",
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     self.$store.commit("updateUsers", response.data.users_list);
                     resolve(response.data.users_list);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting users.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting users.");
                   });
-              })
+              });
             },
             getProjects() {
               let self = this;
@@ -1765,16 +1705,20 @@ if (singleUserMode) {
                 self.usingToken += 1;
                 this.axios
                   .get(
-                    "/server/tenants/" + this.computed_active_tenant_id + "/projects",
-                    this.get_axiosConfig()
+                    "/server/tenants/" +
+                    this.computed_active_tenant_id +
+                    "/projects",
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     self.$store.commit("updateProjects", response.data);
                     resolve(response.data);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting projects.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting projects.");
                   });
               });
             },
@@ -1798,7 +1742,9 @@ if (singleUserMode) {
                     resolve(response.data);
                   })
                   .catch(function(error) {
-                    self.handleRequestError(error, "Error while getting cloud credentials.");
+                    self.handleRequestError(
+                      error,
+                      "Error while getting cloud credentials.");
                   });
               });
             },
@@ -1822,7 +1768,9 @@ if (singleUserMode) {
                     resolve(response.data);
                   })
                   .catch(function(error) {
-                    self.handleRequestError(error, "Error while getting cloud credential details.");
+                    self.handleRequestError(
+                      error,
+                      "Error while getting cloud credential details.");
                   });
               });
             },
@@ -1836,14 +1784,16 @@ if (singleUserMode) {
                 this.axios
                   .get(
                     "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
-                    this.get_axiosConfig()
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     resolve(response.data);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting clusters.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting clusters.");
                   });
               });
             },
@@ -1860,14 +1810,16 @@ if (singleUserMode) {
                       this.computed_active_tenant_id +
                       "/clusters/" +
                       clusterID,
-                    this.get_axiosConfig()
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     resolve(response.data);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting cluster details.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting cluster details.");
                   });
               });
             },
@@ -1883,14 +1835,16 @@ if (singleUserMode) {
                     "/server/tenants/" +
                       this.computed_active_tenant_id +
                       "/environment-templates",
-                    this.get_axiosConfig()
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     resolve(response.data);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting templates.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting templates.");
                   });
               });
             },
@@ -1903,18 +1857,22 @@ if (singleUserMode) {
                 self.usingToken += 1;
                 this.axios
                   .get(
-                    "/server/tenants/" + this.computed_active_tenant_id + "/buckets",
-                    this.get_axiosConfig()
+                    "/server/tenants/" +
+                    this.computed_active_tenant_id +
+                    "/buckets",
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     self.$store.commit("updateBuckets", response.data);
                     resolve(response.data);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting storage information.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting storage information.");
                   });
-              })
+              });
             },
             getBucketDetails(bucketID) {
               let self = this;
@@ -1929,16 +1887,18 @@ if (singleUserMode) {
                       this.computed_active_tenant_id +
                       "/buckets/" +
                       bucketID,
-                    this.get_axiosConfig()
+                    this.get_axiosConfig(),
                   )
-                  .then(function (response) {
+                  .then(function(response) {
                     self.usingToken -= 1;
                     resolve(response.data.bucket_details[0]);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while getting storage information.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while getting storage information.");
                   });
-              })
+              });
             },
             getAccountSettings() {
               let self = this;
@@ -1948,10 +1908,12 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .get(
-                  "/server/tenants/" + this.computed_active_tenant_id + "/settings",
-                  this.get_axiosConfig()
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/settings",
+                  this.get_axiosConfig(),
                 )
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   if (response.status == 200) {
                     self.$store.commit("updateAccountSettings", response.data);
@@ -1959,8 +1921,10 @@ if (singleUserMode) {
                     self.$root.$emit("accountSettingsChanged", undefined);
                   }
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting workspace settings!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting workspace settings!");
                 });
             },
             removeComputeNode(nodeID, clusterID) {
@@ -1973,9 +1937,9 @@ if (singleUserMode) {
                     clusterID +
                     "/nodes/" +
                     nodeID,
-                  this.get_axiosConfig()
+                  this.get_axiosConfig(),
                 )
-                .then(function () {
+                .then(function() {
                   self.$notify({
                     group: "msg",
                     type: "success",
@@ -1984,7 +1948,7 @@ if (singleUserMode) {
                   });
                   self.getClustersList();
                 })
-                .catch(function () {
+                .catch(function() {
                   self.$notify({
                     group: "msg",
                     type: "error",
@@ -2001,36 +1965,42 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .get("/server/user/profile/picture", this.get_axiosConfig())
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   self.$store.commit(
                     "updateUserProfileImageLocation",
-                    response.data.location
+                    response.data.location,
                   );
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting user image!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting user image!");
                 });
             },
             getUserQuota() {
-              let self = this
+              let self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
               this.usingToken += 1;
               return this.axios
                 .get(
-                  "/server/tenants/" + this.computed_active_tenant_id + "/quotas",
-                  this.get_axiosConfig()
+                  "/server/tenants/" +
+                  this.computed_active_tenant_id +
+                  "/quotas",
+                  this.get_axiosConfig(),
                 )
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   let quota = response.data;
 
                   quota["available_kubernetes_cluster_environments"] =
-                    quota["limit_kubernetes_cluster_environments"] - quota["used_kubernetes_cluster_environments"];
+                    (quota["limit_kubernetes_cluster_environments"] -
+                      quota["used_kubernetes_cluster_environments"]);
                   quota["available_vms_environments"] =
-                    quota["limit_compute_vms_environments"] - quota["used_compute_vms_environments"];
+                    (quota["limit_compute_vms_environments"] -
+                      quota["used_compute_vms_environments"]);
                   quota["available_nodes"] =
                     quota["limit_nodes"] - quota["used_nodes"];
                   quota["available_services"] =
@@ -2038,7 +2008,7 @@ if (singleUserMode) {
 
                   return quota;
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                   self.handleRequestError(error, "Error while getting quotas.");
                 });
             },
@@ -2047,17 +2017,17 @@ if (singleUserMode) {
               while (self.updatingToken) {
                 self.sleep(200);
               }
-              let profile = {}
-              let user = {}
+              let profile = {};
+              let user = {};
               this.usingToken += 1;
               this.axios
                 .get("/server/user/profile", this.get_axiosConfig())
-                .then(function (response) {
+                .then(function(response) {
                   profile = response.data;
 
                   self.axios.get("/server/user", self.get_axiosConfig())
-                    .then(function (response) {
-                      user = {}
+                    .then(function(response) {
+                      user = {};
                       user.profile = profile;
 
                       user.username = response.data.username;
@@ -2073,7 +2043,7 @@ if (singleUserMode) {
                       self.$store.commit("updateUserInfo", user);
                       self.getAccountSettings();
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                       self.usingToken -= 1;
                       console.log(error);
                       self.$notify({
@@ -2084,8 +2054,10 @@ if (singleUserMode) {
                       });
                     });
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting user information!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting user information!");
                 });
             },
             checkCanChangePassword() {
@@ -2096,12 +2068,16 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .get("/server/user/password/can-update", this.get_axiosConfig())
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
-                  self.$store.commit("canChangePassword", response.data.canUpdateUserPassword);
+                  self.$store.commit(
+                    "canChangePassword",
+                    response.data.canUpdateUserPassword);
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while checking if change password is permitted!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while checking if change password is permitted!");
                 });
             },
             getActiveTenants() {
@@ -2112,17 +2088,21 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .get("/server/user/active-tenants", this.get_axiosConfig())
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   if (response.data.activeTenants.length < 2) {
                     self.hasMultipleTenants = false;
                   } else {
                     self.hasMultipleTenants = true;
                   }
-                  self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+                  self.$store.commit(
+                    "updateActiveTenant",
+                    response.data.selectedTenant);
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting active tenants!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting active tenants!");
                 });
             },
             getSpecificUserInfo(tenantId, username) {
@@ -2134,14 +2114,16 @@ if (singleUserMode) {
               return this.axios
                 .get(
                   "/server/tenants/" + tenantId + "/users/" + username,
-                  this.get_axiosConfig()
+                  this.get_axiosConfig(),
                 )
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   return response.data;
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting specific user info!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting specific user info!");
                 });
             },
             hasMultipleTenants() {
@@ -2155,28 +2137,28 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .get("/server/is-registered", this.get_axiosConfig())
-                .then(function (response) {
+                .then(function(response) {
                   self.usingToken -= 1;
                   if (!response.data.isRegistered) {
-                          self.axios
-                            .post("/server/tenants", {}, self.get_axiosConfig())
-                            .then(function () {
-                              self.getUserInfo();
-                              self.checkCanChangePassword();
-                              self.getProfilePicture();
-                              self.getActiveTenants();
-                              window.location.href = '#/app/platform/overview';
-                            })
-                            .catch(function (error) {
-                              console.log(error);
-                              self.$notify({
-                                group: "msg",
-                                type: "error",
-                                title: "Notification:",
-                                text: "Error while registering user!",
-                              });
+                    self.axios
+                      .post("/server/tenants", {}, self.get_axiosConfig())
+                      .then(function() {
+                        self.getUserInfo();
+                        self.checkCanChangePassword();
+                        self.getProfilePicture();
+                        self.getActiveTenants();
+                        window.location.href = "#/app/platform/overview";
                       })
-                      .catch(function (error) {
+                      .catch(function(error) {
+                        console.log(error);
+                        self.$notify({
+                          group: "msg",
+                          type: "error",
+                          title: "Notification:",
+                          text: "Error while registering user!",
+                        });
+                      })
+                      .catch(function(error) {
                         self.registrationOpen = false;
                         console.info(error);
                       });
@@ -2187,8 +2169,10 @@ if (singleUserMode) {
                     self.getActiveTenants();
                   }
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while getting user information!");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while getting user information!");
                 });
             },
             endSession() {
@@ -2198,16 +2182,11 @@ if (singleUserMode) {
                 }
               }
               let self = this;
-              // if (Vue.$keycloak.authenticated) {
-              console.log("kookokoko");
-              console.log(this);
               if (keycloak.authenticated) {
-                // Vue.$keycloak.logout();
                 keycloak.logout();
               }
               self.resetState();
 
-              // self.$session.destroy(self.$router.push("/app/login"));
               sessionStorage.clear();
               self.$router.push("/app/login");
             },
@@ -2220,14 +2199,16 @@ if (singleUserMode) {
               this.axios
                 .delete(
                   "/server/user/profile/picture",
-                  this.get_axiosConfig()
+                  this.get_axiosConfig(),
                 )
-                .then(function () {
+                .then(function() {
                   self.usingToken -= 1;
                   self.getProfilePicture();
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while deleting the user image.");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while deleting the user image.");
                 });
             },
             updateUserProfilePicture(request) {
@@ -2241,15 +2222,17 @@ if (singleUserMode) {
                   .put(
                     "/server/user/profile/picture",
                     request,
-                    this.get_axiosConfig()
+                    this.get_axiosConfig(),
                   )
-                  .then(function () {
+                  .then(function() {
                     self.usingToken -= 1;
                     self.getProfilePicture();
                     resolve(true);
                   })
-                  .catch(function (error) {
-                    self.handleRequestError(error, "Error while saving the user image.");
+                  .catch(function(error) {
+                    self.handleRequestError(
+                      error,
+                      "Error while saving the user image.");
                   });
               });
             },
@@ -2261,11 +2244,10 @@ if (singleUserMode) {
               this.usingToken += 1;
               this.axios
                 .put("/server/user/profile", profile, this.get_axiosConfig())
-                .then(function () {
-
+                .then(function() {
                   self.axios
                     .put("/server/user", user, self.get_axiosConfig())
-                    .then(function () {
+                    .then(function() {
                       self.$notify({
                         group: "msg",
                         type: "success",
@@ -2274,7 +2256,7 @@ if (singleUserMode) {
                       });
                       self.getUserInfo();
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                       console.log(error);
                       if (error.response) {
                         console.log(error.response.data);
@@ -2288,8 +2270,10 @@ if (singleUserMode) {
                       });
                     });
                 })
-                .catch(function (error) {
-                  self.handleRequestError(error, "Error while saving the user information.");
+                .catch(function(error) {
+                  self.handleRequestError(
+                    error,
+                    "Error while saving the user information.");
                 });
             },
             editUserInfo(request) {
@@ -2308,9 +2292,9 @@ if (singleUserMode) {
                 .put(
                   endpoint,
                   request,
-                  this.get_axiosConfig()
+                  this.get_axiosConfig(),
                 )
-                .then(function () {
+                .then(function() {
                   self.usingToken -= 1;
                   self.$notify({
                     group: "msg",
@@ -2321,7 +2305,7 @@ if (singleUserMode) {
 
                   self.getUserInfo();
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                   self.handleRequestError(error, "Error while updating user.");
                 });
             },
@@ -2332,8 +2316,12 @@ if (singleUserMode) {
               }
               this.usingToken += 1;
               this.axios
-                .put("/server/user/profile", { news_subscribbed: false }, this.get_axiosConfig())
-                .then(function () {
+                .put(
+                  "/server/user/profile",
+                  {news_subscribbed: false},
+                  this.get_axiosConfig(),
+                )
+                .then(function() {
                   self.usingToken -= 1;
                   self.$notify({
                     group: "msg",
@@ -2342,7 +2330,7 @@ if (singleUserMode) {
                     text: "Unsubscribe Successful!",
                   });
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                   self.handleRequestError(error, "Error while unsubscribing.");
                 });
             },
@@ -2353,8 +2341,12 @@ if (singleUserMode) {
               }
               this.usingToken += 1;
               this.axios
-                .put("/server/user/profile", { news_subscribbed: true }, this.get_axiosConfig())
-                .then(function () {
+                .put(
+                  "/server/user/profile",
+                  {news_subscribbed: true},
+                  this.get_axiosConfig(),
+                )
+                .then(function() {
                   self.usingToken -= 1;
                   self.$notify({
                     group: "msg",
@@ -2363,11 +2355,13 @@ if (singleUserMode) {
                     text: "Successfuly subscribed!",
                   });
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                   self.handleRequestError(error, "Error while subscribing.");
                 });
             },
           },
+        });
+        app.mixin({
           computed: {
             computed_account_settings() {
               if (!this.$store) {
@@ -2493,9 +2487,7 @@ if (singleUserMode) {
           });
       }, 6000);
     })
-    .catch((error) => {
-      console.log(3333333333333);
-      console.log(error);
+    .catch(() => {
       console.log("Authenticated Failed");
     });
 }

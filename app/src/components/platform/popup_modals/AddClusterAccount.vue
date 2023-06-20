@@ -54,7 +54,7 @@
             <div class="col-lg-16">
               <input
                 v-on:click="addAccountToCluster"
-                :disabled="$v.account.$invalid"
+                :disabled="v$.account.$invalid"
                 type="button"
                 class="btn btn-primary col-lg-5"
                 value="Submit"
@@ -74,14 +74,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import axios from "axios";
 
 export default {
   name: 'AddClusterAccount',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       account: {
         provider: "",
         accountLabel: ""

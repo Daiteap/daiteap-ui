@@ -137,7 +137,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.onpremise.label.$invalid && !labelInFocus
+                  v$.onpremise.label.$invalid && !labelInFocus
                     ? 'is-danger'
                     : '',
                 ]"
@@ -158,7 +158,7 @@
                 Cloud Credentials name already taken
               </p>
               <p
-                v-else-if="onpremise.label != '' && !$v.onpremise.label.and"
+                v-else-if="onpremise.label != '' && !v$.onpremise.label.and"
                 class="help text-danger"
               >
                 This Cloud Credentials name is not valid
@@ -182,7 +182,7 @@
             </div>
             <div class="">
               <p
-                v-if="$v.onpremise.description.$invalid"
+                v-if="v$.onpremise.description.$invalid"
                 class="help text-danger"
               >
                 Invalid Cloud Credentials Description
@@ -199,7 +199,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.onpremise.gw_public_ip.$invalid &&
+                  v$.onpremise.gw_public_ip.$invalid &&
                   onpremise.gw_public_ip != '' &&
                   !gwPublicIpInFocus
                     ? 'is-danger'
@@ -214,7 +214,7 @@
             </div>
             <div class="">
               <p
-                v-if="onpremise.gw_public_ip != '' && $v.onpremise.gw_public_ip.$invalid"
+                v-if="onpremise.gw_public_ip != '' && v$.onpremise.gw_public_ip.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid IP
@@ -230,7 +230,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.onpremise.gw_private_ip.$invalid &&
+                  v$.onpremise.gw_private_ip.$invalid &&
                   onpremise.gw_private_ip != '' &&
                   !gwPrivateIpInFocus
                     ? 'is-danger'
@@ -245,7 +245,7 @@
             </div>
             <div class="">
               <p
-                v-if="onpremise.gw_private_ip != '' && $v.onpremise.gw_private_ip.$invalid"
+                v-if="onpremise.gw_private_ip != '' && v$.onpremise.gw_private_ip.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid IP
@@ -262,7 +262,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.onpremise.admin_username.$invalid &&
+                  v$.onpremise.admin_username.$invalid &&
                   onpremise.admin_username != '' &&
                   !adminUsernameInFocus
                     ? 'is-danger'
@@ -278,7 +278,7 @@
 
             <div class="">
               <p
-                v-if="onpremise.admin_username != '' && $v.onpremise.admin_username.$invalid"
+                v-if="onpremise.admin_username != '' && v$.onpremise.admin_username.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid username
@@ -302,7 +302,7 @@
             </div>
             <div class="">
               <p
-                v-if="onpremise.admin_private_key != '' && $v.onpremise.admin_private_key.$invalid"
+                v-if="onpremise.admin_private_key != '' && v$.onpremise.admin_private_key.$invalid"
                 class="help text-danger"
               >
                 Please provide a private key.
@@ -319,7 +319,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.onpremise.admin_private_key_password.$invalid &&
+                  v$.onpremise.admin_private_key_password.$invalid &&
                   onpremise.admin_private_key_password != '' &&
                   !adminPrivateKeyPasswordInFocus
                     ? 'is-danger'
@@ -342,7 +342,7 @@
                 password protected)
               </p>
               <p
-                v-else-if="$v.onpremise.admin_private_key_password.$invalid"
+                v-else-if="v$.onpremise.admin_private_key_password.$invalid"
                 class="help text-danger"
               >
                 Please provide a password for the private key
@@ -374,7 +374,7 @@
             <div class="">
               <div
                 class="custom-button float-right ml-5"
-                :class="[$v.onpremise.$invalid || loading ? 'deactivated' : '']"
+                :class="[v$.onpremise.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()"
                 data-test-id="input-save"
               >
@@ -395,8 +395,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { and, required, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 let newLabelValidation = function (value) {
   if (this.allCurrentLabels.includes(value)) {
@@ -413,9 +413,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       gwPublicIpInFocus: false,
       gwPrivateIpInFocus: false,
@@ -516,7 +516,7 @@ export default {
       this.$bvModal.hide("bv-modal-addonpremiseaccount");
       document.getElementById("addNewAccountOnpremiseForm").reset();
       this.$nextTick(() => {
-        this.$v.$reset();
+        this.v$.$reset();
       });
       this.$router.push({ name: "CloudProfile" });
     },

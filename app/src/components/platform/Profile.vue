@@ -42,8 +42,8 @@
           inputplaceholder="First name"
           errorMsg="Invalid first name"
           v-model.trim="profile.first_name"
-          :validation="$v.profile.first_name"
-          @change="$v.profile.first_name.$touch"
+          :validation="v$.profile.first_name"
+          @change="v$.profile.first_name.$touch"
           default=""
         />
 
@@ -54,8 +54,8 @@
           inputplaceholder="Last name"
           errorMsg="Invalid last name"
           v-model.trim="profile.last_name"
-          :validation="$v.profile.last_name"
-          @change="$v.profile.last_name.$touch"
+          :validation="v$.profile.last_name"
+          @change="v$.profile.last_name.$touch"
           default=""
         />
 
@@ -155,7 +155,7 @@
           <span class="align-right">
             <div
               class="custom-button mr-3 mt-5 float-right"
-              :class="[$v.profile.$invalid ? 'deactivated' : '']"
+              :class="[v$.profile.$invalid ? 'deactivated' : '']"
               @click="saveChangesProfile()"
             >
               Update Profile
@@ -179,15 +179,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { maxLength, minLength, alpha, required } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, minLength, alpha, required } from "@vuelidate/validators";
 import CardTitle from "@/components/platform/CardTitle";
 import VerticalInput from "@/components/platform/input/VerticalInput";
 import TextAreaInput from "@/components/platform/input/TextAreaInput";
 
 export default {
   name: "Profile",
-  mixins: [validationMixin],
   components: {
     CardTitle,
     VerticalInput,
@@ -195,6 +194,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       profile: {
         role: "",
         first_name: "",

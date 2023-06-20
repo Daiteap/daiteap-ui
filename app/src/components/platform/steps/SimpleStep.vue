@@ -263,8 +263,12 @@
         </b-card-group>
         <div class="m-3 pl-2">
           <br />
-          <toggle-button :value="highAvailability" @input="changeHighAvailability()" :disabled="calculatingSizes"
-            sync />
+          <Toggle
+            :value="highAvailability"
+            @change="changeHighAvailability()"
+            :disabled="calculatingSizes"
+            sync
+          />
           &nbsp;
           <span>
             Switch on High Availability to get 3 Control Plane Nodes as default
@@ -276,17 +280,18 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
 import WarningAlert from "@/components/platform/WarningAlert";
+import Toggle from "@vueform/toggle";
 
 export default {
   name: "SimpleStep",
   components: {
     WarningAlert,
+    Toggle,
   },
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   activated() {
     this.getAccountSettings();
   },
@@ -1217,6 +1222,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       awsProvided: false,
       azureProvided: false,
       googleProvided: false,
@@ -1279,7 +1285,7 @@ export default {
     },
   },
   watch: {
-    $v: {
+    v$: {
       handler: function () {
         if (
           this.form.awsSelected == false &&

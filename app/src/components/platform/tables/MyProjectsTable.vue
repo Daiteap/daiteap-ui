@@ -52,7 +52,7 @@
             {{ item.Description }}
           </td>
           <td name="projectsHidePriority0">
-            {{ item.CreatedAt | FormatDateFilter }}
+            {{ FormatDateFilter(item.CreatedAt) }}
           </td>
           <td
             name="projectsHidePriority1"

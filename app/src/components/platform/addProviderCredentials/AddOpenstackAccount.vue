@@ -123,7 +123,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.label.$invalid && !labelInFocus
+                  v$.openstack.label.$invalid && !labelInFocus
                     ? 'is-danger'
                     : '',
                 ]"
@@ -144,7 +144,7 @@
                 Cloud Credentials name already taken
               </p>
               <p
-                v-if="openstack.label != '' && !$v.openstack.label.and"
+                v-if="openstack.label != '' && !v$.openstack.label.and"
                 class="help text-danger"
               >
                 This Cloud Credentials name is not valid
@@ -168,7 +168,7 @@
             </div>
             <div class="">
               <p
-                v-if="$v.openstack.description.$invalid"
+                v-if="v$.openstack.description.$invalid"
                 class="help text-danger"
               >
                 Invalid Cloud Credentials Description
@@ -185,7 +185,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.application_credential_id.$invalid &&
+                  v$.openstack.application_credential_id.$invalid &&
                   openstack.application_credential_id != '' &&
                   !accessKeyInFocus
                     ? 'is-danger'
@@ -198,7 +198,7 @@
             </div>
             <div class="">
               <p
-                v-if="openstack.application_credential_id != '' && $v.openstack.application_credential_id.$invalid"
+                v-if="openstack.application_credential_id != '' && v$.openstack.application_credential_id.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid <span class="openstack-text"/> application credential id
@@ -216,7 +216,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.application_credential_secret.$invalid &&
+                  v$.openstack.application_credential_secret.$invalid &&
                   openstack.application_credential_secret != '' &&
                   !secretKeyInFocus
                     ? 'is-danger'
@@ -229,7 +229,7 @@
             </div>
             <div class="">
               <p
-                v-if="openstack.application_credential_secret != '' && $v.openstack.application_credential_secret.$invalid"
+                v-if="openstack.application_credential_secret != '' && v$.openstack.application_credential_secret.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid <span class="openstack-text"/> application credential secret
@@ -245,7 +245,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.region_name.$invalid &&
+                  v$.openstack.region_name.$invalid &&
                   openstack.region_name != '' &&
                   !accessKeyInFocus
                     ? 'is-danger'
@@ -258,7 +258,7 @@
             </div>
             <div class="">
               <p
-                v-if="openstack.region_name != '' && $v.openstack.region_name.$invalid"
+                v-if="openstack.region_name != '' && v$.openstack.region_name.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid <span class="openstack-text"/> region name
@@ -274,7 +274,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.auth_url.$invalid &&
+                  v$.openstack.auth_url.$invalid &&
                   openstack.auth_url != '' &&
                   !accessKeyInFocus
                     ? 'is-danger'
@@ -287,7 +287,7 @@
             </div>
             <div class="">
               <p
-                v-if="openstack.auth_url != '' && $v.openstack.auth_url.$invalid"
+                v-if="openstack.auth_url != '' && v$.openstack.auth_url.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid <span class="openstack-text"/> auth url
@@ -304,7 +304,7 @@
                 class="form-control"
                 :class="[
                   'input',
-                  $v.openstack.external_network_id.$invalid &&
+                  v$.openstack.external_network_id.$invalid &&
                   openstack.external_network_id != '' &&
                   !accessKeyInFocus
                     ? 'is-danger'
@@ -317,7 +317,7 @@
             </div>
             <div class="">
               <p
-                v-if="openstack.external_network_id != '' && $v.openstack.external_network_id.$invalid"
+                v-if="openstack.external_network_id != '' && v$.openstack.external_network_id.$invalid"
                 class="help text-danger"
               >
                 Please provide a valid <span class="openstack-text"/> external network ID
@@ -349,7 +349,7 @@
             <div class="">
               <div
                 class="custom-button float-right ml-5"
-                :class="[$v.openstack.$invalid || loading ? 'deactivated' : '']"
+                :class="[v$.openstack.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()"
                 data-test-id="input-save"
               >
@@ -370,8 +370,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, and, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 let newLabelValidation = function (value) {
   if (this.allCurrentLabels.includes(value)) {
@@ -388,9 +388,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       accessKeyInFocus: false,
       secretKeyInFocus: false,
