@@ -619,14 +619,14 @@ if (singleUserMode) {
       },
       deleteClusterMain(cluster) {
         let endpoint;
-        if (cluster.Type == 5) {
+        if (cluster.Type === 5) {
           endpoint =
             "/server/tenants/" +
             this.computed_active_tenant_id +
             "/clusters/" +
             cluster.ID +
             "/capi-delete";
-        } else if (cluster.Type == 8) {
+        } else if (cluster.Type === 8) {
           endpoint =
             "/server/tenants/" +
             this.computed_active_tenant_id +
@@ -642,7 +642,7 @@ if (singleUserMode) {
             "/delete";
         }
 
-        let self = this;
+        const self = this;
         return this.axios
           .delete(endpoint, this.get_axiosConfig())
           .then(function() {
@@ -676,7 +676,7 @@ if (singleUserMode) {
           });
       },
       getUsers() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -700,7 +700,7 @@ if (singleUserMode) {
         });
       },
       getProjects() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -724,7 +724,7 @@ if (singleUserMode) {
         });
       },
       getCredentials() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -750,7 +750,7 @@ if (singleUserMode) {
         });
       },
       getCredentialDetails(credentialId) {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -776,7 +776,7 @@ if (singleUserMode) {
         });
       },
       getAllClusters() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -799,7 +799,7 @@ if (singleUserMode) {
         });
       },
       getClusterDetailsMain(clusterID) {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -825,7 +825,7 @@ if (singleUserMode) {
         });
       },
       getTemplates() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -850,7 +850,7 @@ if (singleUserMode) {
         });
       },
       getBuckets() {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -874,7 +874,7 @@ if (singleUserMode) {
         });
       },
       getBucketDetails(bucketID) {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -900,7 +900,7 @@ if (singleUserMode) {
         });
       },
       getAccountSettings() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -912,7 +912,7 @@ if (singleUserMode) {
           )
           .then(function(response) {
             self.usingToken -= 1;
-            if (response.status == 200) {
+            if (response.status === 200) {
               self.$store.commit("updateAccountSettings", response.data);
               self.$store.commit("updateAccount", response.data.tenant);
               self.$root.$emit("accountSettingsChanged", undefined);
@@ -925,7 +925,7 @@ if (singleUserMode) {
           });
       },
       removeComputeNode(nodeID, clusterID) {
-        let self = this;
+        const self = this;
         return this.axios
           .delete(
             "/server/tenants/" +
@@ -955,7 +955,7 @@ if (singleUserMode) {
           });
       },
       getProfilePicture() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -976,7 +976,7 @@ if (singleUserMode) {
           });
       },
       getUserQuota() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1008,7 +1008,7 @@ if (singleUserMode) {
           });
       },
       getUserInfo() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1056,7 +1056,7 @@ if (singleUserMode) {
           });
       },
       checkCanChangePassword() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1076,7 +1076,7 @@ if (singleUserMode) {
           });
       },
       getActiveTenants() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1101,7 +1101,7 @@ if (singleUserMode) {
           });
       },
       getSpecificUserInfo(tenantId, username) {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1125,7 +1125,7 @@ if (singleUserMode) {
         return this.hasMultipleTenants;
       },
       registerUser() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1176,7 +1176,7 @@ if (singleUserMode) {
             clearInterval(window.intervals[i]);
           }
         }
-        let self = this;
+        const self = this;
         if (keycloak.authenticated) {
           keycloak.logout();
         }
@@ -1186,7 +1186,7 @@ if (singleUserMode) {
         self.$router.push("/app/login");
       },
       deleteUserProfilePicture() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1207,7 +1207,7 @@ if (singleUserMode) {
           });
       },
       updateUserProfilePicture(request) {
-        let self = this;
+        const self = this;
         return new Promise((resolve) => {
           while (self.updatingToken) {
             self.sleep(200);
@@ -1232,7 +1232,7 @@ if (singleUserMode) {
         });
       },
       updateUserInfo(profile, user) {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1278,7 +1278,7 @@ if (singleUserMode) {
           "/users/" +
           request.username;
 
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1305,7 +1305,7 @@ if (singleUserMode) {
           });
       },
       emailUnsubscribe() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1330,7 +1330,7 @@ if (singleUserMode) {
           });
       },
       emailSubscribe() {
-        let self = this;
+        const self = this;
         while (self.updatingToken) {
           self.sleep(200);
         }
@@ -1570,7 +1570,7 @@ if (singleUserMode) {
               }
             },
             changeColumnsVisibility(resourceType, lastIndex) {
-              let offset =
+              const offset =
                 document.getElementById("custom-sidebar-menu").clientWidth +
                 100;
 
@@ -1581,8 +1581,8 @@ if (singleUserMode) {
                 );
                 if (
                   document.getElementById(resourceType + "DataTable") &&
-                  document.getElementById(resourceType + "DataTable").clientWidth +
-                    offset <=
+                  document.getElementById(resourceType + "DataTable")
+                    .clientWidth + offset <=
                   window.innerWidth
                 ) {
                   for (let j = 0; j < columns.length; j++) {
@@ -1598,8 +1598,8 @@ if (singleUserMode) {
                 );
                 if (
                   document.getElementById(resourceType + "DataTable") &&
-                  document.getElementById(resourceType + "DataTable").clientWidth +
-                    offset >
+                  document.getElementById(resourceType + "DataTable")
+                    .clientWidth + offset >
                   window.innerWidth
                 ) {
                   for (let j = 0; j < columns.length; j++) {
@@ -1614,14 +1614,14 @@ if (singleUserMode) {
             },
             deleteClusterMain(cluster) {
               let endpoint;
-              if (cluster.Type == 5) {
+              if (cluster.Type === 5) {
                 endpoint =
                   "/server/tenants/" +
                   this.computed_active_tenant_id +
                   "/clusters/" +
                   cluster.ID +
                   "/capi-delete";
-              } else if (cluster.Type == 8) {
+              } else if (cluster.Type === 8) {
                 endpoint =
                   "/server/tenants/" +
                   this.computed_active_tenant_id +
@@ -1637,7 +1637,7 @@ if (singleUserMode) {
                   "/delete";
               }
 
-              let self = this;
+              const self = this;
               return this.axios
                 .delete(endpoint, this.get_axiosConfig())
                 .then(function() {
@@ -1671,7 +1671,7 @@ if (singleUserMode) {
                 });
             },
             getUsers() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1697,7 +1697,7 @@ if (singleUserMode) {
               });
             },
             getProjects() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1723,7 +1723,7 @@ if (singleUserMode) {
               });
             },
             getCredentials() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1749,7 +1749,7 @@ if (singleUserMode) {
               });
             },
             getCredentialDetails(credentialId) {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1775,7 +1775,7 @@ if (singleUserMode) {
               });
             },
             getAllClusters() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1783,7 +1783,8 @@ if (singleUserMode) {
                 self.usingToken += 1;
                 this.axios
                   .get(
-                    "/server/tenants/" + this.computed_active_tenant_id + "/clusters",
+                    "/server/tenants/" +
+                    this.computed_active_tenant_id + "/clusters",
                     this.get_axiosConfig(),
                   )
                   .then(function(response) {
@@ -1798,7 +1799,7 @@ if (singleUserMode) {
               });
             },
             getClusterDetailsMain(clusterID) {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1824,7 +1825,7 @@ if (singleUserMode) {
               });
             },
             getTemplates() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1849,7 +1850,7 @@ if (singleUserMode) {
               });
             },
             getBuckets() {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1875,7 +1876,7 @@ if (singleUserMode) {
               });
             },
             getBucketDetails(bucketID) {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -1901,7 +1902,7 @@ if (singleUserMode) {
               });
             },
             getAccountSettings() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -1915,7 +1916,7 @@ if (singleUserMode) {
                 )
                 .then(function(response) {
                   self.usingToken -= 1;
-                  if (response.status == 200) {
+                  if (response.status === 200) {
                     self.$store.commit("updateAccountSettings", response.data);
                     self.$store.commit("updateAccount", response.data.tenant);
                     self.$root.$emit("accountSettingsChanged", undefined);
@@ -1928,7 +1929,7 @@ if (singleUserMode) {
                 });
             },
             removeComputeNode(nodeID, clusterID) {
-              let self = this;
+              const self = this;
               return this.axios
                 .delete(
                   "/server/tenants/" +
@@ -1958,7 +1959,7 @@ if (singleUserMode) {
                 });
             },
             getProfilePicture() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -1979,7 +1980,7 @@ if (singleUserMode) {
                 });
             },
             getUserQuota() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2013,7 +2014,7 @@ if (singleUserMode) {
                 });
             },
             getUserInfo() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2061,7 +2062,7 @@ if (singleUserMode) {
                 });
             },
             checkCanChangePassword() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2081,7 +2082,7 @@ if (singleUserMode) {
                 });
             },
             getActiveTenants() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2106,7 +2107,7 @@ if (singleUserMode) {
                 });
             },
             getSpecificUserInfo(tenantId, username) {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2130,7 +2131,7 @@ if (singleUserMode) {
               return this.hasMultipleTenants;
             },
             registerUser() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2181,7 +2182,7 @@ if (singleUserMode) {
                   clearInterval(window.intervals[i]);
                 }
               }
-              let self = this;
+              const self = this;
               if (keycloak.authenticated) {
                 keycloak.logout();
               }
@@ -2191,7 +2192,7 @@ if (singleUserMode) {
               self.$router.push("/app/login");
             },
             deleteUserProfilePicture() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2212,7 +2213,7 @@ if (singleUserMode) {
                 });
             },
             updateUserProfilePicture(request) {
-              let self = this;
+              const self = this;
               return new Promise((resolve) => {
                 while (self.updatingToken) {
                   self.sleep(200);
@@ -2237,7 +2238,7 @@ if (singleUserMode) {
               });
             },
             updateUserInfo(profile, user) {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2283,7 +2284,7 @@ if (singleUserMode) {
                 "/users/" +
                 request.username;
 
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2310,7 +2311,7 @@ if (singleUserMode) {
                 });
             },
             emailUnsubscribe() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2335,7 +2336,7 @@ if (singleUserMode) {
                 });
             },
             emailSubscribe() {
-              let self = this;
+              const self = this;
               while (self.updatingToken) {
                 self.sleep(200);
               }
@@ -2392,7 +2393,8 @@ if (singleUserMode) {
                 return false;
               }
               return (
-                this.$store.state.userInfo.profile.role == helpers.USER_ROLES.ADMIN
+                (this.$store.state.userInfo.profile.role ==
+                  helpers.USER_ROLES.ADMIN)
               );
             },
             computed_isRegularUser() {
