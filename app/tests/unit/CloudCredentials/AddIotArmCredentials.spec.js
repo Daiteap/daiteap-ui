@@ -1,18 +1,18 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue3-notifications";
+import Notifications from "@kyvg/vue3-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
 import AddIotArmAccount
   from "@/components/platform/addProviderCredentials/AddIotArmAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Add Cloud Credentials - IOT ARM", () => {
   const mockedGetResponse = {
@@ -66,7 +66,7 @@ describe("Add Cloud Credentials - IOT ARM", () => {
     });
 
     wrapper.setData({selectedProvider: "iotarm"});
-    await Vue.nextTick();
+    await nextTick();
     iotarm = wrapper.findComponent(AddIotArmAccount);
     iotarm.setData({get_axiosConfig: () => {
       return {};
@@ -157,9 +157,9 @@ describe("Add Cloud Credentials - IOT ARM", () => {
 
     const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(iotarm.vm.newIotArme).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);
@@ -189,9 +189,9 @@ describe("Add Cloud Credentials - IOT ARM", () => {
 
     const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(iotarm.vm.newIotArme).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(true);
@@ -223,9 +223,9 @@ describe("Add Cloud Credentials - IOT ARM", () => {
 
       const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(iotarm.vm.newIotArme).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(false);
@@ -251,14 +251,14 @@ describe("Add Cloud Credentials - IOT ARM", () => {
     expect(iotarm.vm.sharedCredentials).toBe(false);
     const input = iotarm.find("[data-test-id=\"shared-credential\"]");
     input.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(iotarm.vm.sharedCredentials).toBe(true);
 
     const saveButton = iotarm.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(iotarm.vm.newIotArme).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);

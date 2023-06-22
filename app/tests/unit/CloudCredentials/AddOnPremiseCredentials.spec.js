@@ -1,18 +1,18 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue3-notifications";
+import Notifications from "@kyvg/vue3-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
 import AddOnpremiseAccount
   from "@/components/platform/addProviderCredentials/AddOnpremiseAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Add Cloud Credentials - On Premise", () => {
   const mockedGetResponse = {
@@ -65,7 +65,7 @@ describe("Add Cloud Credentials - On Premise", () => {
     });
 
     wrapper.setData({selectedProvider: "onpremise"});
-    await Vue.nextTick();
+    await nextTick();
     onpremise = wrapper.findComponent(AddOnpremiseAccount);
     onpremise.setData({get_axiosConfig: () => {
       return {};
@@ -151,9 +151,9 @@ describe("Add Cloud Credentials - On Premise", () => {
 
     const saveButton = onpremise.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(onpremise.vm.newOnpremise).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);
@@ -183,9 +183,9 @@ describe("Add Cloud Credentials - On Premise", () => {
 
     const saveButton = onpremise.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(onpremise.vm.newOnpremise).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(true);
@@ -217,9 +217,9 @@ describe("Add Cloud Credentials - On Premise", () => {
 
       const saveButton = onpremise.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(onpremise.vm.newOnpremise).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(false);
@@ -245,14 +245,14 @@ describe("Add Cloud Credentials - On Premise", () => {
     expect(onpremise.vm.sharedCredentials).toBe(false);
     const input = onpremise.find("[data-test-id=\"shared-credential\"]");
     input.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(onpremise.vm.sharedCredentials).toBe(true);
 
     const saveButton = onpremise.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(onpremise.vm.newOnpremise).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);

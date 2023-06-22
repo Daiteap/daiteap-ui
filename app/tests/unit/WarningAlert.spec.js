@@ -1,7 +1,7 @@
-import {mount} from "@vue/test-utils";
+import {mount, config} from "@vue/test-utils";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
-import Vue from "vue";
-Vue.config.silent = true;
+
+config.silent = true;
 
 describe("WarningAlert.vue", () => {
   let wrapper; let bAlert;

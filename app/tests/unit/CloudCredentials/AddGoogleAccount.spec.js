@@ -1,18 +1,18 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue3-notifications";
+import Notifications from "@kyvg/vue3-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
 import AddGoogleAccount
   from "@/components/platform/addProviderCredentials/AddGoogleAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Add Cloud Credentials - Google", () => {
   const mockedGetResponse = {
@@ -61,7 +61,7 @@ describe("Add Cloud Credentials - Google", () => {
     });
 
     wrapper.setData({selectedProvider: "google"});
-    await Vue.nextTick();
+    await nextTick();
     google = wrapper.findComponent(AddGoogleAccount);
     google.setData({get_axiosConfig: () => {
       return {};
@@ -75,7 +75,7 @@ describe("Add Cloud Credentials - Google", () => {
     await input.setValue(credential.description);
 
     wrapper.setData({selectedProvider: "google"});
-    await Vue.nextTick();
+    await nextTick();
 
     jest.spyOn(FileReader.prototype, "readAsText")
       .mockImplementation(() => {
@@ -130,9 +130,9 @@ describe("Add Cloud Credentials - Google", () => {
 
     const saveButton = google.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(google.vm.newGoogle).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);
@@ -162,9 +162,9 @@ describe("Add Cloud Credentials - Google", () => {
 
     const saveButton = google.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(google.vm.newGoogle).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(true);
@@ -196,9 +196,9 @@ describe("Add Cloud Credentials - Google", () => {
 
       const saveButton = google.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(google.vm.newGoogle).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(false);
@@ -224,14 +224,14 @@ describe("Add Cloud Credentials - Google", () => {
     expect(google.vm.sharedCredentials).toBe(false);
     const input = google.find("[data-test-id=\"shared-credential\"]");
     input.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(google.vm.sharedCredentials).toBe(true);
 
     const saveButton = google.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(google.vm.newGoogle).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);

@@ -31,6 +31,7 @@ import Vuex from "vuex";
 import VueSlider from "vue-slider-component";
 import {createVuetify} from "vuetify";
 import Keycloak from "keycloak-js";
+import mitt from "mitt";
 import helpers from "@/services/helpers.js";
 
 
@@ -1485,6 +1486,7 @@ if (singleUserMode) {
         console.log("Authenticated");
 
         const vuetify = createVuetify();
+        const emitter = mitt();
         const app = createApp(App)
           .component("VueSlider", VueSlider)
           .use(router)
@@ -1505,6 +1507,7 @@ if (singleUserMode) {
           .use(VueAxios, axios)
           .use(Notifications);
 
+        app.config.globalProperties.emitter = emitter;
         app.config.globalProperties.$keycloak = keycloak;
         app.config.globalProperties.FormatDateFilter = FormatDateFilter;
         app.config.globalProperties.DateFilter = DateFilter;

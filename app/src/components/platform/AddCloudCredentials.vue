@@ -220,7 +220,7 @@ export default {
     window.intervals = [];
     window.intervals.push(self.interval);
     
-    this.$root.$on("accountSettingsChanged", () => {
+    this.emitter.on("accountSettingsChanged", () => {
       self.providers = [];
       if (!self.computed_account_settings) { 
         this.getAccountSettings();
@@ -300,7 +300,7 @@ export default {
       }
     });
 
-    self.$root.$emit('accountSettingsChanged', undefined);
+    self.emitter.emit('accountSettingsChanged', undefined);
   },
   methods: {
     azureAuth() {

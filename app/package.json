@@ -35,6 +35,7 @@
         "jquery.cookie": "^1.4.1",
         "keycloak-js": "^18.0.0",
         "minimist": "^1.2.6",
+        "mitt": "^3.0.0",
         "node-sass": "^9.0.0",
         "portal-vue": "^3.0.0",
         "register-service-worker": "^1.7.2",

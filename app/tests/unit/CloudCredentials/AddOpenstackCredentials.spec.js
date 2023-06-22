@@ -1,18 +1,18 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue3-notifications";
+import Notifications from "@kyvg/vue3-notification";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials.vue";
 import AddOpenstackAccount
   from "@/components/platform/addProviderCredentials/AddOpenstackAccount.vue";
 import WarningAlert from "@/components/platform/WarningAlert.vue";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Add Cloud Credentials - Openstack", () => {
   const mockedGetResponse = {
@@ -70,7 +70,7 @@ describe("Add Cloud Credentials - Openstack", () => {
     });
 
     wrapper.setData({selectedProvider: "openstack"});
-    await Vue.nextTick();
+    await nextTick();
     openstack = wrapper.findComponent(AddOpenstackAccount);
     openstack.setData({get_axiosConfig: () => {
       return {};
@@ -153,9 +153,9 @@ describe("Add Cloud Credentials - Openstack", () => {
 
     const saveButton = openstack.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);
@@ -185,9 +185,9 @@ describe("Add Cloud Credentials - Openstack", () => {
 
     const saveButton = openstack.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(true);
@@ -219,9 +219,9 @@ describe("Add Cloud Credentials - Openstack", () => {
 
       const saveButton = openstack.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(openstack.vm.newOpenstack).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(true);
@@ -253,9 +253,9 @@ describe("Add Cloud Credentials - Openstack", () => {
 
       const saveButton = openstack.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(openstack.vm.newOpenstack).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(true);
@@ -273,7 +273,7 @@ describe("Add Cloud Credentials - Openstack", () => {
           enable_kubernetes_capi: false,
         },
       });
-      await Vue.nextTick();
+      await nextTick();
 
       const mockedPostResponse = {
         data: {
@@ -294,9 +294,9 @@ describe("Add Cloud Credentials - Openstack", () => {
 
       const saveButton = openstack.find("[data-test-id=\"input-save\"]");
       saveButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(openstack.vm.newOpenstack).toEqual(credential);
-      await Vue.nextTick();
+      await nextTick();
 
       const alert = wrapper.findComponent(WarningAlert);
       expect(alert.exists()).toBe(false);
@@ -324,14 +324,14 @@ describe("Add Cloud Credentials - Openstack", () => {
     expect(openstack.vm.sharedCredentials).toBe(false);
     const input = openstack.find("[data-test-id=\"shared-credential\"]");
     input.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(openstack.vm.sharedCredentials).toBe(true);
 
     const saveButton = openstack.find("[data-test-id=\"input-save\"]");
     saveButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(openstack.vm.newOpenstack).toEqual(credential);
-    await Vue.nextTick();
+    await nextTick();
 
     const alert = wrapper.findComponent(WarningAlert);
     expect(alert.exists()).toBe(false);

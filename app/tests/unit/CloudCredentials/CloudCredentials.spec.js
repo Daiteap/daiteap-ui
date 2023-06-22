@@ -1,5 +1,5 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import CloudProfile from "@/components/platform/CloudProfile.vue";
@@ -8,12 +8,12 @@ import CloudProfileTable
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue3-notifications";
+import Notifications from "@kyvg/vue3-notification";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Cloud Credentials", () => {
   const mockedGetResponse = {
@@ -126,7 +126,7 @@ describe("Cloud Credentials", () => {
       },
     });
 
-    await Vue.nextTick();
+    await nextTick();
     table = wrapper.findComponent(CloudProfileTable);
   });
 
@@ -246,13 +246,13 @@ describe("Cloud Credentials", () => {
 
     expect(popup.isVisible()).toBe(false);
     deleteButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(popup.isVisible()).toBe(true);
 
     expect(popup.find("[data-test-id=\"label-to-remove\"]").text())
       .toBe("openstack-1");
     confirmDeleteButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(popup.isVisible()).toBe(false);
   });
 
@@ -276,11 +276,11 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-success");
 
@@ -307,11 +307,11 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
@@ -345,11 +345,11 @@ describe("Cloud Credentials", () => {
       const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
       validateButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(icon.attributes().class).toBe("circle-loader");
-      await Vue.nextTick();
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
+      await nextTick();
       expect(icon.attributes().class)
         .toBe("circle-loader load-complete load-failure");
 
@@ -387,7 +387,7 @@ describe("Cloud Credentials", () => {
         },
       });
 
-      await Vue.nextTick();
+      await nextTick();
       table = wrapper.findComponent(CloudProfileTable);
 
       const mockedPostResponse = {
@@ -411,11 +411,11 @@ describe("Cloud Credentials", () => {
       const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
       validateButton.trigger("click");
-      await Vue.nextTick();
+      await nextTick();
       expect(icon.attributes().class).toBe("circle-loader");
-      await Vue.nextTick();
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
+      await nextTick();
       expect(icon.attributes().class)
         .toBe("circle-loader load-complete load-success");
 
@@ -448,11 +448,11 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
@@ -485,11 +485,11 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
