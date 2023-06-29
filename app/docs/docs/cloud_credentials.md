@@ -69,16 +69,44 @@ Create the user. Copy and paste the **Access key ID** and **Secret access key** 
 
 ## Microsoft Azure
 
-### OAuth
-The easiest way to create a new Azure cloud credentials is to use OAuth. To use OAuth, click the link `Use OAuth` and follow the on-screen instructions. Alternatively, one can create the credential manually by following the steps below.
-
-We will need access to the "https://management.azure.com/user_impersonation" scope.
-
 ### Manual configuration
 
 ![Screenshot](img/cloud_credentials_azure_mask.png)
 
 To create cloud credential for `Microsoft Azure` you will need to know the following fields:
+
+* `Tenant ID`
+* `Subscription ID`
+* `Client ID`
+* `Client Secret`
+
+#### Create Credentials Using Script
+
+* Navigate to the <a href="https://portal.azure.com/" target="_blank">Azure Portal</a>
+* From the top right corner of the Azure Portal, click on the profile icon and select Switch Directory
+* Select the directory you want to use, by clicking on **Switch**
+* Click on the **Cloud Shell** icon in the top right corner of the **Azure Portal**
+* If you have not used **Cloud Shell** before, you will be prompted to create a storage account
+* Execute `az login` to login to Azure
+* Navigate to the prompted URL and enter the code, after logging in, close the browser window and return to the **Cloud Shell**
+* Download the script and set the permissions by executing the following commands:
+
+  ```sh
+  wget "https://raw.githubusercontent.com/Daiteap/daiteap-ui/master/app/public/azure_credentials.sh"
+  chmod +x azure_credentials.sh
+  ```
+
+* Run the script by executing the following command:
+
+  ```sh
+  ./azure_credentials.sh
+  ```
+
+* Use the credentials from the output of the script to create the cloud credential in Daiteap
+
+#### Create Credentials Manually
+
+You can either use the automated script to get the credentials or you can create them manually.
 
 * `Tenant ID` - the tenant ID identifying the tenant for you Azure account.
 Go to **Tenant properties** and copy the `Tenant ID`
