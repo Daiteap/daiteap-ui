@@ -4,13 +4,6 @@
     <div v-else @click="showHelp = false"></div>
     <div>
       <div v-if="showHelp === true">
-        <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
-          Use OAuth:
-              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
-        </div>
-        <br />
-        <hr />
-        <br /> -->
         <div class="h4">Manual Configuration</div>
         <div class="text-right">
           <small class="showHelpLink" @click="showHelp = false">
@@ -22,7 +15,47 @@
           <p class="card-text"></p>
           <div class="">
             <p>To create cloud credential for <code>Microsoft Azure</code> you will need to know the following fields:
+            <ul style="margin-left: 40px;">
+              <li><code>Tenant ID</code></li>
+              <li><code>Subscription ID</code></li>
+              <li><code>Client ID</code></li>
+              <li><code>Client Secret</code></li>
+            </ul>
+            You can either use the automated script to get the credentials or you can create them manually.
+            <hr />
             </p>
+            <h4>Create Credentials Using Script</h4>
+            <p style="margin-left: 40px;">
+            <ol>
+              <li>Navigate to the <a href="https://portal.azure.com" target="_blank">Azure Portal</a></li>
+              <li>From the top right corner of the Azure Portal, click on the profile icon and select <a
+                  href="https://portal.azure.com/#settings/directory" target="_blank">Switch Directory</a></li>
+              <li>Select the directory you want to use, by clicking on "Switch"</li>
+              <li>Click on the Cloud Shell icon in the top right corner of the Azure Portal</li>
+              <li>If you have not used Cloud Shell before, you will be prompted to create a storage account</li>
+              <li>Execute 'az login' to login to Azure</li>
+              <li>Navigate to the prompted URL and enter the code, after logging in, close the browser window and return
+                to
+                the Cloud Shell</li>
+              <li>Download the script and set the permissions by executing the following commands:</li>
+              <div class="code-block">
+                <code>
+                wget {{ azureCredentialsScriptLocation }} <br />
+                chmod +x azure_credentials.sh
+              </code>
+              </div>
+              <li>Run the script by executing the following command:</li>
+              <div class="code-block">
+                <code>
+                ./azure_credentials.sh
+              </code>
+              <li>Use the credentials from the output of the script to create the cloud credential in Daiteap</li>
+              </div>
+            </ol>
+            </p>
+            <hr />
+            <h4>Create Credentials Manually</h4>
+            <div style="margin-left: 40px;">
             <ul>
               <li>
                 <p><code>Tenant ID</code> - the tenant ID identifying the tenant for you Azure account.
@@ -64,7 +97,8 @@
                 role</strong>. The role name <code>DaiteapRole</code> will be automatically filled. For Baseline
               permissions
               select <strong>Start from JSON</strong>. The JSON file will the needed permissions can be downloaded <a
-                href="/azure_custom_role.json" download="azure_role_daiteap.json">here</a>. Click <strong>Next</strong> and finally create the role.</p>
+                href="/azure_custom_role.json" download="azure_role_daiteap.json">here</a>. Click <strong>Next</strong>
+              and finally create the role.</p>
             <p>At last we create a RoleAssignment, which will map the role to the client application. Click on
               <strong>Role
                 assignments -&gt; Add role assignment</strong>, select the custom role <strong>DaiteapRole</strong>,
@@ -81,29 +115,20 @@
               permission needs to be granted by an admin.
             </p>
             <p>
-              After granting the permission, press the checkbox `Grant admin consent for Default Directory` 
+              After granting the permission, press the checkbox `Grant admin consent for Default Directory`
               and then make sure the Status fields shows that the access is granted.
             </p>
-            <a
-              href="/documentation/cloud_credentials/#microsoft-azure"
-              target="_blank"
-            >
+            <a href="/documentation/cloud_credentials/#microsoft-azure" target="_blank">
               Full Guide
             </a>
             <br />
+            </div>
           </div>
         </div>
       </div>
 
       <div v-else class="box">
         <form class="form-horizontal" role="form">
-          <!-- <div @click="$emit('auth')" class="h4 provideConfigurationIcon">
-            Use OAuth:
-              <img width="35pix" style="margin-bottom: 5px;" src="../../../assets/img/azure_logo_small.png" />
-          </div>
-          <br />
-          <hr />
-          <br /> -->
           <h4>Manual Configuration</h4>
           <div class="text-right">
             <small class="showHelpLink" @click="showHelp = true">Credentials configuration instructions
@@ -121,9 +146,8 @@
                 data-test-id="input-label" />
             </div>
             <div class="">
-              <p v-if="
-                allCurrentLabels.includes(azure.label)
-              " class="help text-danger">
+              <p v-if="allCurrentLabels.includes(azure.label)
+                " class="help text-danger">
                 Cloud Credentials name already taken
               </p>
               <p v-else-if="azure.label != '' && !$v.azure.label.and" class="help text-danger">
@@ -136,15 +160,8 @@
           <div class="form-group">
             <label class="control-label"> Cloud Credentials Description: </label>
             <div class="">
-              <b-form-textarea
-                autocomplete="off"
-                v-model="azure.description"
-                class="form-control"
-                :class="['input']"
-                type="text"
-                id="azuredescription"
-                data-test-id="input-description"
-              ></b-form-textarea>
+              <b-form-textarea autocomplete="off" v-model="azure.description" class="form-control" :class="['input']"
+                type="text" id="azuredescription" data-test-id="input-description"></b-form-textarea>
             </div>
             <div class="">
               <p v-if="$v.azure.description.$invalid" class="help text-danger">
@@ -234,8 +251,7 @@
                 @blur="clientSecretInFocus = false" data-test-id="input-secret" />
             </div>
             <div class="">
-              <p v-if="azure.azure_client_secret != '' && $v.azure.azure_client_secret.$invalid"
-                class="help text-danger">
+              <p v-if="azure.azure_client_secret != '' && $v.azure.azure_client_secret.$invalid" class="help text-danger">
                 Please provide a valid Azure Client Secret
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -299,6 +315,7 @@ export default {
   mixins: [validationMixin],
   data() {
     return {
+      azureCredentialsScriptLocation: window.location.origin + "/azure_credentials.sh",
       labelInFocus: false,
       tenantIdInFocus: false,
       subscriptionIdInFocus: false,
@@ -430,7 +447,7 @@ export default {
   overflow-y: auto;
 }
 
-div > p {
+div>p {
   line-height: 24px;
   font-size: 16px;
   margin: 0 0 24px;
