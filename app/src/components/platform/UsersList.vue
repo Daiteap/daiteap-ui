@@ -21,10 +21,10 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div v-else-if="users.length == 0"> No users currently. </div>
+      <div v-else-if="users.length == 0" class="users-list-empty"> No users currently. </div>
       <div v-else>
         <UsersListTable
-          class="mt-2"
+          class="mt-2 users-list-table"
           :users="users"
           @removeUser="removeUser"
           @showUserDetails="showUserDetails"

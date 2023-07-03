@@ -178,7 +178,9 @@ export default {
     }, 200);
   },
   destroyed() {
-    window.removeEventListener("resize", this.columnsEvent);
+    if (this.columnsEvent) {
+      window.removeEventListener("resize", this.columnsEvent);
+    }
   },
   methods: {
     goToRemoveAccountWarning(accountToRemove) {
