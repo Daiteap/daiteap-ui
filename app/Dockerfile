@@ -1,11 +1,11 @@
 # build stage
-FROM node:12-alpine as build-stage
+FROM node:18-alpine as build-stage
 WORKDIR /app
 
 COPY package.json ./
 COPY package-lock.json ./
 
-RUN apk add python3 python2 make g++
+RUN apk add python3 make g++
 RUN apk add --update py-pip
 RUN pip3 install markdown==3.3.4 mkdocs==1.3.0 jinja2==3.0.3
 

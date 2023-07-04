@@ -123,18 +123,17 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, minValue, maxValue } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minValue, maxValue, required } from "@vuelidate/validators";
 import Vue from "vue";
 import axios from "axios";
 
 export default {
   name: "StepAlicloud",
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   methods: {
     checkCanContinue(){
-    if (!this.$v.$invalid && !this.ipConflicts) {
+    if (!this.v$.$invalid && !this.ipConflicts) {
       this.$emit("can-continue", { value: true });
     } else {
       this.$emit("can-continue", { value: false });
@@ -448,6 +447,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       errorMsg: "",
       vpcCidrFocus: false,
       loadingAccounts: true,
@@ -505,7 +505,7 @@ export default {
   },
 
   watch: {
-    $v: {
+    v$: {
       handler: function(val) {
         if (!val.$invalid && !this.ipConflicts) {
           Vue.prototype.$finalModel = {
@@ -534,7 +534,7 @@ export default {
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () =>
       self.$destroy()
     );
-    if (!this.$v.$invalid && !this.ipConflicts) {
+    if (!this.v$.$invalid && !this.ipConflicts) {
       this.$emit("can-continue", { value: true });
     } else {
       this.$emit("can-continue", { value: false });

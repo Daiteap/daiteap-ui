@@ -11,7 +11,7 @@
           :value="value"
           :disabled="disabled"
         ></b-form-input>
-        <div class="help text-danger" v-if="$v.value.$invalid && value != '' && !disabled">
+        <div class="help text-danger" v-if="v$.value.$invalid && value != '' && !disabled">
           {{ errorMsg }}
         </div>
     </b-row>
@@ -19,12 +19,11 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { maxLength, minLength, alpha } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, minLength, alpha } from "@vuelidate/validators";
 
 export default {
   name: "VerticalInputFirstname",
-  mixins: [validationMixin],
   validations: {
     value: {
       maxLength: maxLength(100),
@@ -34,6 +33,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       valuecopy: "",
     };
   },

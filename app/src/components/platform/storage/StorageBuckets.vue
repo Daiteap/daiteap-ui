@@ -110,7 +110,7 @@
               />
             </td>
             <td name="bucketsHidePriority0">
-              {{ item.created_at | formatDate }}
+              {{ FormatDateFilter(item.created_at) }}
             </td>
             <td
               name="bucketsHidePriority1"

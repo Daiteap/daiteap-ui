@@ -246,7 +246,7 @@
               <input
                 id="submit-machines"
                 v-on:click="submitNewMachinesToEnvironment"
-                :disabled="$v.machines.$invalid"
+                :disabled="v$.machines.$invalid"
                 type="button"
                 class="btn btn-outline-success col-lg-5 float-sm-right"
                 value="Submit"
@@ -267,14 +267,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import axios from "axios";
 
 export default {
   name: 'AddMachinesToVMs',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       providers: [],
       loadingZones: false,
       loadingInstances: false,
@@ -439,7 +439,7 @@ export default {
     checkCanContinue() {
       let submitEl = document.getElementById("submit-machines");
 
-      if (!this.$v.$invalid && this.invalidMachines.indexOf(true) == -1) {
+      if (!this.v$.$invalid && this.invalidMachines.indexOf(true) == -1) {
         submitEl.disabled = false;
       } else {
         submitEl.disabled = true;

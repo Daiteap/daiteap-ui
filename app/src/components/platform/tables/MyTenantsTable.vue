@@ -41,16 +41,16 @@
             {{ item.company }}
           </td>
           <td name="tenantsHidePriority1">
-            {{ item.createdAt | formatDate }}
+            {{ FormatDateFilter(item.createdAt) }}
           </td>
           <td name="tenantsHidePriority0">
-            {{ item.updatedAt | formatDate }}
+            {{ FormatDateFilter(item.updatedAt) }}
           </td>
           <td>
-            <toggle-button
+            <Toggle
               :value="item.selected"
               data-test-id="compute-option-button"
-              @input="showChangeTenantDialog(item)"
+              @change="showChangeTenantDialog(item)"
               :disabled="item.selected"
               sync
             />
@@ -63,6 +63,7 @@
 
 <script>
 import ConfirmDialog from "../popup_modals/ConfirmDialog";
+import Toggle from "@vueform/toggle";
 
 export default {
   props: {
@@ -71,6 +72,7 @@ export default {
   },
   components: {
     ConfirmDialog,
+    Toggle,
   },
   data() {
     return {
@@ -218,7 +220,7 @@ input {
 .card-body {
   border: #00708c10 1px solid;
 }
-::v-deep .dropDownMenuButton .btn-secondary {
+:deep(.dropDownMenuButton .btn-secondary) {
   color: #1d1e22 !important;
   font-weight: bold;
   background-color: #fff !important;
@@ -226,35 +228,35 @@ input {
   box-shadow: none;
   outline: none;
 }
-::v-deep .dropDownMenuButton .btn-secondary:hover {
+:deep(.dropDownMenuButton .btn-secondary:hover) {
   color: #034758 !important;
   background-color: #fff !important;
   border: none;
 }
-::v-deep .dropDownMenuButton .btn-secondary:focus {
+:deep(.dropDownMenuButton .btn-secondary:focus) {
   color: #1d1e22 !important;
   background-color: #fff !important;
   border: none;
   box-shadow: none;
 }
-::v-deep .dropDownMenuButton .btn-secondary.focus {
+:deep(.dropDownMenuButton .btn-secondary.focus) {
   color: #1d1e22 !important;
   background-color: #fff !important;
   border: none;
   box-shadow: none;
 }
-::v-deep .dropDownMenuButton #createDropdown:active {
+:deep(.dropDownMenuButton #createDropdown:active) {
   border: none;
   box-shadow: none;
 }
-::v-deep
+:deep(
   .dropDownMenuButton
   .btn-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
-.show > .btn-secondary.dropdown-toggle:focus {
+.show > .btn-secondary.dropdown-toggle:focus) {
   box-shadow: none;
 }
-::v-deep .dropDownMenuButton .dropdown-menu {
+:deep(.dropDownMenuButton .dropdown-menu) {
   background-color: #fff;
   background-clip: padding-box;
   border: 2px solid #5f737950;
@@ -324,3 +326,5 @@ kbd:hover {
   background-color: #ea002f;
 }
 </style>
+
+<style src="@vueform/toggle/themes/default.css"></style>

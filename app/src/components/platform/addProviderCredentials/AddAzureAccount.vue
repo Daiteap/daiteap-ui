@@ -116,7 +116,7 @@
             <div class="">
               <input required autocomplete="off" v-model="azure.label" class="form-control" :class="[
                 'input',
-                $v.azure.label.$invalid && !labelInFocus ? 'is-danger' : '',
+                v$.azure.label.$invalid && !labelInFocus ? 'is-danger' : '',
               ]" type="text" id="azureLabel" @focus="labelInFocus = true" @blur="labelInFocus = false"
                 data-test-id="input-label" />
             </div>
@@ -126,7 +126,7 @@
               " class="help text-danger">
                 Cloud Credentials name already taken
               </p>
-              <p v-else-if="azure.label != '' && !$v.azure.label.and" class="help text-danger">
+              <p v-else-if="azure.label != '' && !v$.azure.label.and" class="help text-danger">
                 This Cloud Credentials name is not valid
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -147,7 +147,7 @@
               ></b-form-textarea>
             </div>
             <div class="">
-              <p v-if="$v.azure.description.$invalid" class="help text-danger">
+              <p v-if="v$.azure.description.$invalid" class="help text-danger">
                 Invalid Cloud Credentials Description
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -159,7 +159,7 @@
             <div class="">
               <input v-model="azure.azure_tenant_id" class="form-control" :class="[
                 'input',
-                $v.azure.azure_tenant_id.$invalid &&
+                v$.azure.azure_tenant_id.$invalid &&
                   azure.azure_tenant_id != '' &&
                   !tenantIdInFocus
                   ? 'is-danger'
@@ -168,7 +168,7 @@
                 data-test-id="input-directory" />
             </div>
             <div class="">
-              <p v-if="azure.azure_tenant_id != '' && $v.azure.azure_tenant_id.$invalid" class="help text-danger">
+              <p v-if="azure.azure_tenant_id != '' && v$.azure.azure_tenant_id.$invalid" class="help text-danger">
                 Please provide a valid Azure Tenant ID
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -180,7 +180,7 @@
             <div class="">
               <input v-model="azure.azure_subscription_id" class="form-control" :class="[
                 'input',
-                $v.azure.azure_subscription_id.$invalid &&
+                v$.azure.azure_subscription_id.$invalid &&
                   azure.azure_subscription_id != '' &&
                   !subscriptionIdInFocus
                   ? 'is-danger'
@@ -189,7 +189,7 @@
                 @blur="subscriptionIdInFocus = false" data-test-id="input-subscription" />
             </div>
             <div class="">
-              <p v-if="azure.azure_subscription_id != '' && $v.azure.azure_subscription_id.$invalid"
+              <p v-if="azure.azure_subscription_id != '' && v$.azure.azure_subscription_id.$invalid"
                 class="help text-danger">
                 Please provide a valid Azure Subscription ID
               </p>
@@ -204,7 +204,7 @@
             <div class="">
               <input v-model="azure.azure_client_id" class="form-control" :class="[
                 'input',
-                $v.azure.azure_client_id.$invalid &&
+                v$.azure.azure_client_id.$invalid &&
                   azure.azure_client_id != '' &&
                   !clientIdInFocus
                   ? 'is-danger'
@@ -213,7 +213,7 @@
                 data-test-id="input-id" />
             </div>
             <div class="">
-              <p v-if="azure.azure_client_id != '' && $v.azure.azure_client_id.$invalid" class="help text-danger">
+              <p v-if="azure.azure_client_id != '' && v$.azure.azure_client_id.$invalid" class="help text-danger">
                 Please provide a valid Azure Client ID
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -225,7 +225,7 @@
             <div class="">
               <input v-model="azure.azure_client_secret" class="form-control" :class="[
                 'input',
-                $v.azure.azure_client_secret.$invalid &&
+                v$.azure.azure_client_secret.$invalid &&
                   azure.azure_client_secret != '' &&
                   !clientIdInFocus
                   ? 'is-danger'
@@ -234,7 +234,7 @@
                 @blur="clientSecretInFocus = false" data-test-id="input-secret" />
             </div>
             <div class="">
-              <p v-if="azure.azure_client_secret != '' && $v.azure.azure_client_secret.$invalid"
+              <p v-if="azure.azure_client_secret != '' && v$.azure.azure_client_secret.$invalid"
                 class="help text-danger">
                 Please provide a valid Azure Client Secret
               </p>
@@ -255,7 +255,7 @@
 
           <div class="form-group">
             <div class="">
-              <div class="custom-button float-right ml-5" :class="[$v.azure.$invalid || loading ? 'deactivated' : '']"
+              <div class="custom-button float-right ml-5" :class="[v$.azure.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()" data-test-id="input-save">
                 Save
               </div>
@@ -271,14 +271,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  and,
-  or,
-  minLength,
-  maxLength,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, or, minLength, maxLength, required } from "@vuelidate/validators";
 
 const isAdded = (value) => /^[*]{10,10}$/.test(value);
 let newLabelValidation = function (value) {
@@ -296,9 +290,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       tenantIdInFocus: false,
       subscriptionIdInFocus: false,

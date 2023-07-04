@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, required } from "@vuelidate/validators";
 import Vue from "vue";
 import axios from "axios";
 import "vue-slider-component/theme/default.css";
@@ -65,7 +65,6 @@ import AddButton from "@/components/platform/AddButton"
 export default {
   name: 'StepYaookOpenstack',
   props: ["clickedNext", "currentStep", "disableAccountSelector", "isInResize"],
-  mixins: [validationMixin],
   components: {
     NodeGroup,
     AddButton,
@@ -452,6 +451,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       errorMsg: "",
       loadingAccounts: true,
       loadingRegions: false,
@@ -529,7 +529,7 @@ export default {
   },
 
   watch: {
-    $v: {
+    v$: {
       handler: function (val) {
         if (!val.$invalid && this.checkCanContinue) {
           Vue.prototype.$finalModel = {

@@ -23,11 +23,11 @@
               id="project-name"
               v-model="form.name"
               placeholder="Project Name"
-              v-on:change="$v.form.name.$touch && onProjectNameChange()"
-              v-on:input="$v.form.name.$touch"
+              v-on:change="v$.form.name.$touch && onProjectNameChange()"
+              v-on:input="v$.form.name.$touch"
               :change="onProjectNameChange()"
             ></b-form-input>
-            <p v-if="form.name != '' && $v.form.name.$invalid" class="help text-danger">
+            <p v-if="form.name != '' && v$.form.name.$invalid" class="help text-danger">
               Invalid project name
             </p>
             <p v-if="nameTaken" class="help text-danger">
@@ -42,10 +42,10 @@
               v-model="form.description"
               id="project-description"
               placeholder="Project Description"
-              v-on:change="$v.form.description.$touch"
+              v-on:change="v$.form.description.$touch"
             ></b-form-textarea>
             <p
-              v-if="$v.form.description.$invalid"
+              v-if="v$.form.description.$invalid"
               class="help text-danger"
             >
               Invalid project description
@@ -59,7 +59,7 @@
           <b-col class="text-right">
             <div
               class="custom-button float-right ml-5"
-              :class="[$v.form.$invalid || nameTaken ? 'deactivated' : '']"
+              :class="[v$.form.$invalid || nameTaken ? 'deactivated' : '']"
               @click="onSave()"
             >
               Save
@@ -79,18 +79,18 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 import CardTitle from "@/components/platform/CardTitle";
 
 export default {
   name: 'AddNewProject',
-  mixins: [validationMixin],
   props: {
     projectParams: Object,
   },
   data() {
     return {
+      v$: useVuelidate(),
       created: false,
       form: {
         name: "",

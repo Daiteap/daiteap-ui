@@ -86,14 +86,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 
 export default {
   name: 'RemoveAccountWarning',
   props: ["accountToRemoveFromParent"],
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       accountToRemove: {
         label: "",
         id: "",

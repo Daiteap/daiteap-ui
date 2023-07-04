@@ -1,15 +1,18 @@
 import {shallowMount, mount} from "@vue/test-utils";
 import SubmitKubernetesCluster
   from "@/components/platform/SubmitKubernetesCluster.vue";
+// import {
+//   BootstrapVue,
+// } from "bootstrap-vue";
 import {
-  BootstrapVue,
-} from "bootstrap-vue";
+  BootstrapVueNext,
+} from "bootstrap-vue-next";
 
 import axios from "axios";
 
-import Vue from "vue";
+// import Vue from "vue";
 
-Vue.use(BootstrapVue);
+// Vue.use(BootstrapVue);
 
 const mockedGetResponse = {
   data: {
@@ -67,6 +70,11 @@ describe("SubmitKubernetesCluster.vue", () => {
           getClusterDetailsMain: () => {
             return mockCluster;
           },
+        },
+        global: {
+          plugins: [
+            BootstrapVueNext,
+          ],
         },
       });
 

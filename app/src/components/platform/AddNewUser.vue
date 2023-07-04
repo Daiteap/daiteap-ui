@@ -36,8 +36,8 @@
             inputplaceholder="Name"
             errorMsg="Invalid Name"
             v-model="form.firstname"
-            :validation="$v.form.firstname"
-            @change="$v.form.firstname.$touch"
+            :validation="v$.form.firstname"
+            @change="v$.form.firstname.$touch"
           />
 
           <VerticalInputLastname
@@ -47,8 +47,8 @@
             inputplaceholder="Last name"
             errorMsg="Invalid last name"
             v-model="form.lastname"
-            :validation="$v.form.lastname"
-            @change="$v.form.lastname.$touch"
+            :validation="v$.form.lastname"
+            @change="v$.form.lastname.$touch"
           />
 
           <VerticalInput
@@ -80,7 +80,7 @@
               </div>
               <div
                 class="custom-button ml-5 mr-3"
-                :class="[$v.form.$invalid ? 'deactivated' : '']"
+                :class="[v$.form.$invalid ? 'deactivated' : '']"
                 @click="onSave()"
               >
                 Save
@@ -102,19 +102,13 @@ import VerticalInputFirstname from "@/components/platform/input/VerticalInputFir
 import VerticalInputLastname from "@/components/platform/input/VerticalInputLastname";
 import VerticalInputPhone from "@/components/platform/input/VerticalInputPhone";
 import SelectInput from "@/components/platform/input/SelectInput";
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength,
-  helpers,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, minLength, helpers, required } from "@vuelidate/validators";
 
 const regPhone = helpers.regex('regPhone',/^[\s0-9-+()]*$/);
 
 export default {
   name: 'AddNewUser',
-  mixins: [validationMixin],
   props: [
     "tenant",
     "username",
@@ -152,6 +146,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       optionsUserRoles: [
         {
           name: "Admin",

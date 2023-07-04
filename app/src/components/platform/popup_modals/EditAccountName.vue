@@ -19,7 +19,7 @@
                 id="label"
               />
             </div>
-            <div v-if="accountToEdit.label != '' && $v.accountToEdit.label.$invalid">
+            <div v-if="accountToEdit.label != '' && v$.accountToEdit.label.$invalid">
             <p class="help text-danger">
               Invalid Cloud Credentials Name
             </p>
@@ -40,7 +40,7 @@
               ></b-form-textarea>
             </div>
             <div>
-            <p v-if="$v.accountToEdit.description.$invalid" class="help text-danger">
+            <p v-if="v$.accountToEdit.description.$invalid" class="help text-danger">
               Invalid Cloud Credentials Description
             </p>
             <div v-else style="height: 1.375rem"></div>
@@ -218,7 +218,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.accountToEdit.$invalid ? 'deactivated' : '']"
+                :class="[v$.accountToEdit.$invalid ? 'deactivated' : '']"
                 @click="submitChangesOfAccountName()"
               >
                 Save
@@ -238,18 +238,17 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  and,
-  minLength,
-  maxLength,
-  required,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 export default {
   name: 'EditAccountName',
   props: ["accountToEdit"],
-  mixins: [validationMixin],
+  data() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
   validations: {
     accountToEdit: {
       label: {

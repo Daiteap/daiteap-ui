@@ -83,25 +83,25 @@
           class="form-control"
           :class="[
             'input',
-            $v.form.clusterName.$invalid && $v.form.clusterName.$dirty
+            v$.form.clusterName.$invalid && v$.form.clusterName.$dirty
               ? 'is-danger'
               : '',
           ]"
           type="text"
           placeholder="Cluster name"
           v-model="form.clusterName"
-          @input="$v.form.clusterName.$touch"
+          @input="v$.form.clusterName.$touch"
           @change="updateCreateClusterSetting('ClusterName', form.clusterName)"
         />
         <p
-          v-if="form.clusterName != '' && !$v.form.clusterName.maxLength && $v.form.clusterName.$dirty"
+          v-if="form.clusterName != '' && !v$.form.clusterName.maxLength && v$.form.clusterName.$dirty"
           class="help text-danger"
           style="height: 1.2rem"
         >
           Invalid cluster name
         </p>
         <p
-          v-else-if="form.clusterName != '' && clusterNameResolved && !$v.form.clusterName.isNameFree"
+          v-else-if="form.clusterName != '' && clusterNameResolved && !v$.form.clusterName.isNameFree"
           class="help text-danger"
           style="height: 1.2rem"
         >
@@ -118,21 +118,21 @@
           class="form-control"
           :class="[
             'input',
-            $v.form.clusterDescription.$invalid &&
-            $v.form.clusterDescription.$dirty
+            v$.form.clusterDescription.$invalid &&
+            v$.form.clusterDescription.$dirty
               ? 'is-danger'
               : '',
           ]"
           type="text"
           placeholder="Description"
           v-model="form.clusterDescription"
-          @input="$v.form.clusterDescription.$touch"
+          @input="v$.form.clusterDescription.$touch"
           @change="updateCreateClusterSetting('ClusterDescription', form.clusterDescription)"
         ></b-form-textarea>
         <p
           v-if="
-            $v.form.clusterDescription.$invalid &&
-            $v.form.clusterDescription.$dirty
+            v$.form.clusterDescription.$invalid &&
+            v$.form.clusterDescription.$dirty
           "
           class="help text-danger"
         >
@@ -339,17 +339,17 @@
 </template>
 
 <script>
-import { required, maxLength } from "vuelidate/lib/validators";
-import { validationMixin } from "vuelidate";
+import { maxLength, required } from "@vuelidate/validators";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
 import axios from "axios";
 
 export default {
   name: "StepK3sClusterDetails",
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       form: {
         clusterName: "",
         clusterDescription: "",
@@ -429,7 +429,7 @@ export default {
   methods: {
     checkCanContinue() {
       if (
-        !this.$v.$invalid &&
+        !this.v$.$invalid &&
         !this.kubePodsSubnetIpInvalid &&
         !this.kubeServiceAddressesInvalid &&
         !this.ipConflicts
@@ -602,7 +602,7 @@ export default {
     },
   },
   watch: {
-    $v: {
+    v$: {
       handler: function (val) {
         if (
           !val.$invalid &&
@@ -626,7 +626,7 @@ export default {
     },
     clickedNext(val) {
       if (val === true) {
-        this.$v.form.$touch();
+        this.v$.form.$touch();
       }
     },
   },
@@ -636,7 +636,7 @@ export default {
   },
   mounted() {
     if (
-      !this.$v.$invalid &&
+      !this.v$.$invalid &&
       !this.kubePodsSubnetIpInvalid &&
       !this.kubeServiceAddressesInvalid &&
       !this.ipConflicts

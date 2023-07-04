@@ -289,13 +289,12 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 import Vue from "vue";
 
 export default {
   name: "StepProviders",
   props: ["clickedNext", "currentStep", "clusterType"],
-  mixins: [validationMixin],
   activated() {
     this.getAccountSettings();
   },
@@ -620,6 +619,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       account_settings: {
         providers_enable_gcp: false,
         providers_enable_aws: false,
@@ -695,7 +695,7 @@ export default {
     },
   },
   watch: {
-    $v: {
+    v$: {
       handler: function () {
         this.$root.$emit(
           "updateSteps",

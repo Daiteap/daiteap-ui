@@ -20,12 +20,12 @@
       </select>
 
       <br />
-      <div v-on:click="$v.form.onpremise.vpcCidr.$touch">
+      <div v-on:click="v$.form.onpremise.vpcCidr.$touch">
         <label for="vpcCidr">Network CIDR</label>
         <input
           style="display: inline-block"
           class="form-control"
-          :class="['input', (ipConflicts && $v.form.onpremise.vpcCidr.$dirty) ? 'is-danger' : '']"
+          :class="['input', (ipConflicts && v$.form.onpremise.vpcCidr.$dirty) ? 'is-danger' : '']"
           type="text"
           placeholder="e.g. 192.168.0.0/16"
           v-model="form.onpremise.vpcCidr"
@@ -33,7 +33,7 @@
           @focus="networkCidrFocus = true"
           @blur="networkCidrFocus = false"
         />
-        <p v-if="ipConflicts && $v.form.onpremise.vpcCidr.$dirty && !networkCidrFocus" class="help is-danger">
+        <p v-if="ipConflicts && v$.form.onpremise.vpcCidr.$dirty && !networkCidrFocus" class="help is-danger">
           Please enter a valid private Network that does not conflict with other providers
           Networks
         </p>
@@ -81,15 +81,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, required } from "@vuelidate/validators";
 import Vue from "vue";
 import axios from "axios";
 
 export default {
   name: "StepOnpremise",
   props: ["clickedNext", "currentStep"],
-  mixins: [validationMixin],
   methods: {
     setForm() {
       let self = this;
@@ -108,7 +107,7 @@ export default {
     },
     checkCanContinue() {
       if (
-        !this.$v.$invalid &&
+        !this.v$.$invalid &&
         this.ipConflicts == false &&
         this.invalidMachines.indexOf(true) == -1
       ) {
@@ -324,6 +323,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       errorMsg: "",
       networkCidrFocus: false,
       ipFocus: [],
@@ -375,7 +375,7 @@ export default {
     let cidr = { srcElement: { value: this.form.onpremise.vpcCidr } };
     this.checkForIpConflicts(cidr);
     self.$root.$on("clicking-back-" + Vue.prototype.$currentIndex, () => self.$destroy());
-    if (!this.$v.$invalid) {
+    if (!this.v$.$invalid) {
       this.$emit("can-continue", { value: true });
     } else {
       this.$emit("can-continue", { value: false });

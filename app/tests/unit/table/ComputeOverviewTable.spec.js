@@ -1,18 +1,68 @@
-import {shallowMount} from "@vue/test-utils";
+import {shallowMount, config} from "@vue/test-utils";
 import ComputeOverviewTable from
   "@/components/platform/tables/ComputeOverviewTable.vue";
-import Vue from "vue";
-import BootstrapVue from "bootstrap-vue";
+import {
+  BootstrapVueNext,
+} from "bootstrap-vue-next";
+import {
+  FormatDateFilter,
+} from "../../../src/common/date.filter";
+import {nextTick} from "vue";
 
-Vue.use(BootstrapVue);
-Vue.filter("formatDate", function(value) {
-  if (value) {
-    return value;
-  }
-});
+config.silent = true;
 
 describe("ComputeOverviewTable", () => {
   let wrapper;
+  const clustersList = [
+    {
+      ID: 1,
+      Name: "Cluster 1",
+      Description: "This is the first cluster",
+      ProjectName: "Project A",
+      Providers: ["Azure", "Amazon"],
+      Credentials: {
+        azure: "azure-credentials",
+        aws: "aws-credentials",
+      },
+      CreatedAt: "2021-08-01T12:00:00Z",
+      Contact: "John Doe",
+      Status: "running",
+      InstallStep: 0,
+      ResizeStep: 0,
+    },
+    {
+      ID: 2,
+      Name: "Cluster 2",
+      Description: "This is the second cluster",
+      ProjectName: "Project B",
+      Providers: ["Google", "Onpremise"],
+      Credentials: {
+        google: "google-credentials",
+        onpremise: "onpremise-credentials",
+      },
+      CreatedAt: "2021-08-02T12:00:00Z",
+      Contact: "Jane Smith",
+      Status: "starting",
+      InstallStep: 50,
+      ResizeStep: 0,
+    },
+    {
+      ID: 3,
+      Name: "Cluster 3",
+      Description: "This is the third cluster",
+      ProjectName: "Project C",
+      Providers: ["Openstack", "IotArm"],
+      Credentials: {
+        openstack: "openstack-credentials",
+        iotarm: "iotarm-credentials",
+      },
+      CreatedAt: "2021-08-03T12:00:00Z",
+      Contact: "Bob Johnson",
+      Status: "stopping",
+      InstallStep: 100,
+      ResizeStep: 0,
+    },
+  ];
 
   beforeEach(() => {
     wrapper = shallowMount(ComputeOverviewTable, {
@@ -22,76 +72,39 @@ describe("ComputeOverviewTable", () => {
       data() {
         return {
           computed_theme: "daiteap",
-          clustersList: [
-            {
-              ID: 1,
-              Name: "Cluster 1",
-              Description: "This is the first cluster",
-              ProjectName: "Project A",
-              Providers: ["Azure", "Amazon"],
-              Credentials: {
-                azure: "azure-credentials",
-                aws: "aws-credentials",
-              },
-              CreatedAt: "2021-08-01T12:00:00Z",
-              Contact: "John Doe",
-              Status: "running",
-              InstallStep: 0,
-              ResizeStep: 0,
-            },
-            {
-              ID: 2,
-              Name: "Cluster 2",
-              Description: "This is the second cluster",
-              ProjectName: "Project B",
-              Providers: ["Google", "Onpremise"],
-              Credentials: {
-                google: "google-credentials",
-                onpremise: "onpremise-credentials",
-              },
-              CreatedAt: "2021-08-02T12:00:00Z",
-              Contact: "Jane Smith",
-              Status: "starting",
-              InstallStep: 50,
-              ResizeStep: 0,
-            },
-            {
-              ID: 3,
-              Name: "Cluster 3",
-              Description: "This is the third cluster",
-              ProjectName: "Project C",
-              Providers: ["Openstack", "IotArm"],
-              Credentials: {
-                openstack: "openstack-credentials",
-                iotarm: "iotarm-credentials",
-              },
-              CreatedAt: "2021-08-03T12:00:00Z",
-              Contact: "Bob Johnson",
-              Status: "stopping",
-              InstallStep: 100,
-              ResizeStep: 0,
-            },
-          ],
           loading: false,
           computed_account_settings: {
             enable_templates: false,
           },
+          getAllClusters: () => {
+            return clustersList;
+          },
+          getProjects: () => {
+            return [];
+          },
+          FormatDateFilter: FormatDateFilter,
         };
+      },
+      global: {
+        plugins: [
+          BootstrapVueNext,
+        ],
       },
     });
   });
 
-  afterEach(() => {
-    wrapper.destroy();
-  });
+  // afterEach(() => {
+  //   wrapper.destroy();
+  // });
 
   it("renders the component", () => {
     expect(wrapper.exists()).toBe(true);
   });
 
   it("displays the clusters list", async () => {
-    await wrapper.vm.$nextTick();
+    await nextTick();
 
+    console.log(wrapper.findAll("td"));
     const cluster1Name = wrapper.findAll("td").at(0).text();
     const cluster1Description = wrapper.findAll("td").at(1).text();
     const cluster1Project = wrapper.findAll("td").at(2).text();
@@ -118,7 +131,7 @@ describe("ComputeOverviewTable", () => {
   it("displays a loading spinner when the table is loading", async () => {
     wrapper.setData({loading: true});
 
-    await wrapper.vm.$nextTick();
+    await nextTick();
 
     const spinner = wrapper.find(".spinner-border");
 
@@ -128,7 +141,7 @@ describe("ComputeOverviewTable", () => {
   it("displays a message when there are no clusters", async () => {
     wrapper.setData({clustersList: []});
 
-    await wrapper.vm.$nextTick();
+    await nextTick();
 
     const message = wrapper.findAll("div").at(0);
 

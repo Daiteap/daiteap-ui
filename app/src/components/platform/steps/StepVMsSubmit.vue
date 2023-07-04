@@ -28,15 +28,15 @@
           <b-col sm="6">
             <b-form-input
               v-model="form.name"
-              v-on:change="$v.form.name.$touch"
+              v-on:change="v$.form.name.$touch"
               id="template-name"
               placeholder="Template Name"
             ></b-form-input>
             <p
               v-if="
                 form.name != '' &&
-                !$v.form.name.maxLength &&
-                $v.form.name.$dirty
+                !v$.form.name.maxLength &&
+                v$.form.name.$dirty
               "
               class="help text-danger"
               style="height: 1.2rem"
@@ -47,7 +47,7 @@
               v-else-if="
                 form.name != '' &&
                 templateNameResolved &&
-                !$v.form.name.isNameFree
+                !v$.form.name.isNameFree
               "
               class="help text-danger"
               style="height: 1.2rem"
@@ -65,11 +65,11 @@
             <b-form-textarea
               id="template-description"
               placeholder="Template Description"
-              v-on:change="$v.form.description.$touch"
+              v-on:change="v$.form.description.$touch"
               v-model="form.description"
             ></b-form-textarea>
             <p
-              v-if="$v.form.description.$invalid && $v.form.description.$dirty"
+              v-if="v$.form.description.$invalid && v$.form.description.$dirty"
               class="help text-danger"
             >
               Invalid template description
@@ -80,7 +80,7 @@
           <b-col sm="6">
             <div
               class="custom-button float-right"
-              :class="[$v.form.$invalid ? 'deactivated' : '']"
+              :class="[v$.form.$invalid ? 'deactivated' : '']"
               @click="onSave()"
             >
               Save
@@ -96,12 +96,11 @@
 import CardTitle from "@/components/platform/CardTitle";
 /*eslint no-unused-vars:*/
 import Vue from "vue";
-import { required, maxLength } from "vuelidate/lib/validators";
-import { validationMixin } from "vuelidate";
+import { maxLength, required } from "@vuelidate/validators";
+import {useVuelidate} from "@vuelidate/core";
 
 export default {
   name: "StepVMsSubmit",
-  mixins: [validationMixin],
   components: {
     CardTitle,
   },
@@ -158,6 +157,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       templateSaved: "Not saved",
       form: {
         name: "",

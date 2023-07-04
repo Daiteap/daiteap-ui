@@ -22,13 +22,13 @@
 
               <div>
                 <p
-                  v-if="!$v.currentProject.Name.maxLength"
+                  v-if="!v$.currentProject.Name.maxLength"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   Invalid Project Name
                 </p>
                 <p
-                  v-else-if="nameResolved && !$v.currentProject.Name.isNameFree && currentProject.Name != ''"
+                  v-else-if="nameResolved && !v$.currentProject.Name.isNameFree && currentProject.Name != ''"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
@@ -54,7 +54,7 @@
                   id="description"
                 ></b-form-textarea>
               </div>
-              <div v-if="$v.currentProject.Description.$invalid">
+              <div v-if="v$.currentProject.Description.$invalid">
                 <p class="help text-danger">
                   Invalid Project Description
                 </p>
@@ -68,7 +68,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.currentProject.$invalid ? 'deactivated' : '']"
+                :class="[v$.currentProject.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
               >
                 Save
@@ -88,14 +88,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 
 export default {
   name: 'EditProjectPopup',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       project: {},
       nameResolved: true,
       nameTakenMsg: "This project name is taken",

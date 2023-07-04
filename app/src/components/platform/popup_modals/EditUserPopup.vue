@@ -38,7 +38,7 @@
               </div>
               <div
                 class="help text-danger"
-                v-if="currentUser.firstname != '' && $v.currentUser.firstname.$invalid"
+                v-if="currentUser.firstname != '' && v$.currentUser.firstname.$invalid"
               >
                 Invalid Name
               </div>
@@ -60,7 +60,7 @@
               </div>
               <div
                 class="help text-danger"
-                v-if="currentUser.lastname != '' && $v.currentUser.lastname.$invalid"
+                v-if="currentUser.lastname != '' && v$.currentUser.lastname.$invalid"
               >
                 Invalid Name
               </div>
@@ -98,7 +98,7 @@
               </div>
               <p
                 class="help text-danger"
-                v-if="$v.currentUser.phone.$invalid"
+                v-if="v$.currentUser.phone.$invalid"
               >
                 Invalid Phone
               </p>
@@ -119,7 +119,7 @@
                   @input="saveKey += 1"
                 />
               </div>
-              <p class="help text-danger" v-if="password != '' && $v.password.$invalid">
+              <p class="help text-danger" v-if="password != '' && v$.password.$invalid">
                 Password must contain upper case letter, lower case letter, special character, number, and to be at least 8 characters
               </p>
               <div v-else style="height: 1rem"></div>
@@ -150,7 +150,7 @@
               <div
                 v-if="password == ''"
                 class="custom-button float-right"
-                :class="[$v.currentUser.$invalid ? 'deactivated' : '']"
+                :class="[v$.currentUser.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
                 :key="saveKey"
               >
@@ -159,7 +159,7 @@
               <div
                 v-else
                 class="custom-button float-right"
-                :class="[$v.currentUser.$invalid || $v.password.$invalid || password != confirmPassword ? 'deactivated' : '']"
+                :class="[v$.currentUser.$invalid || v$.password.$invalid || password != confirmPassword ? 'deactivated' : '']"
                 @click="submitChanges()"
                 :key="saveKey"
               >
@@ -180,17 +180,17 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { helpers, maxLength, minLength, alpha, required } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, maxLength, helpers, required, alpha } from "@vuelidate/validators";
 
 const regPhone = helpers.regex("regPhone", /^[\s0-9-+()]*$/);
 const valLastname = helpers.regex("valLastname", /^[a-zA-Z\s]*$/);
 
 export default {
   name: "EditUserPopup",
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       user: {},
       password: "",
       confirmPassword: "",

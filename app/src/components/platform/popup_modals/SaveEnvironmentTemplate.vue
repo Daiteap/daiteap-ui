@@ -15,7 +15,7 @@
               <div>
                 <input
                   v-model="form.name"
-                  v-on:input="$v.form.name.$touch"
+                  v-on:input="v$.form.name.$touch"
                   class="form-control"
                   :class="['input']"
                   placeholder="Template Name"
@@ -28,8 +28,8 @@
                 <p
                   v-if="
                     form.name != '' &&
-                    !$v.form.name.maxLength &&
-                    $v.form.name.$dirty
+                    !v$.form.name.maxLength &&
+                    v$.form.name.$dirty
                   "
                   class="help text-danger"
                   style="height: 1.2rem"
@@ -40,7 +40,7 @@
                   v-else-if="
                     form.name != '' &&
                     templateNameResolved &&
-                    !$v.form.name.isNameFree
+                    !v$.form.name.isNameFree
                   "
                   class="help text-danger"
                   style="height: 1.2rem"
@@ -55,7 +55,7 @@
               <div>
                 <b-form-textarea
                   v-model="form.description"
-                  v-on:input="$v.form.description.$touch"
+                  v-on:input="v$.form.description.$touch"
                   class="form-control"
                   :class="['input']"
                   placeholder="Description"
@@ -67,7 +67,7 @@
               <div>
                 <p
                   v-if="
-                    $v.form.description.$invalid && $v.form.description.$dirty
+                    v$.form.description.$invalid && v$.form.description.$dirty
                   "
                   class="help text-danger"
                 >
@@ -81,7 +81,7 @@
               <div class="col-lg-12">
                 <div
                   class="custom-button col-lg-5 float-right"
-                  :class="[$v.form.$invalid ? 'deactivated' : '']"
+                  :class="[v$.form.$invalid ? 'deactivated' : '']"
                   @click="saveTemplate()"
                 >
                   Save Template
@@ -102,18 +102,18 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 
 export default {
   name: "SaveEnvironmentTemplate",
-  mixins: [validationMixin],
   props: {
     clusterName: String,
     templateClusterId: String,
   },
   data() {
     return {
+      v$: useVuelidate(),
       form: {
         name: "",
         description: "",

@@ -196,7 +196,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-overlay__content {
+:deep(.v-overlay__content) {
     width: 90%;
     max-width: 500px;
 

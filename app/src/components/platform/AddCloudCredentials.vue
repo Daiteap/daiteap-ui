@@ -93,8 +93,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 import CardTitle from "@/components/platform/CardTitle";
 import AddAwsAccount from "@/components/platform/addProviderCredentials/AddAwsAccount";
 import AddAzureAccount from "@/components/platform/addProviderCredentials/AddAzureAccount";
@@ -106,12 +106,12 @@ import WarningAlert from "@/components/platform/WarningAlert.vue";
 
 export default {
   name: "AddCloudCredentials",
-  mixins: [validationMixin],
   props: {
     projectParams: Object,
   },
   data() {
     return {
+      v$: useVuelidate(),
       allAccounts: [],
       aws: {
         label: "",
@@ -220,7 +220,7 @@ export default {
     window.intervals = [];
     window.intervals.push(self.interval);
     
-    this.$root.$on("accountSettingsChanged", () => {
+    this.emitter.on("accountSettingsChanged", () => {
       self.providers = [];
       if (!self.computed_account_settings) { 
         this.getAccountSettings();
@@ -300,7 +300,7 @@ export default {
       }
     });
 
-    self.$root.$emit('accountSettingsChanged', undefined);
+    self.emitter.emit('accountSettingsChanged', undefined);
   },
   methods: {
     azureAuth() {

@@ -17,10 +17,9 @@
             <i class="material-icons">keyboard_arrow_left</i>
           </div>
         </template>
-        <template v-for="(step, index) in steps">
+        <template v-for="(step, index) in steps" :key="index">
           <div
             :class="['step', isStepActive(index, step), 'next']"
-            :key="index"
             :style="{width: `${100 / steps.length}%`}"
           >
             <div class="circle">
@@ -86,13 +85,13 @@
     <div v-show="showStepper" :class="['bottom', (currentStep.index >= 0) ? '' : 'only-next']" style="padding: 0">
       <div v-if="currentStep.index > 0" class="stepper-button previous mr-5" @click="backStep()">
         <i class="material-icons">keyboard_arrow_left</i>
-        <span class="mr-2">{{ 'back' | translate(locale) }}</span>
+        <span class="mr-2">{{ 'Back' }}</span>
       </div>
       <div v-if="currentStep.index == 0" class="stepper-button previous mr-5" @click="$router.go(-1)">
         Cancel
       </div>
       <div :class="['stepper-button next', !canContinue || disableNextButton ? 'deactivated' : '']" class="ml-5" @click="nextStep()">
-        <span class="ml-2">{{ (finalStep) ? 'finish' : 'next' | translate(locale) }}</span>
+        <span class="ml-2">{{ (finalStep) ? 'Submit' : 'Next' }}</span>
         <i class="material-icons">keyboard_arrow_right</i>
       </div>
     </div>
@@ -108,11 +107,6 @@ export default {
   name: 'HorizontalStepper',
   components:{
     ShowErrorCreatingCluster
-  },
-  filters: {
-    translate: function (value, locale) {
-      return translations[locale][value];
-    }
   },
   props: {
     locale: {

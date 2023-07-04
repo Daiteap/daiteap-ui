@@ -1,9 +1,6 @@
 import {shallowMount} from "@vue/test-utils";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
-import BootstrapVue from "bootstrap-vue";
-import Vue from "vue";
-
-Vue.use(BootstrapVue);
+import {BootstrapVueNext} from "bootstrap-vue-next";
 
 describe("ValidateButton", () => {
   let wrapper;
@@ -22,11 +19,12 @@ describe("ValidateButton", () => {
         listOfAccountsInDeletion,
         updateStatus,
       },
+      global: {
+        plugins: [
+          BootstrapVueNext,
+        ],
+      },
     });
-  });
-
-  afterEach(() => {
-    wrapper.destroy();
   });
 
   it("renders the component", () => {

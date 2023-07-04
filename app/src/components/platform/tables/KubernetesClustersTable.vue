@@ -212,7 +212,7 @@
             <div v-else>---</div>
           </td>
           <td name="clustersHidePriority0">
-            {{ item.CreatedAt | formatDate }}
+            {{ FormatDateFilter(item.CreatedAt) }}
           </td>
           <td
             name="clustersHidePriority1"

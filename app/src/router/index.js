@@ -1,6 +1,6 @@
-import { DropdownPlugin } from "bootstrap-vue";
-import Vue from "vue";
-import Router from "vue-router";
+// import { DropdownPlugin } from "bootstrap-vue-next";
+// import Vue from "vue";
+import {createRouter, createWebHistory} from "vue-router";
 
 import Login from "@/components/platform/Login";
 import DaiteapWebLandingPage from "@/components/platform/DaiteapWebLandingPage";
@@ -18,7 +18,8 @@ import CreateCAPI from "@/components/platform/CreateCAPI";
 import CreateK3s from "@/components/platform/CreateK3s";
 import CreateVMs from "@/components/platform/CreateVMs";
 import AzureAdminConsent from "@/components/platform/oauth/AzureAdminConsent";
-import AzureGrantAdminConsent from "@/components/platform/oauth/AzureGrantAdminConsent";
+import AzureGrantAdminConsent
+  from "@/components/platform/oauth/AzureGrantAdminConsent";
 import AzureAuthorize from "@/components/platform/oauth/AzureAuthorize";
 import AzureCreateApp from "@/components/platform/oauth/AzureCreateApp";
 import GoogleProjects from "@/components/platform/oauth/GoogleProjects";
@@ -33,7 +34,8 @@ import Profile from "@/components/platform/Profile";
 import ReleaseNotes from "@/components/platform/ReleaseNotes";
 import SubmitCAPICluster from "@/components/platform/SubmitCAPICluster";
 import SubmitYaookCluster from "@/components/platform/SubmitYaookCluster";
-import SubmitKubernetesCluster from "@/components/platform/SubmitKubernetesCluster";
+import SubmitKubernetesCluster
+  from "@/components/platform/SubmitKubernetesCluster";
 import SubmitK3sCluster from "@/components/platform/SubmitK3sCluster";
 import AddCloudCredentials from "@/components/platform/AddCloudCredentials";
 import SubmitVMs from "@/components/platform/SubmitVMs";
@@ -49,12 +51,14 @@ import BucketDetails from "@/components/platform/storage/BucketDetails";
 import ResourceQuotas from "@/components/platform/ResourceQuotas";
 import Unsubscribe from "@/components/platform/email/Unsubscribe";
 import ClusterStatus from "@/components/platform/email/ClusterStatus";
+// import Layout from "@/views/Layout";
 
-const Layout = () => import('@/views/Layout');
+const Layout = () => import ('@/views/Layout');
 
-Vue.use(DropdownPlugin);
-Vue.use(Router);
-const router = new Router({
+// Vue.use(DropdownPlugin);
+// Vue.use(Router);
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       name: 'Login',
@@ -335,7 +339,7 @@ const router = new Router({
     },
 
     {
-      path: '*',
+      path: '/:catchAll(.*)',
       redirect: '/app/login',
     },
   ],
@@ -346,10 +350,10 @@ router.beforeEach((to, from, next) => {
     if (to.meta.isAuthenticated) {
       // Get the actual url of the app, it's needed for Keycloak
       const basePath = window.location.toString();
-      if (!Vue.$keycloak.authenticated) {
+      if (!this.$keycloak.authenticated) {
         // The page is protected and the user is not authenticated. Force a login.
-        Vue.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path });
-      } else if (Vue.$keycloak.hasResourceRole('vue-demo-user')) {
+        this.$keycloak.login({ redirectUri: basePath.slice(0, -1) + to.path });
+      } else if (this.$keycloak.hasResourceRole('vue-demo-user')) {
         // The user was authenticated, and has the app role (is authorized). Update the token.
         next();
       } else {

@@ -12,7 +12,7 @@
         ></b-form-textarea>
         <div
           class="help text-danger"
-          v-if="inputId === 'ssh-key' && !$v.value.isSSHFormatCorrect"
+          v-if="inputId === 'ssh-key' && !v$.value.isSSHFormatCorrect"
         >
           {{ errorMsg }}
         </div>
@@ -22,11 +22,10 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 
 export default {
   name: "TextAreaInput",
-  mixins: [validationMixin],
   validations: {
     value: {
       isSSHFormatCorrect(value) {
@@ -47,6 +46,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       valuecopy: "",
     };
   },

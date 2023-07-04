@@ -42,7 +42,7 @@
           type="text" />
       </div>
       <div class="">
-        <p v-if="azureSelected && bucketName != '' && $v.bucketName.$invalid" class="m-3 help text-danger">
+        <p v-if="azureSelected && bucketName != '' && v$.bucketName.$invalid" class="m-3 help text-danger">
           Invalid Container Name
         </p>
         <div v-else></div>
@@ -60,7 +60,7 @@
       </div>
       <div class="">
         <p
-          v-if="azureSelected && $v.description.$invalid"
+          v-if="azureSelected && v$.description.$invalid"
           class="m-3 help text-danger"
         >
           Invalid Description
@@ -100,13 +100,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength,
-  helpers,
-} from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { minLength, maxLength, helpers, required } from "@vuelidate/validators";
 
 const bucketNameValidation = function (value) {
   let previousDash = false;
@@ -137,6 +132,7 @@ export default {
   name: "AddAzureBucket",
   data() {
     return {
+      v$: useVuelidate(),
       credentials: [],
       credential_id: "",
       projects: [],
@@ -158,7 +154,7 @@ export default {
   },
   computed: {
     saveDeactivated() {
-      return this.$v.bucketName.$invalid || this.credential_id == '' || this.project_id == '' || this.storageAccount == '';
+      return this.v$.bucketName.$invalid || this.credential_id == '' || this.project_id == '' || this.storageAccount == '';
     }
   },
   methods: {
@@ -286,7 +282,6 @@ export default {
       }
     },
   },
-  mixins: [validationMixin],
   validations: {
     bucketName: {
       required,

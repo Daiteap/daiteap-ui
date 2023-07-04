@@ -22,13 +22,13 @@
 
               <div>
                 <p
-                  v-if="!$v.currentTemplate.name.maxLength"
+                  v-if="!v$.currentTemplate.name.maxLength"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   Invalid Template Name
                 </p>
                 <p
-                  v-else-if="nameResolved && !$v.currentTemplate.name.isNameFree && currentTemplate.name != ''"
+                  v-else-if="nameResolved && !v$.currentTemplate.name.isNameFree && currentTemplate.name != ''"
                   class="help text-danger" style="height: 1.2rem"
                 >
                   {{ nameTakenMsg }}
@@ -53,7 +53,7 @@
                   id="description"
                 ></b-form-textarea>
               </div>
-              <div v-if="$v.currentTemplate.description.$invalid">
+              <div v-if="v$.currentTemplate.description.$invalid">
                 <p class="help text-danger">
                   Invalid Template Description
                 </p>
@@ -67,7 +67,7 @@
             <div>
               <div
                 class="custom-button float-right"
-                :class="[$v.currentTemplate.$invalid ? 'deactivated' : '']"
+                :class="[v$.currentTemplate.$invalid ? 'deactivated' : '']"
                 @click="submitChanges()"
               >
                 Save
@@ -87,14 +87,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 
 export default {
   name: 'EditTemplatePopup',
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       template: {},
       nameResolved: true,
       nameTakenMsg: "This template name is taken",

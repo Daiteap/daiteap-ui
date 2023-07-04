@@ -102,7 +102,7 @@
             <div class="">
               <input required autocomplete="off" v-model="google.label" class="form-control" :class="[
                 'input',
-                $v.google.label.$invalid && !labelInFocus ? 'is-danger' : '',
+                v$.google.label.$invalid && !labelInFocus ? 'is-danger' : '',
               ]" type="text" id="googleLabel" @focus="labelInFocus = true" @blur="labelInFocus = false"
                 data-test-id="input-label" />
             </div>
@@ -112,7 +112,7 @@
               " class="help text-danger">
                 Cloud Credentials name already taken
               </p>
-              <p v-else-if="google.label != '' && !$v.google.label.and" class="help text-danger">
+              <p v-else-if="google.label != '' && !v$.google.label.and" class="help text-danger">
                 This Cloud Credentials name is not valid
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -133,7 +133,7 @@
               ></b-form-textarea>
             </div>
             <div class="">
-              <p v-if="$v.google.description.$invalid" class="help text-danger">
+              <p v-if="v$.google.description.$invalid" class="help text-danger">
                 Invalid Cloud Credentials Description
               </p>
               <div v-else style="height: 1.375rem"></div>
@@ -149,7 +149,7 @@
             </div>
             <div>
               <div class="">
-                <p v-if="google.google_key != '' && $v.google.google_key.$invalid" class="help text-danger">
+                <p v-if="google.google_key != '' && v$.google.google_key.$invalid" class="help text-danger">
                   Please provide a valid Secret Key
                 </p>
                 <div v-else style="height: 1.375rem"></div>
@@ -170,7 +170,7 @@
 
           <div class="form-group">
             <div class="">
-              <div class="custom-button float-right ml-5" :class="[$v.google.$invalid || loading ? 'deactivated' : '']"
+              <div class="custom-button float-right ml-5" :class="[v$.google.$invalid || loading ? 'deactivated' : '']"
                 @click="submitNewAccountDetails()" data-test-id="input-save">
                 Save
               </div>
@@ -186,8 +186,8 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, and, minLength, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { and, minLength, maxLength, required } from "@vuelidate/validators";
 
 function isValidGoogleKey(str) {
   if (!str) {
@@ -220,9 +220,9 @@ export default {
     loading: Boolean,
     allCurrentLabels: Array,
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
       labelInFocus: false,
       serviceAccounttKeyInFocus: false,
       google: {
@@ -278,7 +278,7 @@ export default {
       this.$bvModal.hide("bv-modal-addgoogleaccount");
       this.showHelp = false;
       this.$nextTick(() => {
-        this.$v.$reset();
+        this.v$.$reset();
       });
       this.$router.push({ name: "CloudProfile" });
     },

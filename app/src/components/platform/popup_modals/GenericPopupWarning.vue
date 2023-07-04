@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
+import {useVuelidate} from "@vuelidate/core";
 
 export default {
   name: 'GenericPopupWarning',
@@ -42,9 +42,9 @@ export default {
       default: "bv-modal-removeuserwarning"
     }
   },
-  mixins: [validationMixin],
   data() {
     return {
+      v$: useVuelidate(),
     };
   },
   mounted() {

@@ -1,19 +1,19 @@
-import {mount} from "@vue/test-utils";
-import Vue from "vue";
+import {mount, config} from "@vue/test-utils";
+import {nextTick} from "vue";
 import axios from "axios";
-import VueAxios from "vue-axios";
+// import VueAxios from "vue-axios";
 import CloudProfile from "@/components/platform/CloudProfile.vue";
 import CloudProfileTable
   from "@/components/platform/tables/CloudProfileTable.vue";
 import RemoveAccountButton from "@/components/platform/RemoveAccountButton.vue";
 import ValidateButton from "@/components/platform/ValidateButton.vue";
 import {BootstrapVue} from "bootstrap-vue";
-import Notifications from "vue-notification";
+import Notifications from "@kyvg/vue3-notification";
 
-Vue.config.silent = true;
-Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.use(Notifications);
+config.silent = true;
+// Vue.use(VueAxios, axios);
+// Vue.use(BootstrapVue);
+// Vue.use(Notifications);
 
 describe("Cloud Credentials", () => {
   const mockedGetResponse = {
@@ -126,7 +126,7 @@ describe("Cloud Credentials", () => {
       },
     });
 
-    await Vue.nextTick();
+    await nextTick();
     table = wrapper.findComponent(CloudProfileTable);
   });
 
@@ -145,7 +145,8 @@ describe("Cloud Credentials", () => {
     };
 
     let cells = table.findAll("[data-test-id=\"table\"]").at(0).findAll("td");
-    let date = Date.parse(mockedGetResponse.data.credentials[0].created_at.replace(" ", "T"));
+    let date = Date.parse(
+      mockedGetResponse.data.credentials[0].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[0].label);
@@ -157,7 +158,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[0].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(1).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[1].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[1].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[1].label);
@@ -169,7 +171,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[1].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(2).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[2].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[2].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[2].label);
@@ -181,7 +184,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[2].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(3).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[3].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[3].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[3].label);
@@ -193,7 +197,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[3].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(4).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[4].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[4].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[4].label);
@@ -205,7 +210,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[4].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(5).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[5].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[5].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[5].label);
@@ -217,7 +223,8 @@ describe("Cloud Credentials", () => {
       .toEqual(mockedGetResponse.data.credentials[5].contact);
 
     cells = table.findAll("[data-test-id=\"table\"]").at(6).findAll("td");
-    date = Date.parse(mockedGetResponse.data.credentials[6].created_at.replace(" ", "T"));
+    date = Date.parse(
+      mockedGetResponse.data.credentials[6].created_at.replace(" ", "T"));
     date = new Date(date).toLocaleString("en-US", options);
     expect(cells.at(0).text())
       .toEqual(mockedGetResponse.data.credentials[6].label);
@@ -232,18 +239,20 @@ describe("Cloud Credentials", () => {
   test("removes credentials correctly", async () => {
     jest.spyOn(axios, "post").mockResolvedValue();
 
-    const deleteButton = table.findComponent(RemoveAccountButton).find("[data-test-id=\"remove-button\"]");
+    const deleteButton = table.findComponent(RemoveAccountButton)
+      .find("[data-test-id=\"remove-button\"]");
     const popup = wrapper.find("#bv-modal-removeaccountwarning");
     const confirmDeleteButton = popup.find("[data-test-id=\"confirm-remove\"]");
 
     expect(popup.isVisible()).toBe(false);
     deleteButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(popup.isVisible()).toBe(true);
 
-    expect(popup.find("[data-test-id=\"label-to-remove\"]").text()).toBe("openstack-1");
+    expect(popup.find("[data-test-id=\"label-to-remove\"]").text())
+      .toBe("openstack-1");
     confirmDeleteButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(popup.isVisible()).toBe(false);
   });
 
@@ -267,16 +276,17 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-success");
 
     expect(buttonComponent.vm.validationStatus).toBe(true);
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
+    const alert = buttonComponent.vm.alerts.find(
+      (alert) => alert.label === buttonComponent.vm.account.label);
     expect(alert.show).toBe(false);
   });
 
@@ -297,116 +307,123 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
     expect(buttonComponent.vm.validationStatus).toBe("error");
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
+    const alert = buttonComponent.vm.alerts.find(
+      (alert) => alert.label === buttonComponent.vm.account.label);
     expect(alert.show).toBe(true);
   });
 
-  test("status check fails if capi images are false when capi is on", async () => {
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        error: true,
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": false,
-          "yaookCapiImages": true,
-          "externalNetwork": true,
-        },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-
-    const validateButton = table.find("[data-test-id=\"validate-button\"]");
-    const buttonComponent = table.findComponent(ValidateButton);
-    const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
-
-    validateButton.trigger("click");
-    await Vue.nextTick();
-    expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
-    expect(icon.attributes().class)
-      .toBe("circle-loader load-complete load-failure");
-
-    expect(buttonComponent.vm.validationStatus).toBe("error");
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
-    expect(alert.show).toBe(true);
-  });
-
-  test("status check passes if capi images are false when capi is off", async () => {
-    wrapper = mount(CloudProfile, {
-      data() {
-        return {
-          computed_theme: "daiteap",
-          get_axiosConfig: () => {
-            return {};
+  test(
+    "status check fails if capi images are false when capi is on",
+    async () => {
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          error: true,
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": false,
+            "yaookCapiImages": true,
+            "externalNetwork": true,
           },
-          computed_account_settings: {
-            enable_kubernetes_capi: false,
-          },
-        };
-      },
-      mocks: {
-        computed_userInfo: {
-          id: 1,
-          image: "",
-          news_subscribbed: null,
-          username: "testUser",
         },
-        getCredentials: function() {
-          return mockedGetResponse.data.credentials;
-        },
-      },
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+
+      const validateButton = table.find("[data-test-id=\"validate-button\"]");
+      const buttonComponent = table.findComponent(ValidateButton);
+      const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
+
+      validateButton.trigger("click");
+      await nextTick();
+      expect(icon.attributes().class).toBe("circle-loader");
+      await nextTick();
+      await nextTick();
+      await nextTick();
+      expect(icon.attributes().class)
+        .toBe("circle-loader load-complete load-failure");
+
+      expect(buttonComponent.vm.validationStatus).toBe("error");
+      const alert = buttonComponent.vm.alerts.find(
+        (alert) => alert.label === buttonComponent.vm.account.label);
+      expect(alert.show).toBe(true);
     });
 
-    await Vue.nextTick();
-    table = wrapper.findComponent(CloudProfileTable);
-
-    const mockedPostResponse = {
-      data: {
-        taskId: 0,
-        status: "ok",
-        errorMessage: "",
-        lcmStatuses: {
-          "dlcmV2Images": true,
-          "capiImages": false,
-          "yaookCapiImages": true,
-          "externalNetwork": true,
+  test(
+    "status check passes if capi images are false when capi is off",
+    async () => {
+      wrapper = mount(CloudProfile, {
+        data() {
+          return {
+            computed_theme: "daiteap",
+            get_axiosConfig: () => {
+              return {};
+            },
+            computed_account_settings: {
+              enable_kubernetes_capi: false,
+            },
+          };
         },
-      },
-    };
-    jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
-    jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
+        mocks: {
+          computed_userInfo: {
+            id: 1,
+            image: "",
+            news_subscribbed: null,
+            username: "testUser",
+          },
+          getCredentials: function() {
+            return mockedGetResponse.data.credentials;
+          },
+        },
+      });
 
-    const validateButton = table.find("[data-test-id=\"validate-button\"]");
-    const buttonComponent = table.findComponent(ValidateButton);
-    const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
+      await nextTick();
+      table = wrapper.findComponent(CloudProfileTable);
 
-    validateButton.trigger("click");
-    await Vue.nextTick();
-    expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
-    expect(icon.attributes().class)
-      .toBe("circle-loader load-complete load-success");
+      const mockedPostResponse = {
+        data: {
+          taskId: 0,
+          status: "ok",
+          errorMessage: "",
+          lcmStatuses: {
+            "dlcmV2Images": true,
+            "capiImages": false,
+            "yaookCapiImages": true,
+            "externalNetwork": true,
+          },
+        },
+      };
+      jest.spyOn(axios, "post").mockResolvedValue(mockedPostResponse);
+      jest.spyOn(axios, "get").mockResolvedValue(mockedPostResponse);
 
-    expect(buttonComponent.vm.validationStatus).toBe(true);
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
-    expect(alert.show).toBe(false);
-  });
+      const validateButton = table.find("[data-test-id=\"validate-button\"]");
+      const buttonComponent = table.findComponent(ValidateButton);
+      const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
+
+      validateButton.trigger("click");
+      await nextTick();
+      expect(icon.attributes().class).toBe("circle-loader");
+      await nextTick();
+      await nextTick();
+      await nextTick();
+      expect(icon.attributes().class)
+        .toBe("circle-loader load-complete load-success");
+
+      expect(buttonComponent.vm.validationStatus).toBe(true);
+      const alert = buttonComponent.vm.alerts.find(
+        (alert) => alert.label === buttonComponent.vm.account.label);
+      expect(alert.show).toBe(false);
+    });
 
   test("status check fails if dlcmv2 images are false", async () => {
     const mockedPostResponse = {
@@ -431,16 +448,17 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
     expect(buttonComponent.vm.validationStatus).toBe("error");
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
+    const alert = buttonComponent.vm.alerts.find(
+      (alert) => alert.label === buttonComponent.vm.account.label);
     expect(alert.show).toBe(true);
   });
 
@@ -467,16 +485,17 @@ describe("Cloud Credentials", () => {
     const icon = buttonComponent.find("[data-test-id=\"status-icon\"]");
 
     validateButton.trigger("click");
-    await Vue.nextTick();
+    await nextTick();
     expect(icon.attributes().class).toBe("circle-loader");
-    await Vue.nextTick();
-    await Vue.nextTick();
-    await Vue.nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(icon.attributes().class)
       .toBe("circle-loader load-complete load-failure");
 
     expect(buttonComponent.vm.validationStatus).toBe("error");
-    const alert = buttonComponent.vm.alerts.find((alert) => alert.label === buttonComponent.vm.account.label);
+    const alert = buttonComponent.vm.alerts.find(
+      (alert) => alert.label === buttonComponent.vm.account.label);
     expect(alert.show).toBe(true);
   });
 });

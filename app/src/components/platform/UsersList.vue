@@ -72,6 +72,7 @@ export default {
   },
   data() {
     return {
+      tenantObject: {},
       errorMsg: undefined,
       loading: true,
       deleteDialogParams: {
@@ -99,14 +100,18 @@ export default {
     };
   },
   created() {
-    this.axios
-      .get(
-        "/server/tenants/" + this.computed_active_tenant_id,
-        this.get_axiosConfig()
-      )
-      .then((response) => {
-        this.tenant = response.data;
-      });
+    if (this.tenant){
+      this.tenantObject = this.tenant;
+    } else {
+      this.axios
+        .get(
+          "/server/tenants/" + this.computed_active_tenant_id,
+          this.get_axiosConfig()
+        )
+        .then((response) => {
+          this.tenantObject = response.data;
+        });
+    }
 
     this.getUsersList();
   },
@@ -130,12 +135,12 @@ export default {
       this.$router.push({
         name: "SelectNewUser",
         params: {
-          tenant: this.tenant
+          tenant: this.tenantObject
         },
       });
     },
     deleteAllUsers() {
-      let token = this.$session.get("token");
+      let token = sessionStorage.getItem("token");
       let base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
       let jsonPayload = decodeURIComponent(
         atob(base64)

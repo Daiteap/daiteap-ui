@@ -152,8 +152,8 @@
 
 <script>
 import CreateEnvironmentFromTemplate from "./CreateEnvironmentFromTemplate";
-import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import {useVuelidate} from "@vuelidate/core";
+import { maxLength, required } from "@vuelidate/validators";
 import QuotaExceededModal from "@/components/platform/popup_modals/QuotaExceededModal";
 import K3sClusterStepper from "@/components/platform/K3sClusterStepper";
 import CAPIStepper from "@/components/platform/CAPIStepper";
@@ -164,7 +164,6 @@ import Vue from "vue";
 
 export default {
   name: "CreateCluster",
-  mixins: [validationMixin],
   components: {
     QuotaExceededModal,
     K3sClusterStepper,
@@ -176,6 +175,7 @@ export default {
   },
   data() {
     return {
+      v$: useVuelidate(),
       templateNamesList: [],
       showClusterDetails: true,
       form: {
