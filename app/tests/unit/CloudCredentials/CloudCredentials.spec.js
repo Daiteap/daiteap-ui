@@ -1,7 +1,7 @@
 import {mount, config} from "@vue/test-utils";
 import {nextTick} from "vue";
 import axios from "axios";
-import VueAxios from "vue-axios";
+// import VueAxios from "vue-axios";
 import CloudProfile from "@/components/platform/CloudProfile.vue";
 import CloudProfileTable
   from "@/components/platform/tables/CloudProfileTable.vue";

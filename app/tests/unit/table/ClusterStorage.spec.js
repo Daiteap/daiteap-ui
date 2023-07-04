@@ -1,11 +1,11 @@
-import {shallowMount} from "@vue/test-utils";
+import {shallowMount, config} from "@vue/test-utils";
 import ClusterStorage from "@/components/platform/tables/ClusterStorage.vue";
 import {
-  BootstrapVue,
-} from "bootstrap-vue";
-import Vue from "vue";
+  BootstrapVueNext,
+} from "bootstrap-vue-next";
+import {nextTick} from "vue";
 
-Vue.use(BootstrapVue);
+config.silent = true;
 
 describe("ClusterStorage", () => {
   let wrapper;
@@ -26,37 +26,36 @@ describe("ClusterStorage", () => {
           get_axiosConfig: () => {
             return {};
           },
+          axios: {
+            get: jest.fn(() =>
+              Promise.resolve({
+                data: {
+                  nodes: [
+                    {
+                      name: "testnode1",
+                      type: "worker",
+                      storageMaximum: 1000000000,
+                      storageAvailable: 500000000,
+                    },
+                    {
+                      name: "testnode2",
+                      type: "worker",
+                      storageMaximum: 2000000000,
+                      storageAvailable: 1000000000,
+                    },
+                  ],
+                },
+              }),
+            ),
+          },
         };
       },
-      mocks: {
-        axios: {
-          get: jest.fn(() =>
-            Promise.resolve({
-              data: {
-                nodes: [
-                  {
-                    name: "testnode1",
-                    type: "worker",
-                    storageMaximum: 1000000000,
-                    storageAvailable: 500000000,
-                  },
-                  {
-                    name: "testnode2",
-                    type: "worker",
-                    storageMaximum: 2000000000,
-                    storageAvailable: 1000000000,
-                  },
-                ],
-              },
-            }),
-          ),
-        },
+      global: {
+        plugins: [
+          BootstrapVueNext,
+        ],
       },
     });
-  });
-
-  afterEach(() => {
-    wrapper.destroy();
   });
 
   it("renders the component", () => {
@@ -94,7 +93,7 @@ describe("ClusterStorage", () => {
       showStorage: true,
     });
 
-    await wrapper.vm.$nextTick();
+    await nextTick();
 
     const node1Name = wrapper.findAll(".node-name").at(0).text();
     const node1Type = wrapper
@@ -147,7 +146,7 @@ describe("ClusterStorage", () => {
     async () => {
       wrapper.setData({showStorage: false, loadingTable: false});
 
-      await wrapper.vm.$nextTick();
+      await nextTick();
 
       const message = wrapper.find("div.justify-content-center");
 

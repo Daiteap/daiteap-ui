@@ -1,8 +1,7 @@
-import {shallowMount} from "@vue/test-utils";
+import {shallowMount, config} from "@vue/test-utils";
 import AddButton from "@/components/platform/AddButton.vue";
-import Vue from "vue";
 
-Vue.config.silent = true;
+config.silent = true;
 
 describe("AddButton.vue", () => {
   it("renders the correct text", () => {
