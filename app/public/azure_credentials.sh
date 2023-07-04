@@ -4,10 +4,10 @@ set -e
 
 # List the Subscription ID
 SUBSCRIPTION=$(az account show)
-SUBSCRIPTION_ID=$(echo $SUBSCRIPTION | jq -r .id)
+SUBSCRIPTION_ID=$(echo "${SUBSCRIPTION}" | jq -r .id)
 
 # List Tenant ID
-TENANT_ID=$(echo $SUBSCRIPTION | jq -r .tenantId)
+TENANT_ID=$(echo "${SUBSCRIPTION}" | jq -r .tenantId)
 
 # Define your role JSON as a string
 ROLE_JSON='{
@@ -132,7 +132,7 @@ ROLE_JSON='{
     ],
     "NotActions": [],
     "AssignableScopes": [
-        "/subscriptions/'$SUBSCRIPTION_ID'"
+        "/subscriptions/'${SUBSCRIPTION_ID}'"
     ],
     "DataActions": [
         "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete",
@@ -145,12 +145,12 @@ ROLE_JSON='{
 }'
 
 # Create a file for the role definition
-echo $ROLE_JSON > role.json
+echo "${ROLE_JSON}" > role.json
 
 # Create a custom role from the role definition file, update if it already exists
 ROLE=$(az role definition create --role-definition @role.json || true)
 
-if [ -z "$ROLE" ]; then
+if [[ -z "${ROLE}" ]]; then
     echo "Updating existing role"
     ROLE=$(az role definition update --role-definition @role.json)
 else
@@ -160,34 +160,34 @@ fi
 ROLE=$(az role definition list --name DaiteapRole)
 
 # Get role ID
-ROLE_ID=$(echo $ROLE | jq -r .[0].id)
+ROLE_ID=$(echo "${ROLE}" | jq -r .[0].id)
 
 # Get the username of the logged in user
 USERNAME=$(az account show --query user.name -o tsv)
 
 # Create a service principal and capture the output
 
-SP=$(az ad sp create-for-rbac --name daiteap-$USERNAME --role $ROLE_ID --scopes /subscriptions/$SUBSCRIPTION_ID --sdk-auth)
+SP=$(az ad sp create-for-rbac --name daiteap-"${USERNAME}" --role "${ROLE_ID}" --scopes /subscriptions/"${SUBSCRIPTION_ID}" --sdk-auth)
 
 # Extract Client ID and Client Secret from the service principal output
-CLIENT_ID=$(echo $SP | jq -r .clientId)
-CLIENT_SECRET=$(echo $SP | jq -r .clientSecret)
+CLIENT_ID=$(echo "${SP}" | jq -r .clientId)
+CLIENT_SECRET=$(echo "${SP}" | jq -r .clientSecret)
 
 # Add Directory.Read.All permission to the app registration
 echo "Adding Directory.Read.All permission to the app registration"
-az ad app permission add --id $CLIENT_ID --api 00000003-0000-0000-c000-000000000000 --api-permissions 7ab1d382-f21e-4acd-a863-ba3e13f7da61=Role
+az ad app permission add --id "${CLIENT_ID}" --api 00000003-0000-0000-c000-000000000000 --api-permissions 7ab1d382-f21e-4acd-a863-ba3e13f7da61=Role
 
 echo "Granting admin consent for Directory.Read.All permission"
-az ad app permission admin-consent --id $CLIENT_ID
+az ad app permission admin-consent --id "${CLIENT_ID}"
 
 echo ""
 echo ""
 echo ""
 
-echo "Tenant ID: $TENANT_ID"
-echo "Subscription ID: $SUBSCRIPTION_ID"
-echo "Client ID: $CLIENT_ID"
-echo "Client Secret: $CLIENT_SECRET"
+echo "Tenant ID: ${TENANT_ID}"
+echo "Subscription ID: ${SUBSCRIPTION_ID}"
+echo "Client ID: ${CLIENT_ID}"
+echo "Client Secret: ${CLIENT_SECRET}"
 
 # Clean up role definition file
 rm ./role.json
