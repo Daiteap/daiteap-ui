@@ -82,6 +82,8 @@ To create cloud credential for `Microsoft Azure` you will need to know the follo
 
 #### Create Credentials Using Script
 
+> **_NOTE:_** User needs to have admin rights to create the credentials using the script.
+
 * Navigate to the <a href="https://portal.azure.com/" target="_blank">Azure Portal</a>
 * From the top right corner of the Azure Portal, click on the profile icon and select Switch Directory
 * Select the directory you want to use, by clicking on **Switch**

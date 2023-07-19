@@ -25,6 +25,7 @@
             <hr />
             </p>
             <h4>Create Credentials Using Script</h4>
+            <b>NOTE:</b> User needs to have admin rights to create the credentials using the script.
             <p style="margin-left: 40px;">
             <ol>
               <li>Navigate to the <a href="https://portal.azure.com" target="_blank">Azure Portal</a></li>
