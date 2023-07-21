@@ -9,62 +9,59 @@ used to interact with the daiteap platform.
 
 ![Daiteap Console](./img/Console_Start_Screen_GitHub_small.png)
 
-## Start UI
+## Development Environment
 
-- Clone the repo:
+### Start Devcontainer
+
+There are 2 ways to start the devcontainer
+
+From VS Code:
+
+- Install Dev Containers extension in VS Code
+- From Remote Explorer tab -> Dev Containers -> + New Dev Container
+  -> Open Current Folder in Container
+
+From Terminal:
+
+- Install `devcontainers`
+- Execute
 
 ```bash
-git clone https://github.com/Daiteap/daiteap-ui.git
+# start devcontainer
+devcontainer up --workspace-folder .
+# start vscode
+code .
 ```
 
-- Enter `app` directory:
+- Attach VSCode to the running devcontainer
+
+Once the devcontainer is created this script `.devcontainer/buils-ui.sh` is executed
+automatically, wait for it to complete - you can see the progress
+in the terminal, inside the devcontainer
+
+### Configuration (execute the commands inside the devcontainer)
+
+- Change the adresses in `app/nginx/dev.conf`,
+  then execute these commands to setup Nginx config and restart Nginx service:
 
 ```bash
-cd ./daiteap-ui/app
-```
-
-- Install requirements:
-
-```bash
-sudo rm -r -f node_modules/
-sudo rm package-lock.json
-sudo apt install npm nginx -y
-sudo npm install -g @vue/cli
-sudo npm uninstall node-sass -g && npm cache clean --force && npm install node-sass
-npm install
-```
-
-- Build UI:
-
-```bash
-export VUE_APP_THEME=daiteap
-export VUE_APP_SINGLE_USER_MODE=False
-npm run build -- --modern
-```
-
-- Change the adresses in `app/nginx/dev.conf`
-
-- Setup Nginx config and restart Nginx service:
-
-```bash
-sudo cp ./nginx/dev.conf etc/nginx/sites-enabled/cloudcluster.conf
+sudo cp app/nginx/dev.conf /etc/nginx/sites-enabled/cloudcluster.conf
 sudo service nginx restart
 ```
 
 - Edit `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
 
-- Run UI:
+### Run UI (execute the commands inside the devcontainer)
 
 ```bash
+cd app
 export VUE_APP_THEME=daiteap
 export VUE_APP_SINGLE_USER_MODE=False
 npm run serve -- --port 8084
 ```
 
-## Build Documentation Pages
+### Build & Run Docs (execute the commands inside the devcontainer)
 
 ```bash
-cp ./public/favicon-daiteap.ico ./docs/docs/img/favicon.ico
-mkdocs build -f ./docs/mkdocs.yaml --site-dir ../public/documentation
-mkdocs serve --config-file ./docs/mkdocs.yaml -a localhost:8085
+./.devcontainer/docs.sh
 ```
