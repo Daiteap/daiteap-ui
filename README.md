@@ -60,6 +60,17 @@ export VUE_APP_SINGLE_USER_MODE=False
 npm run serve -- --port 8084
 ```
 
+The UI should run on port 8090 but if that port is already in use on your machine,
+check where the app is actually forwarded, in VSCode,
+at the bottom of the window, next to "Dev Container: Daiteap UI",
+click on the "Forwarded Ports" symbol and see the `Local Address` for port 8090
+
+Use this address in Keycloak,
+by changing the URL settings of `app-vue` and `django-backend` clients
+
+If you're using Telepresence to connect this UI to a cluster
+use the port in `Local Address` for local port in the Telepresence command
+
 ### Build & Run Docs (execute the commands inside the devcontainer)
 
 ```bash
