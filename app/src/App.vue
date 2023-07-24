@@ -26,7 +26,6 @@ export default {
       this.registerUser();
     } else {
       this.getActiveTenants();
-      this.getUserInfo();
     }
 
     setTimeout(() => {
@@ -590,6 +589,7 @@ Vue.mixin({
             self.hasMultipleTenants = true;
           }
           self.$store.commit("updateActiveTenant", response.data.selectedTenant);
+          self.getUserInfo();
         })
         .catch(function (error) {
           self.handleRequestError(error, "Error while getting active tenants!");
