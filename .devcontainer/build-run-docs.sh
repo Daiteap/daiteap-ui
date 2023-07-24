@@ -10,7 +10,7 @@ sudo apt install mkdocs -y
 echo --- Build Documentation ---
 
 cp app/public/favicon-daiteap.ico app/docs/docs/img/favicon.ico
-mkdocs build -f app/docs/mkdocs.yaml --site-dir public/documentation
+mkdocs build -f app/docs/mkdocs.yaml
 
 echo --- Run Docs ---
 

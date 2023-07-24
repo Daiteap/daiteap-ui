@@ -74,5 +74,5 @@ use the port in `Local Address` for local port in the Telepresence command
 ### Build & Run Docs (execute the commands inside the devcontainer)
 
 ```bash
-./.devcontainer/docs.sh
+./.devcontainer/build-run-docs.sh
 ```
