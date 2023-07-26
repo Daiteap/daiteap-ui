@@ -9,62 +9,92 @@ used to interact with the daiteap platform.
 
 ![Daiteap Console](./img/Console_Start_Screen_GitHub_small.png)
 
-## Start UI
+## Development Environment
 
-- Clone the repo:
+### Start Devcontainer
+
+There are 2 ways to start the devcontainer
+
+From VS Code:
+
+- Install Dev Containers extension in VS Code
+- From Remote Explorer tab -> Dev Containers -> + New Dev Container
+  -> Open Current Folder in Container
+
+From Terminal:
+
+- Install `devcontainers`
+- Execute
 
 ```bash
-git clone https://github.com/Daiteap/daiteap-ui.git
+# start devcontainer
+devcontainer up --workspace-folder .
+# start vscode
+code .
 ```
 
-- Enter `app` directory:
+- Attach VSCode to the running devcontainer
+
+Once the devcontainer is created, this script `.devcontainer/buils-ui.sh`,
+which install the necessary dependencies for the UI, is executed automatically,
+wait for it to complete - you can see the progress in the terminal, inside the devcontainer.
+
+If the script fails with this error - `Restarting nginx: nginx. failed`,
+change the `listen` port in `app/nginx/dev.conf`.
+
+### Changing Ports
+
+By default these ports are used:
+
+- UI -> 8095
+- Docs -> 8085
+
+If any of these ports are already in use on your machine,
+go through the scripts mentioned below and `app/nginx/dev.conf`
+and change the ports to the ones you want to use.
+
+### Configuration
+
+To be able to use the platform fully you need to have the devcontainer
+from the `daiteap-platform` repository running as well.
+
+- Use the Keycloak address from `daiteap-platform` devcontainer
+  (default <http://127.0.0.1:8082/auth/>) to change
+  `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
+
+- From your machine connect to the cluster in `daiteap-platform` devcontainer
+  and port-forward the `platform-api` service with this command
+  (replace `local_port` with the port you want to use
+  and use that same port in `app/nginx/dev.conf` at `location /server/`):
 
 ```bash
-cd ./daiteap-ui/app
+kubectl -n daiteap port-forward service/platform-api local_port:8080
 ```
 
-- Install requirements:
+- Execute these commands, inside the `daiteap-ui` devcontainer,
+  to setup Nginx config and restart Nginx service:
 
 ```bash
-sudo rm -r -f node_modules/
-sudo rm package-lock.json
-sudo apt install npm nginx -y
-sudo npm install -g @vue/cli
-sudo npm uninstall node-sass -g && npm cache clean --force && npm install node-sass
-npm install
-```
-
-- Build UI:
-
-```bash
-export VUE_APP_THEME=daiteap
-export VUE_APP_SINGLE_USER_MODE=False
-npm run build -- --modern
-```
-
-- Change the adresses in `app/nginx/dev.conf`
-
-- Setup Nginx config and restart Nginx service:
-
-```bash
-sudo cp ./nginx/dev.conf etc/nginx/sites-enabled/cloudcluster.conf
+sudo cp app/nginx/dev.conf /etc/nginx/sites-enabled/cloudcluster.conf
 sudo service nginx restart
 ```
 
-- Edit `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
-
-- Run UI:
+### Run UI (execute the commands inside the `daiteap-ui` devcontainer)
 
 ```bash
+cd app
 export VUE_APP_THEME=daiteap
 export VUE_APP_SINGLE_USER_MODE=False
 npm run serve -- --port 8084
 ```
 
-## Build Documentation Pages
+Access the UI on <http://localhost:8095/>.
+
+Use this address in Keycloak,
+by changing the URL settings of `app-vue` and `django-backend` clients.
+
+### Build & Run Docs (execute the commands inside the devcontainer)
 
 ```bash
-cp ./public/favicon-daiteap.ico ./docs/docs/img/favicon.ico
-mkdocs build -f ./docs/mkdocs.yaml --site-dir ../public/documentation
-mkdocs serve --config-file ./docs/mkdocs.yaml -a localhost:8085
+./.devcontainer/build-run-docs.sh
 ```
