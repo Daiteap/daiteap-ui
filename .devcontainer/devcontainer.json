@@ -15,12 +15,7 @@
 	// 		"extensions": []
 	// 	}
 	// },
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		8084,
-		8085,
-		8090
-	],
+	"runArgs": ["--network=host"],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "./.devcontainer/build-ui.sh"
 }

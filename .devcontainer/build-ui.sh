@@ -16,6 +16,8 @@ echo --- Install Nginx ---
 
 sudo apt update
 sudo apt install nginx -y
+sudo rm /etc/nginx/sites-enabled/default
+sudo cp nginx/dev.conf /etc/nginx/sites-enabled/cloudcluster.conf
 sudo service nginx restart
 
 echo --- Remove Files From Previous Installations ---

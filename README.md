@@ -35,23 +35,51 @@ code .
 
 - Attach VSCode to the running devcontainer
 
-Once the devcontainer is created this script `.devcontainer/buils-ui.sh` is executed
-automatically, wait for it to complete - you can see the progress
-in the terminal, inside the devcontainer
+Once the devcontainer is created, this script `.devcontainer/buils-ui.sh`,
+which install the necessary dependencies for the UI, is executed automatically,
+wait for it to complete - you can see the progress in the terminal, inside the devcontainer.
 
-### Configuration (execute the commands inside the devcontainer)
+If the script fails with this error - `Restarting nginx: nginx. failed`,
+change the `listen` port in `app/nginx/dev.conf`.
 
-- Change the adresses in `app/nginx/dev.conf`,
-  then execute these commands to setup Nginx config and restart Nginx service:
+### Changing Ports
+
+By default these ports are used:
+
+- UI -> 8095
+- Docs -> 8085
+
+If any of these ports are already in use on your machine,
+go through the scripts mentioned below and `app/nginx/dev.conf`
+and change the ports to the ones you want to use.
+
+### Configuration
+
+To be able to use the platform fully you need to have the devcontainer
+from the `daiteap-platform` repository running as well.
+
+- Use the Keycloak address from `daiteap-platform` devcontainer
+  (default <http://127.0.0.1:8082/auth/>) to change
+  `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
+
+- From your machine connect to the cluster in `daiteap-platform` devcontainer
+  and port-forward the `platform-api` service with this command
+  (replace `local_port` with the port you want to use
+  and use that same port in `app/nginx/dev.conf` at `location /server/`):
+
+```bash
+kubectl -n daiteap port-forward service/platform-api local_port:8080
+```
+
+- Execute these commands, inside the `daiteap-ui` devcontainer,
+  to setup Nginx config and restart Nginx service:
 
 ```bash
 sudo cp app/nginx/dev.conf /etc/nginx/sites-enabled/cloudcluster.conf
 sudo service nginx restart
 ```
 
-- Edit `auth-server-url` in `daiteap-ui/app/public/keycloak.json`
-
-### Run UI (execute the commands inside the devcontainer)
+### Run UI (execute the commands inside the `daiteap-ui` devcontainer)
 
 ```bash
 cd app
@@ -60,16 +88,10 @@ export VUE_APP_SINGLE_USER_MODE=False
 npm run serve -- --port 8084
 ```
 
-The UI should run on port 8090 but if that port is already in use on your machine,
-check where the app is actually forwarded, in VSCode,
-at the bottom of the window, next to "Dev Container: Daiteap UI",
-click on the "Forwarded Ports" symbol and see the `Local Address` for port 8090
+Access the UI on <http://localhost:8095/>.
 
 Use this address in Keycloak,
-by changing the URL settings of `app-vue` and `django-backend` clients
-
-If you're using Telepresence to connect this UI to a cluster
-use the port in `Local Address` for local port in the Telepresence command
+by changing the URL settings of `app-vue` and `django-backend` clients.
 
 ### Build & Run Docs (execute the commands inside the devcontainer)
 
