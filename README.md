@@ -35,7 +35,7 @@ code .
 
 - Attach VSCode to the running devcontainer
 
-Once the devcontainer is created, this script `.devcontainer/buils-ui.sh`,
+Once the devcontainer is created, this script `.devcontainer/build-ui.sh`,
 which install the necessary dependencies for the UI, is executed automatically,
 wait for it to complete - you can see the progress in the terminal, inside the devcontainer.
 
