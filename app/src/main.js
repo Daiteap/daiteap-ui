@@ -518,7 +518,7 @@ if (singleUserMode) {
     render: (h) => h(App),
   }).$mount("#app");
 } else {
-  Vue.$keycloak = Keycloak("./keycloak.json");
+  Vue.$keycloak = new Keycloak("./keycloak.json");
 
   Vue.$keycloak
     .init({onLoad: "login-required"})
