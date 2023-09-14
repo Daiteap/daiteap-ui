@@ -8,3 +8,8 @@ module.exports = {
   // ],
   // coverageProvider: "v8",
 };
+
+module.exports = {
+  preset: "@vue/cli-plugin-unit-jest",
+  transformIgnorePatterns: ["node_modules/(?!axios)"],
+};
