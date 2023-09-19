@@ -14,8 +14,7 @@
           <p class="card-text"></p>
           <div class="p">
             Create a new user. Go to
-            <b>Services -> IAM -> Users -> Add user</b>, input new name and
-            select <b>Programmatic access</b>. <br /><br />
+            <b>Services -> IAM -> Users -> Create user</b>, input new name, and click Next <br /><br />
             For permissions, attach the following policies:<br />
             <ul>
               <li><b>AmazonEC2FullAccess</b></li>
@@ -25,7 +24,11 @@
               <li><b>IAMReadOnlyAccess</b></li>
               <li><b>AWSOrganizationsReadOnlyAccess</b></li>
             </ul>
-            Create the user. Copy and paste the <b>Access key ID</b> and
+            Create the user. 
+            From the Users list page click on the user name of that user. 
+            Open the <b>Security credentials</b> tab, and click on <b>Create access key</b> button.
+            Select <b>Application running outside AWS</b> and create the access key.
+            Copy and paste the <b>Access key ID</b> and
             <b>Secret access key</b> from AWS into the corresponding Daiteap
             fields. <br /><br />
             <a
