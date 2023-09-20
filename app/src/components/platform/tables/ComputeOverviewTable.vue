@@ -600,7 +600,7 @@ export default {
         let cluster_machines = await self.getClusterDetails(
           self.clustersList[i].ID
         );
-        cluster_machines.forEach(item => self.addTenant(item));
+        cluster_machines.forEach(item => self.addTenant(item, i))
 
         allMachines = allMachines.concat(cluster_machines);
       }
@@ -609,7 +609,7 @@ export default {
 
       self.loading = false;
     },
-    addTenant(item) {
+    addTenant(item, i) {
       item.tenant = this.clustersList[i].Tenant;
       let errorMsg = this.clustersList[i].ErrorMsg;
 
