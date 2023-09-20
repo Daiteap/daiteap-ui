@@ -939,8 +939,11 @@ Vue.mixin({
       {
         return false;
       }
-      else {
+      else if (process.env.VUE_APP_SINGLE_USER_MODE === "True") {
         return true;
+      }
+      else {
+        throw new TypeError("VUE_APP_SINGLE_USER_MODE variable is not set properly.");
       }
     }
   },
