@@ -506,8 +506,10 @@ let singleUserMode = false;
 
 if (process.env.VUE_APP_SINGLE_USER_MODE == "False") {
   singleUserMode = false;
-} else {
+} else if (process.env.VUE_APP_SINGLE_USER_MODE == "True") {
   singleUserMode = true;
+} else {
+  throw new TypeError("VUE_APP_SINGLE_USER_MODE variable is not set properly.");
 }
 
 if (singleUserMode) {
