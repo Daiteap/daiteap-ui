@@ -877,22 +877,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogstop");
     },
-    stopCluster(payload) {
+    stopCluster(cluster_id, cluster_name) {
       let self = this;
       const requestBody = {
-        clusterID: payload.id,
+        clusterID: cluster_id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        payload.id +
+        cluster_id +
         "/stop";
       const successMessage =
-        'You have successfully submitted stop for "' + payload.name + '".';
+        'You have successfully submitted stop for "' + cluster_name + '".';
       const failureMessage =
         'Error occured while you tried to submit stop of "' + 
-        payload.name + '".';
+        cluster_name + '".';
 
       this.axios
         .post(
@@ -950,22 +950,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogstart");
     },
-    startCluster(payload) {
+    startCluster(cluster_id, cluster_name) {
       let self = this;
       const requestBody = {
-        clusterID: payload.id,
+        clusterID: cluster_id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        payload.id +
+        cluster_id +
         "/start";
       const successMessage =
-        'You have successfully submitted start for "' + payload.name + '".';
+        'You have successfully submitted start for "' + cluster_name + '".';
       const failureMessage =
         'Error occured while you tried to submit start of "' + 
-        payload.name + '".';
+        cluster_name + '".';
 
       this.axios
         .post(
@@ -1023,22 +1023,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogrestart");
     },
-    restartCluster(payload) {
+    restartCluster(cluster_id, cluster_name) {
       let self = this;
       const requestBody = {
-        clusterID: payload.id,
+        clusterID: cluster_id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        payload.id +
+        cluster_id +
         "/restart";
       const successMessage =
-        'You have successfully submitted restart for "' + payload.name + '".';
+        'You have successfully submitted restart for "' + cluster_name + '".';
       const failureMessage =
         'Error occured while you tried to submit restart of "' + 
-        payload.name + '".';
+        cluster_name + '".';
 
       this.axios
         .post(
