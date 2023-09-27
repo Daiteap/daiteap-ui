@@ -300,7 +300,7 @@ export default {
             self.$router.push({
               name: 'ProjectDetails',
               params: {
-                projectID: self.selectedProject
+                projectID: self.computed_create_cluster_settings.selected_project
               },
             })
 
