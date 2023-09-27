@@ -54,7 +54,7 @@ For AWS, only manual configuration is supported. Steps to configure new credenti
 
 ![Screenshot](img/cloud_credentials_aws_mask.png)
 
-Create a new user. Go to **Services -> IAM -> Users -> Add user**, input new name and select **Programmatic access**.
+Create a new user. Go to **Services -> IAM -> Users -> Add user**, input new name, and click Next
 
 For permissions, attach the following policies:
 
@@ -65,7 +65,11 @@ For permissions, attach the following policies:
 * **IAMReadOnlyAccess**
 * **AWSOrganizationsReadOnlyAccess**
 
-Create the user. Copy and paste the **Access key ID** and **Secret access key** from AWS into the corresponding Daiteap fields.
+Create the user.
+From the Users list page click on the user name of that user.
+Open the **Security credentials** tab, and click on **Create access key** button.
+Select **Application running outside AWS** and create the access key.
+Copy and paste the **Access key ID** and **Secret access key** from AWS into the corresponding Daiteap fields.
 
 ## Microsoft Azure
 
