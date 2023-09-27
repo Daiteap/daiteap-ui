@@ -1,19 +1,19 @@
 <template>
   <div class="row">
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstart"
+      modalId="bv-modal-confirmdialogoperationsstart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
       @confirm-action="startCluster()"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstop"
+      modalId="bv-modal-confirmdialogoperationsstop"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
       @confirm-action="stopCluster()"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogrestart"
+      modalId="bv-modal-confirmdialogoperationsrestart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
       @confirm-action="restartCluster()"
@@ -326,7 +326,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstop");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsstop");
     },
     stopCluster(cluster_id, cluster_name) {
       let self = this;
@@ -361,7 +361,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstop");
         })
         .catch(function (error) {
           console.log(error);
@@ -386,7 +386,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstop");
         });
     },
     showStartClusterDialog(id, name) {
@@ -399,7 +399,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstart");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsstart");
     },
     startCluster(cluster_id, cluster_name) {
       let self = this;
@@ -434,7 +434,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstart");
         })
         .catch(function (error) {
           console.log(error);
@@ -459,7 +459,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstart");
         });
     },
     showRestartClusterDialog(id, name) {
@@ -472,7 +472,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogrestart");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsrestart");
     },
     restartCluster(cluster_id, cluster_name) {
       let self = this;
@@ -507,7 +507,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsrestart");
         })
         .catch(function (error) {
           console.log(error);
@@ -532,7 +532,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsrestart");
         });
     },
     downloadKubeconfig(id) {
