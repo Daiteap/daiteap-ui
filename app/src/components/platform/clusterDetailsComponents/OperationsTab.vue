@@ -4,19 +4,19 @@
       modalId="bv-modal-confirmdialogoperationsstart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="startCluster()"
+      @confirm-action="startCluster"
     ></ConfirmDialog>
     <ConfirmDialog
       modalId="bv-modal-confirmdialogoperationsstop"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="stopCluster()"
+      @confirm-action="stopCluster"
     ></ConfirmDialog>
     <ConfirmDialog
       modalId="bv-modal-confirmdialogoperationsrestart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="restartCluster()"
+      @confirm-action="restartCluster"
     ></ConfirmDialog>
     <SaveEnvironmentTemplate
       ref="saveAsTemplate"
@@ -101,7 +101,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="startCluster(clusterID, cluster.title)"
+            @click="showStartClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-play"></i>&nbsp; Start
           </div>
@@ -114,7 +114,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="stopCluster(clusterID, cluster.title)"
+            @click="showStopClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-stop-circle"></i>&nbsp; Stop
           </div>
@@ -127,7 +127,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="restartCluster(clusterID, cluster.title)"
+            @click="showRestartClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-sync-alt"></i>&nbsp; Restart
           </div>
