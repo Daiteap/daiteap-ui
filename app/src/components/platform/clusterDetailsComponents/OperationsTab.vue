@@ -404,19 +404,19 @@ export default {
     startCluster(cluster_id, cluster_name) {
       let self = this;
       const requestBody = {
-        clusterID: cluster_.id,
+        clusterID: cluster_id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        cluster_.id +
+        cluster_id +
         "/start";
       const successMessage =
-        'You have successfully submitted start for "' + cluster_.name + '".';
+        'You have successfully submitted start for "' + cluster_name + '".';
       const failureMessage =
         'Error occured while you tried to submit start of "' + 
-        cluster_.name + '".';
+        cluster_name + '".';
 
       this.axios
         .post(
