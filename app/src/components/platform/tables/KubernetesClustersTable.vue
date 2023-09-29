@@ -24,19 +24,19 @@
         modalId="bv-modal-confirmdialogstart"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="startCluster()"
+        @confirm-action="startCluster"
       ></ConfirmDialog>
       <ConfirmDialog
         modalId="bv-modal-confirmdialogstop"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="stopCluster()"
+        @confirm-action="stopCluster"
       ></ConfirmDialog>
       <ConfirmDialog
         modalId="bv-modal-confirmdialogrestart"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="restartCluster()"
+        @confirm-action="restartCluster"
       ></ConfirmDialog>
       <ResizeError
         v-show="showResizeError"
@@ -337,7 +337,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'stopped' || item.ResizeStep > 0"
-                  v-on:click="startCluster(item.ID, item.Name)"
+                  v-on:click="showStartClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-play"></i>
@@ -348,7 +348,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'running' || item.ResizeStep > 0"
-                  v-on:click="stopCluster(item.ID, item.Name)"
+                  v-on:click="showStopClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-stop-circle"></i>
@@ -359,7 +359,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'running' || item.ResizeStep > 0"
-                  v-on:click="restartCluster(item.ID, item.Name)"
+                  v-on:click="showRestartClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-sync-alt"></i>
@@ -1290,22 +1290,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogstop");
     },
-    stopCluster(cluster_id, cluster_name) {
+    stopCluster(payload) {
       let self = this;
       const requestBody = {
-        clusterID: cluster_id,
+        clusterID: payload.id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        cluster_id +
+        payload.id +
         "/stop";
       const successMessage =
-        'You have successfully submitted stop for "' + cluster_name + '".';
+        'You have successfully submitted stop for "' + payload.name + '".';
       const failureMessage =
         'Error occured while you tried to submit stop of "' + 
-        cluster_name + '".';
+        payload.name + '".';
 
       this.axios
         .post(
@@ -1363,22 +1363,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogstart");
     },
-    startCluster(cluster_id, cluster_name) {
+    startCluster(payload) {
       let self = this;
       const requestBody = {
-        clusterID: cluster_id,
+        clusterID: payload.id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        cluster_id +
+        payload.id +
         "/start";
       const successMessage =
-        'You have successfully submitted start for "' + cluster_name + '".';
+        'You have successfully submitted start for "' + payload.name + '".';
       const failureMessage =
         'Error occured while you tried to submit start of "' + 
-        cluster_name + '".';
+        payload.name + '".';
 
       this.axios
         .post(
@@ -1436,22 +1436,22 @@ export default {
       this.showConfirmDialog = true;
       this.$bvModal.show("bv-modal-confirmdialogrestart");
     },
-    restartCluster(cluster_id, cluster_name) {
+    restartCluster(payload) {
       let self = this;
       const requestBody = {
-        clusterID: cluster_id,
+        clusterID: payload.id,
       };
       const endpoint =
         "/server/tenants/" +
         this.computed_active_tenant_id +
         "/clusters/" +
-        cluster_id +
+        payload.id +
         "/restart";
       const successMessage =
-        'You have successfully submitted restart for "' + cluster_name + '".';
+        'You have successfully submitted restart for "' + payload.name + '".';
       const failureMessage =
         'Error occured while you tried to submit restart of "' + 
-        cluster_name + '".';
+        payload.name + '".';
 
       this.axios
         .post(
