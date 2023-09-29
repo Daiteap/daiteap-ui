@@ -1,22 +1,22 @@
 <template>
   <div class="row">
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstart"
+      modalId="bv-modal-confirmdialogoperationsstart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="startCluster()"
+      @confirm-action="startCluster"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstop"
+      modalId="bv-modal-confirmdialogoperationsstop"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="stopCluster()"
+      @confirm-action="stopCluster"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogrestart"
+      modalId="bv-modal-confirmdialogoperationsrestart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="restartCluster()"
+      @confirm-action="restartCluster"
     ></ConfirmDialog>
     <SaveEnvironmentTemplate
       ref="saveAsTemplate"
@@ -101,7 +101,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="startCluster(clusterID, cluster.title)"
+            @click="showStartClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-play"></i>&nbsp; Start
           </div>
@@ -114,7 +114,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="stopCluster(clusterID, cluster.title)"
+            @click="showStopClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-stop-circle"></i>&nbsp; Stop
           </div>
@@ -127,7 +127,7 @@
                 ? 'deactivated'
                 : '',
             ]"
-            @click="restartCluster(clusterID, cluster.title)"
+            @click="showRestartClusterDialog(clusterID, cluster.title)"
           >
             <i class="fas fa-sync-alt"></i>&nbsp; Restart
           </div>
@@ -326,7 +326,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstop");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsstop");
     },
     stopCluster(payload) {
       let self = this;
@@ -361,7 +361,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstop");
         })
         .catch(function (error) {
           console.log(error);
@@ -386,7 +386,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstop");
         });
     },
     showStartClusterDialog(id, name) {
@@ -399,7 +399,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstart");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsstart");
     },
     startCluster(payload) {
       let self = this;
@@ -434,7 +434,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstart");
         })
         .catch(function (error) {
           console.log(error);
@@ -459,7 +459,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsstart");
         });
     },
     showRestartClusterDialog(id, name) {
@@ -472,7 +472,7 @@ export default {
         "name": name,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogrestart");
+      this.$bvModal.show("bv-modal-confirmdialogoperationsrestart");
     },
     restartCluster(payload) {
       let self = this;
@@ -507,7 +507,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsrestart");
         })
         .catch(function (error) {
           console.log(error);
@@ -532,7 +532,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmdialogoperationsrestart");
         });
     },
     downloadKubeconfig(id) {

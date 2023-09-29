@@ -1,22 +1,22 @@
 <template>
   <b-modal centered id="bv-modal-detailsvirtualmachine" hide-footer>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstart"
+      modalId="bv-modal-confirmvmdetailsdialogstart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="stopMachine()"
+      @confirm-action="stopMachine"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstop"
+      modalId="bv-modal-confirmvmdetailsdialogstop"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="startMachine()"
+      @confirm-action="startMachine"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogrestart"
+      modalId="bv-modal-confirmvmdetailsdialogrestart"
       v-show="showConfirmDialog"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="restartMachine()"
+      @confirm-action="restartMachine"
     ></ConfirmDialog>
     <div v-on:click="closeModal()"></div>
     <div id="textPopupContent">
@@ -249,7 +249,7 @@ export default {
         this.confirmDialogParams.envName = name;
         this.confirmDialogParams.envId = id;
         this.showConfirmDialog = true;
-        this.$bvModal.show("bv-modal-confirmdialogstop");
+        this.$bvModal.show("bv-modal-confirmvmdetailsdialogstop");
       }
     },
     stopMachine(payload) {
@@ -289,7 +289,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogstop");
         })
         .catch(function (error) {
           console.log(error);
@@ -314,7 +314,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogstop");
         });
     },
     showStartMachineDialog(id, name) {
@@ -326,7 +326,7 @@ export default {
         this.confirmDialogParams.envId = id;
         this.confirmDialogParams.envName = name;
         this.showConfirmDialog = true;
-        this.$bvModal.show("bv-modal-confirmdialogstart");
+        this.$bvModal.show("bv-modal-confirmvmdetailsdialogstart");
       }
     },
     startMachine(payload) {
@@ -366,7 +366,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogstart");
         })
         .catch(function (error) {
           console.log(error);
@@ -391,7 +391,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogstart");
         });
     },
     showRestartMachineDialog(id, name) {
@@ -403,7 +403,7 @@ export default {
         this.confirmDialogParams.envId = id;
         this.confirmDialogParams.envName = name;
         this.showConfirmDialog = true;
-        this.$bvModal.show("bv-modal-confirmdialogrestart");
+        this.$bvModal.show("bv-modal-confirmvmdetailsdialogrestart");
       }
     },
     restartMachine(payload) {
@@ -443,7 +443,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogrestart");
         })
         .catch(function (error) {
           console.log(error);
@@ -468,7 +468,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmvmdetailsdialogrestart");
         });
     },
   },

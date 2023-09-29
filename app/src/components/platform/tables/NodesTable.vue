@@ -1,19 +1,19 @@
 <template>
   <div>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstart"
+      modalId="bv-modal-confirmvmdialogstart"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="startCluster()"
+      @confirm-action="startMachine"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogstop"
+      modalId="bv-modal-confirmvmdialogstop"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="stopCluster()"
+      @confirm-action="stopMachine"
     ></ConfirmDialog>
     <ConfirmDialog
-      modalId="bv-modal-confirmdialogrestart"
+      modalId="bv-modal-confirmvmdialogrestart"
       :confirmDialogParams="confirmDialogParams"
-      @confirm-action="restartMachine()"
+      @confirm-action="restartMachine"
     ></ConfirmDialog>
     <GenericPopupWarning
       :modalId="'bv-modal-deletenodewarning'"
@@ -413,7 +413,7 @@ export default {
         "provider": provider,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstop");
+      this.$bvModal.show("bv-modal-confirmvmdialogstop");
     },
     stopMachine(payload) {
       let self = this;
@@ -452,7 +452,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmvmdialogstop");
         })
         .catch(function (error) {
           console.log(error);
@@ -477,7 +477,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstop");
+          self.$bvModal.hide("bv-modal-confirmvmdialogstop");
         });
     },
     showStartMachineDialog(id, name, provider) {
@@ -491,7 +491,7 @@ export default {
         "provider": provider,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogstart");
+      this.$bvModal.show("bv-modal-confirmvmdialogstart");
     },
     startMachine(payload) {
       let self = this;
@@ -530,7 +530,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmvmdialogstart");
         })
         .catch(function (error) {
           console.log(error);
@@ -555,7 +555,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogstart");
+          self.$bvModal.hide("bv-modal-confirmvmdialogstart");
         });
     },
     showRestartMachineDialog(id, name, provider) {
@@ -570,7 +570,7 @@ export default {
         "provider": provider,
       };
       this.showConfirmDialog = true;
-      this.$bvModal.show("bv-modal-confirmdialogrestart");
+      this.$bvModal.show("bv-modal-confirmvmdialogrestart");
     },
     restartMachine(payload) {
       let self = this;
@@ -609,7 +609,7 @@ export default {
             });
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmvmdialogrestart");
         })
         .catch(function (error) {
           console.log(error);
@@ -634,7 +634,7 @@ export default {
             }
           }
           self.showConfirmDialog = false;
-          self.$bvModal.hide("bv-modal-confirmdialogrestart");
+          self.$bvModal.hide("bv-modal-confirmvmdialogrestart");
         });
     },
     deletePopup(nodeForDeletion) {
