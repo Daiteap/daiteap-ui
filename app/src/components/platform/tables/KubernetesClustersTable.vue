@@ -24,19 +24,19 @@
         modalId="bv-modal-confirmdialogstart"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="startCluster()"
+        @confirm-action="startCluster"
       ></ConfirmDialog>
       <ConfirmDialog
         modalId="bv-modal-confirmdialogstop"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="stopCluster()"
+        @confirm-action="stopCluster"
       ></ConfirmDialog>
       <ConfirmDialog
         modalId="bv-modal-confirmdialogrestart"
         v-show="showConfirmDialog"
         :confirmDialogParams="confirmDialogParams"
-        @confirm-action="restartCluster()"
+        @confirm-action="restartCluster"
       ></ConfirmDialog>
       <ResizeError
         v-show="showResizeError"
@@ -337,7 +337,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'stopped' || item.ResizeStep > 0"
-                  v-on:click="startCluster(item.ID, item.Name)"
+                  v-on:click="showStartClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-play"></i>
@@ -348,7 +348,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'running' || item.ResizeStep > 0"
-                  v-on:click="stopCluster(item.ID, item.Name)"
+                  v-on:click="showStopClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-stop-circle"></i>
@@ -359,7 +359,7 @@
                 <b-dropdown-item
                   v-if="item.Type != 5 && item.Type != 8"
                   :disabled="item.Status != 'running' || item.ResizeStep > 0"
-                  v-on:click="restartCluster(item.ID, item.Name)"
+                  v-on:click="showRestartClusterDialog(item.ID, item.Name)"
                 >
                   <span>
                     <i class="fas fa-sync-alt"></i>
