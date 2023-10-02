@@ -530,6 +530,20 @@ export default {
                               text: "Access Denied",
                             });
                           } else {
+                            if (Array.isArray(error.response.data)) {
+                              for(let i = 0; i < error.response.data.length; i++) {
+                                self.alertMsg += error.response.data[i];
+                                if(i != error.response.data.length - 1) {
+                                  self.alertMsg += ", ";
+                                }
+                              }
+                            } else {
+                              self.alertMsg = error.response.data;
+                            }
+
+                            self.showWAlert = true;
+                            self.alertKey += 1;
+
                             self.$notify({
                               group: "msg",
                               type: "error",
@@ -566,6 +580,27 @@ export default {
                 type: "error",
                 title: "Notification:",
                 text: "Access Denied",
+              });
+            } else {
+              if (Array.isArray(error.response.data)) {
+                for(let i = 0; i < error.response.data.length; i++) {
+                  self.alertMsg += error.response.data[i];
+                  if(i != error.response.data.length - 1) {
+                    self.alertMsg += ", ";
+                  }
+                }
+              } else {
+                self.alertMsg = error.response.data;
+              }
+
+              self.showWAlert = true;
+              self.alertKey += 1;
+
+              self.$notify({
+                group: "msg",
+                type: "error",
+                title: "Notification:",
+                text: "Error while saving cloud credentials.",
               });
             }
           }
