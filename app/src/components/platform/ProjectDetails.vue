@@ -171,7 +171,7 @@
               </div>
             </b-col>
             <b-col lg="2" md="3" sm="4" class="my-auto text-right">
-              <AddButton text='Add User' @onClickAddButton="addUserToProject()" />
+              <AddButton v-if="this.computed_isAdmin" text='Add User' @onClickAddButton="addUserToProject()" />
             </b-col>
           </b-row>
         </b-container>
