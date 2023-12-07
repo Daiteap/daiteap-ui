@@ -57,7 +57,7 @@
                 type="text"
                 v-bind:placeholder="defaultName"
                 v-model="form.name"
-                @input="setFormName"
+                @input="setFormName(form.name)"
                 autocomplete="off"
                 @keyup="formExtraFieldsCheck"
               />
@@ -138,7 +138,7 @@
                 </select>
               </div>
               <p
-                v-if="getFormNamespace() == ''"
+                v-if="this.form.namespace  == ''"
                 class="help text-danger text-start"
                 style="margin: 0rem"
               >
@@ -731,7 +731,8 @@ export default {
   name: "SimpleConfig",
   props: [
     "clickedNext",
-    "currentStep"
+    "currentStep",
+    "parentForm",
   ],
   mixins: [validationMixin],
   mounted() {
@@ -762,14 +763,8 @@ export default {
     setFormConfigurationType(value) {
       this.$emit('set-form-configuration-type', value);
     },
-    getFormName() {
-      return this.$emit('get-form-name');
-    },
-    getFormNamespace() {
-      return this.$emit('get-form-namespace');
-    },
-    getFormConfigurationType() {
-      return this.$emit('get-form-configuration-type');
+    setFormCloudProviders(value) {
+      this.$emit('set-form-cloud-providers', value);
     },
     async getUsersClustersList() {
       let self = this;
@@ -1074,6 +1069,7 @@ export default {
         )
         .then(function (response) {
           self.defaultName = response.data.defaultName;
+          self.form.name = response.data.defaultName;
           self.setFormName(response.data.defaultName);
         })
         .catch(function (error) {
@@ -1322,6 +1318,7 @@ export default {
         if (this.form.cloud_providers.iotarmSelected == true) {
           arrayOfProviders.push("iotarm");
         }
+        this.setFormCloudProviders(arrayOfProviders);
         Vue.prototype.$finalModel.cloud_providers = arrayOfProviders;
       }
       if (this.serviceOptions.cloud_providers.choice == "single") {
@@ -1347,13 +1344,14 @@ export default {
         if (this.form.cloud_providers.iotarmSelected == true) {
           providerString = "iotarm";
         }
+        this.setFormCloudProviders(providerString);
         Vue.prototype.$finalModel.cloud_providers = providerString;
       }
     },
     formExtraFieldsCheck() {
       this.emptyExtraFields = false;
 
-      let formName = this.getFormName();
+      let formName = this.parentForm.name;
       if (
         !(
           formName &&
@@ -1413,12 +1411,12 @@ export default {
     },
     serviceOptionsCheck() {
       let emptyFields = false;
-      let formName = this.getFormName();
+      let formName = this.parentForm.name;
 
       if (this.checkIfObjectIsEmpty(this.formExtraFields)) {
         if (
           !formName ||
-          !this.getFormConfigurationType()
+          !this.form.configurationType
         ) {
           emptyFields == true;
         }
@@ -1483,6 +1481,9 @@ export default {
     form: {},
   },
   watch: {
+    parentForm(newVal) {
+      this.parentForm = newVal;
+    },
     $v: {
       handler: function () {
         if (

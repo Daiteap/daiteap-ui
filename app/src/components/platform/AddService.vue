@@ -247,14 +247,13 @@
             <SimpleConfig
               ref="simpleConfig"
               @can-continue="proceed"
-              @set-form-name="setFormName()"
-              @set-form-namespace="setFormNamespace()"
-              @get-form-name="getFormName()"
-              @get-form-namespace="getFormNamespace()"
-              @set-cluster-id="setClusterID()"
-              @set-form-values-file="setFormValuesFile()"
-              @set-form-configuration-type="setFormConfigurationType()"
-              @get-form-configuration-type="getFormConfigurationType()"
+              @set-form-name="setFormName"
+              @set-form-namespace="setFormNamespace"
+              @set-cluster-id="setClusterID"
+              @set-form-values-file="setFormValuesFile"
+              @set-form-configuration-type="setFormConfigurationType"
+              @set-form-cloud-providers="setFormCloudProviders"
+              :parentForm="form"
             ></SimpleConfig>
             <div class="row">
               <div
@@ -265,10 +264,10 @@
                   class="custom-button float-right ml-5"
                   :class="[!canContinue ? 'deactivated' : '']"
                   @click="
-                    submitServiceConfiguration();
-                    currentAccordion = 'submitted';
                     $refs.simpleConfig.cloudProvidersToArrayofValues();
                     $refs.simpleConfig.showCustom = false;
+                    submitServiceConfiguration();
+                    currentAccordion = 'submitted';
                     installStep = 4;
                     canContinue = false;
                     $refs.simpleConfig.resetForm();
@@ -400,13 +399,16 @@ export default {
       this.form.name = value;
     },
     setFormNamespace(value) {
-      this.form.name = value;
+      this.form.namespace = value;
     },
     setFormValuesFile(value) {
       this.form.valuesFile = value;
     },
     setFormConfigurationType(value) {
       this.form.configurationType =value;
+    },
+    setFormCloudProviders(value) {
+      this.form.cloud_providers = value;
     },
     setClusterID(value) {
       this.clusterID = value;
